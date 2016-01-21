@@ -714,7 +714,7 @@ function printDeploymentList(command: cli.IDeploymentListCommand, deployments: D
                 
                 if (showPackage) {
                     row.push(getPackageString(deployment.package));
-                    row.push(getPackageMetricsString(<PackageWithMetrics>(deployment.package)));
+                    row.push(getPackageMetricsString(<PackageWithMetrics>(deployment.package), /* showInstalls */ false));
                 }
                 
                 dataSource.push(row);
@@ -774,7 +774,7 @@ function getPackageString(packageObject: Package): string {
         (packageObject.description ? wordwrap(70)("\n" + chalk.green("Description: ") + packageObject.description): "");
 }
 
-function getPackageMetricsString(packageObject: PackageWithMetrics): string {
+function getPackageMetricsString(packageObject: PackageWithMetrics, showInstalls: boolean = true): string {
     if (!packageObject || !packageObject.metrics) {
         return "";
     }
@@ -782,14 +782,26 @@ function getPackageMetricsString(packageObject: PackageWithMetrics): string {
     var activePercent: number = packageObject.metrics.totalActive
         ? packageObject.metrics.active / packageObject.metrics.totalActive * 100
         : 0.0;
-    var percentString: string = (activePercent === 100.0 ? "100" : activePercent.toPrecision(2)) + "%";
-    var numPending: number = packageObject.metrics.downloaded - packageObject.metrics.installed - packageObject.metrics.failed;
-    var returnString: string = chalk.green("Active: ") + percentString + " (" + packageObject.metrics.active.toLocaleString() + " of " + packageObject.metrics.totalActive.toLocaleString() + ")\n" +
-        chalk.green("Installs: ") + packageObject.metrics.installed.toLocaleString();
         
-    if (numPending > 0) {
-        returnString += " (" + numPending.toLocaleString() + " pending)";
-    }    
+    var percentString: string;
+    if (activePercent === 100.0) {
+        percentString = "100%";
+    } else if (activePercent === 0.0) {
+        percentString = "0%";
+    } else {
+        percentString = activePercent.toPrecision(2) + "%";
+    }
+    
+    var numPending: number = packageObject.metrics.downloaded - packageObject.metrics.installed - packageObject.metrics.failed;
+    var returnString: string = chalk.green("Active: ") + percentString + " (" + packageObject.metrics.active.toLocaleString() + " of " + packageObject.metrics.totalActive.toLocaleString() + ")";
+    if (showInstalls){
+        returnString += "\n" + chalk.green("Installs: ") + packageObject.metrics.installed.toLocaleString();
+        if (numPending > 0) {
+            returnString += " (" + numPending.toLocaleString() + " pending)";
+        }
+    } else {
+        returnString += "\nPending: " + Math.max(numPending, 0).toLocaleString();
+    }
     
     if (packageObject.metrics.failed) {
         returnString += "\n" + chalk.green("Rollbacks: ") + chalk.red(packageObject.metrics.failed.toLocaleString() + "");
