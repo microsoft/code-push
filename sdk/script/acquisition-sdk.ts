@@ -118,8 +118,18 @@ export class AcquisitionManager {
             if (!updateInfo) {
                 callback(error, /*remotePackage=*/ null);
                 return;
-            } else if (updateInfo.updateAppVersion) {
-                callback(/*error=*/ null, { updateAppVersion: true, appVersion: updateInfo.appVersion });
+            } else if (updateInfo.updateAppVersion || updateInfo.shouldRunBinaryVersion) {
+                var returnUpdateInfo: any = {};
+                if (updateInfo.shouldRunBinaryVersion) {
+                    returnUpdateInfo.shouldRunBinaryVersion = true;
+                }
+                
+                if (updateInfo.updateAppVersion) {
+                    returnUpdateInfo.updateAppVersion = true;
+                    returnUpdateInfo.appVersion = updateInfo.appVersion;
+                }
+                
+                callback(/*error=*/ null, returnUpdateInfo);
                 return;
             } else if (!updateInfo.isAvailable) {
                 callback(/*error=*/ null, /*remotePackage=*/ null);
