@@ -1032,6 +1032,7 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
     var platformFolder: string = path.join(projectRoot, "platforms", platform);
     var platformCordova: string = path.join(platformFolder, "cordova");
     var outputFolder: string;
+    var preparePromise: Promise<void>;
 
     if (platform === "ios") {
         outputFolder = path.join(platformFolder, "www");
@@ -1041,15 +1042,15 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
         throw new Error("Platform must be either \"ios\" or \"android\".");
     }
 
-    log(chalk.cyan("Running \"cordova build\" command:\n"));
+    log(chalk.cyan("Running \"cordova prepare\" command:\n"));
     try {
-        execSync(["cordova", "build", platform, "--verbose"].join(" "), { stdio: "inherit" });
+        execSync(["cordova", "prepare", platform, "--verbose"].join(" "), { stdio: "inherit" });
     } catch (error) {
         if (error.code == "ENOENT") {
-            throw new Error(`Failed to call "cordova build". Please ensure that the Cordova CLI is installed.`);
+            throw new Error(`Failed to call "cordova prepare". Please ensure that the Cordova CLI is installed.`);
         }
 
-        throw new Error(`Unable to build project. Please ensure that this is a Cordova project and that platform "${platform}" was added with "cordova platform add ${platform}"`);
+        throw new Error(`Unable to prepare project. Please ensure that this is a Cordova project and that platform "${platform}" was added with "cordova platform add ${platform}"`);
     }
 
     try {

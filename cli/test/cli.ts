@@ -971,7 +971,7 @@ describe("CLI", () => {
         releaseHelperFunction(command, done, INVALID_RELEASE_FILE_ERROR_MESSAGE);
     });
 
-    it("release-cordova fails if Cordova project cannot be built", (done: MochaDone): void => {
+    it("release-cordova fails if Cordova project cannot be prepared", (done: MochaDone): void => {
         var command: cli.IReleaseCordovaCommand = {
             type: cli.CommandType.releaseCordova,
             appName: "a",
@@ -984,7 +984,7 @@ describe("CLI", () => {
         };
 
 
-        var execSync: Sinon.SinonStub = sandbox.stub(cmdexec, "execSync", (command: string, options: any) => { throw "Failed build"; });
+        var execSync: Sinon.SinonStub = sandbox.stub(cmdexec, "execSync", (command: string, options: any) => { throw "Failed Prepare"; });
         var release: Sinon.SinonSpy = sandbox.spy(cmdexec, "release");
         var releaseCordova: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseCordova");
 
@@ -993,7 +993,7 @@ describe("CLI", () => {
                 done(new Error("Did not throw error."));
             })
             .catch((err) => {
-                assert.equal(err.message, `Unable to build project. Please ensure that this is a Cordova project and that platform "${command.platform}" was added with "cordova platform add ${command.platform}"`);
+                assert.equal(err.message, `Unable to prepare project. Please ensure that this is a Cordova project and that platform "${command.platform}" was added with "cordova platform add ${command.platform}"`);
                 sinon.assert.notCalled(release);
                 sinon.assert.threw(releaseCordova, "Error");
                 done();
