@@ -345,6 +345,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .demand(/*count*/ 3, /*max*/ 3)  // Require exactly three non-option arguments.
             .example("release-cordova MyApp ios", "Releases the Cordova iOS project in the current working directory to the \"MyApp\" app's \"Staging\" deployment")
             .example("release-cordova MyApp android -d Production", "Releases the Cordova Android project in the current working directory to the \"MyApp\" app's \"Production\" deployment")
+            .option("build", { alias: "b", default: false, demand: false, description: "Invoke \"cordova build\" instead of \"cordova prepare\"", type: "boolean" })
             .option("deploymentName", { alias: "d", default: "Staging", demand: false, description: "Deployment to release the update to", type: "string" })
             .option("description", { alias: "des", default: null, demand: false, description: "Description of the changes made to the app in this release", type: "string" })
             .option("disabled", { alias: "x", default: false, demand: false, description: "Specifies whether this release should be immediately downloadable", type: "boolean" })
@@ -685,6 +686,7 @@ function createCommand(): cli.ICommand {
                     releaseCordovaCommand.appName = arg1;
                     releaseCordovaCommand.platform = arg2;
 
+                    releaseCordovaCommand.build = argv["build"];
                     releaseCordovaCommand.deploymentName = argv["deploymentName"];
                     releaseCordovaCommand.description = argv["description"] ? backslash(argv["description"]) : "";
                     releaseCordovaCommand.disabled = argv["disabled"];

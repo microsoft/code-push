@@ -162,6 +162,7 @@ export interface IReleaseCommand extends IReleaseBaseCommand {
 }
 
 export interface IReleaseCordovaCommand extends IReleaseBaseCommand {
+    build: boolean;
     platform: string;
 }
 

@@ -972,10 +972,19 @@ describe("CLI", () => {
     });
 
     it("release-cordova fails if Cordova project cannot be prepared", (done: MochaDone): void => {
+        testReleaseCordovaFailure(/*build*/ false, done);
+    });
+
+    it("release-cordova fails if Cordova project cannot be built", (done: MochaDone): void => {
+        testReleaseCordovaFailure(/*build*/ true, done);
+    });
+
+    function testReleaseCordovaFailure(build: boolean, done: MochaDone): void {
         var command: cli.IReleaseCordovaCommand = {
             type: cli.CommandType.releaseCordova,
             appName: "a",
             appStoreVersion: null,
+            build: build,
             deploymentName: "Staging",
             description: "Test invalid project",
             mandatory: false,
@@ -983,8 +992,8 @@ describe("CLI", () => {
             platform: "ios"
         };
 
-
-        var execSync: Sinon.SinonStub = sandbox.stub(cmdexec, "execSync", (command: string, options: any) => { throw "Failed Prepare"; });
+        var cordovaCommand: string = build ? "build" : "prepare";
+        var execSync: Sinon.SinonStub = sandbox.stub(cmdexec, "execSync", (command: string, options: any) => { throw `Failed ${cordovaCommand}`; });
         var release: Sinon.SinonSpy = sandbox.spy(cmdexec, "release");
         var releaseCordova: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseCordova");
 
@@ -993,19 +1002,20 @@ describe("CLI", () => {
                 done(new Error("Did not throw error."));
             })
             .catch((err) => {
-                assert.equal(err.message, `Unable to prepare project. Please ensure that this is a Cordova project and that platform "${command.platform}" was added with "cordova platform add ${command.platform}"`);
+                assert.equal(err.message, `Unable to ${cordovaCommand} project. Please ensure that this is a Cordova project and that platform "${command.platform}" was added with "cordova platform add ${command.platform}"`);
                 sinon.assert.notCalled(release);
                 sinon.assert.threw(releaseCordova, "Error");
                 done();
             })
             .done();
-    });
+    }
 
     it("release-cordova fails if CWD does not contain config.xml", (done: MochaDone): void => {
         var command: cli.IReleaseCordovaCommand = {
             type: cli.CommandType.releaseCordova,
             appName: "a",
             appStoreVersion: null,
+            build: false,
             deploymentName: "Staging",
             description: "Test missing config.xml",
             mandatory: false,
@@ -1036,6 +1046,7 @@ describe("CLI", () => {
             type: cli.CommandType.releaseCordova,
             appName: "a",
             appStoreVersion: null,
+            build: false,
             deploymentName: "Staging",
             description: "Test invalid platform",
             mandatory: false,
@@ -1065,6 +1076,7 @@ describe("CLI", () => {
             type: cli.CommandType.releaseCordova,
             appName: "a",
             appStoreVersion: null,
+            build: false,
             deploymentName: "Staging",
             description: "Test config.xml app version read",
             mandatory: false,
@@ -1079,6 +1091,7 @@ describe("CLI", () => {
             type: cli.CommandType.release,
             appName: "a",
             appStoreVersion: "0.0.1",
+            build: false,
             deploymentName: "Staging",
             description: "Test config.xml app version read",
             mandatory: false,
@@ -1110,6 +1123,7 @@ describe("CLI", () => {
             type: cli.CommandType.releaseCordova,
             appName: "a",
             appStoreVersion: null,
+            build: true,
             deploymentName: "Staging",
             description: "Test android package resolution",
             mandatory: false,
@@ -1124,6 +1138,7 @@ describe("CLI", () => {
             type: cli.CommandType.release,
             appName: "a",
             appStoreVersion: "0.0.1",
+            build: true,
             deploymentName: "Staging",
             description: "Test android package resolution",
             mandatory: false,
