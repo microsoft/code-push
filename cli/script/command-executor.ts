@@ -863,7 +863,7 @@ function getReactNativeProjectAppVersion(platform: string, projectName: string):
             .then((buildGradle: any) => {
                 if (buildGradle.android && buildGradle.android.defaultConfig && buildGradle.android.defaultConfig.versionName) {
                     if (typeof buildGradle.android.defaultConfig.versionName !== "string") {
-                        throw new Error(`The "android.defaultConfig.versionName" property value in "android/app/build.gradle" is not a valid string.  If this is expected, consider using the --targetBinaryVersion option to specify the value manually.`);
+                        throw new Error(`The "android.defaultConfig.versionName" property value in "android/app/build.gradle" is not a valid string. If this is expected, consider using the --targetBinaryVersion option to specify the value manually.`);
                     }
                     
                     var appVersion: string = buildGradle.android.defaultConfig.versionName.replace(/"/g, "").trim();
