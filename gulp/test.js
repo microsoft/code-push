@@ -1,16 +1,17 @@
 "use strict";
 
+var del = require("del");
 var gulp = require("gulp");
 var plugins = require("gulp-load-plugins")();
 
 var mochaConfig = {
     reporter: process.env.REPORTER || "spec",
-    timeout: parseInt(process.env.TIMEOUT) || 5000
+    timeout: parseInt(process.env.TIMEOUT) || 150000
 };
 
 var projects = {
     "sdk": ["build-sdk"],
-    "cli": ["build-cli"]
+    "cli": ["build-cli"],
 };
 
 var projectNames = Object.keys(projects);
@@ -27,6 +28,14 @@ function sourcePathFromName(name) {
 }
 
 function runTests(sources, tests, done) {
+    for (var i = 0; i < process.argv.length; i++) {
+        if (process.argv[i] === "--report") {
+            mochaConfig.reporter = "mocha-junit-reporter";
+            // Delete previous test result file so TFS doesn't read the old file if the tests exit before saving
+            del("./test-results.xml");
+        }
+    }
+    
     require("dotenv").config({ path: ".test.env", silent: true });
     gulp.src(sources)
         .pipe(plugins.istanbul({includeUntested: true}))
@@ -52,4 +61,9 @@ projectNames.forEach(function(projectName) {
 
 gulp.task("test", ["build"], function(done) {
     runTests(sourcesPaths, testPaths, done);
+});
+
+gulp.task("test-e2e", ["build-e2e"], function(done) {
+    process.env.PATH = __dirname + "/../e2e/node_modules/.bin:" + process.env.PATH;
+    runTests([sourcePathFromName("e2e")], [testPathFromName("e2e")], done);
 });

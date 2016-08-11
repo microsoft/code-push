@@ -7,6 +7,7 @@
     "express": "^4.13.1",
     "gulp": "^3.9.0",
     "gulp-debug": "^2.0.1",
+    "gulp-file": "^0.3.0",
     "gulp-if": "^1.2.5",
     "gulp-install": "^0.4.0",
     "gulp-istanbul": "^0.10.0",
@@ -17,6 +18,7 @@
     "gulp-typescript": "^2.7.8",
     "gulp-util": "^3.0.6",
     "merge2": "^0.3.6",
+    "mocha-junit-reporter": "latest",
     "node-libs-browser": "^0.5.2",
     "node-rsa": "^0.2.24",
     "require-all": "^1.1.0",
@@ -28,6 +30,7 @@
     "ts-jsx-loader": "^0.2.1",
     "typescript": "1.5.0-alpha",
     "webpack": "^1.10.1",
-    "which": "^1.1.1"
+    "which": "^1.1.1",
+    "yargs": "^4.7.1"
   }
 }

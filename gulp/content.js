@@ -26,3 +26,4 @@ function contentTask(cwd) {
 
 gulp.task("content-sdk", function() { return contentTask("sdk"); });
 gulp.task("content-cli", function() { return contentTask("cli"); });
+gulp.task("content-e2e", function() { return contentTask("e2e"); });

@@ -12,7 +12,8 @@ var dtsGenerator = require("dts-generator");
 
 var generatedDefinitionDependencies = {
     sdk: [],
-    cli: ["code-push"]
+    cli: ["code-push"],
+    e2e: []
 };
 
 function tsJsxPipe(file, enc, cb) {
@@ -71,6 +72,7 @@ function makeExecutable(path) {
 gulp.task("scripts-external", ["tsd"]);
 
 gulp.task("scripts-compile-sdk", ["scripts-external"], function() { return scriptTask("sdk"); });
+gulp.task("scripts-compile-e2e", ["scripts-external"], function() { return scriptTask("e2e"); });
 gulp.task("scripts-compile-cli", ["scripts-sdk", "scripts-external"], function() { return scriptTask("cli"); });
 
 gulp.task("scripts-chmod-cli", ["scripts-compile-cli"], function() {
@@ -87,5 +89,16 @@ gulp.task("scripts-dtsbundle-sdk", ["scripts-compile-sdk"], function () {
     });
 });
 
+gulp.task("scripts-dtsbundle-e2e", ["scripts-compile-e2e"], function () {
+    dtsGenerator.generate({
+        name: "code-push",
+        main: "code-push/e2e/test/run",
+        baseDir: "e2e/bin/definitions",
+        files: [],
+        out: "definitions/generated/e2e.d.ts"
+    });
+});
+
 gulp.task("scripts-sdk", ["scripts-dtsbundle-sdk"]);
 gulp.task("scripts-cli", ["scripts-chmod-cli"]);
+gulp.task("scripts-e2e", ["scripts-dtsbundle-e2e"]);

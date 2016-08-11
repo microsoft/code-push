@@ -1,0 +1,19 @@
+{
+    "name": "e2e-tests",
+    "version": "1.0.0",
+    "description": "End-to-end tests for testing CLI and code-push-service",
+    "main": "run.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "homepage": "https://microsoft.github.io/code-push",
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "dependencies": {
+        "assert": "^1.4.1",
+        "mocha-junit-reporter": "latest",
+        "nixt": "^0.5.0",
+        "q": "~1.4.1",
+        "try-json": "^1.0.0"
+    }
+}
