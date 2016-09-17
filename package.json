@@ -1,4 +1,5 @@
 {
+  "name": "code-push",
   "devDependencies": {
     "chmod": "^0.2.1",
     "del": "^1.2.0",
