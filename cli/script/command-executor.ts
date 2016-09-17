@@ -1322,7 +1322,6 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
             log(chalk.cyan("\nReleasing update contents to CodePush:\n"));
             return release(releaseCommand);
         })
-        .then(() => deleteFolder(outputFolder))
         .catch((err: Error) => {
             deleteFolder(outputFolder);
             throw err;
