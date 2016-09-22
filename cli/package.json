@@ -31,6 +31,7 @@
     "code-push": "1.10.0-beta",
     "email-validator": "^1.0.3",
     "gradle-to-js": "0.1.1",
+    "jsonwebtoken": "^7.0.0",
     "moment": "^2.10.6",
     "opener": "^1.4.1",
     "parse-duration": "0.1.1",

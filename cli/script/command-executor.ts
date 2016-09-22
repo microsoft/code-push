@@ -25,6 +25,7 @@ import * as yazl from "yazl";
 var which = require("which");
 import wordwrap = require("wordwrap");
 import * as cli from "../definitions/cli";
+import * as signingReleaseHook from "./release-hooks/signing";
 import { AccessKey, Account, App, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, Session, UpdateMetrics } from "code-push/script/types";
 
 var configFilePath: string = path.join(process.env.LOCALAPPDATA || process.env.HOME, ".code-push.config");
@@ -58,17 +59,17 @@ interface ILoginConnectionInfo {
     noProxy?: boolean; // To suppress the environment proxy setting, like HTTP_PROXY
 }
 
-interface IPackageFile {
-    isTemporary: boolean;
-    path: string;
-}
-
 export interface UpdateMetricsWithTotalActive extends UpdateMetrics {
     totalActive: number;
 }
 
 export interface PackageWithMetrics {
     metrics?: UpdateMetricsWithTotalActive;
+}
+
+interface ReleaseFile {
+    sourceLocation: string;     // The current location of the file on disk
+    targetLocation: string;     // The desired location of the file within the zip
 }
 
 export var log = (message: string | Chalk.ChalkChain): void => console.log(message);
@@ -1091,88 +1092,132 @@ function patch(command: cli.IPatchCommand): Promise<void> {
 }
 
 export var release = (command: cli.IReleaseCommand): Promise<void> => {
-    if (isBinaryOrZip(command.package)) {
+    if (isBinaryOrZip(command.path)) {
         throw new Error("It is unnecessary to package releases in a .zip or binary file. Please specify the direct path to the update content's directory (e.g. /platforms/ios/www) or file (e.g. main.jsbundle).");
     }
 
     throwForInvalidSemverRange(command.appStoreVersion);
-    var filePath: string = command.package;
-    var getPackageFilePromise: Promise<IPackageFile>;
-    var isSingleFilePackage: boolean = true;
 
-    if (fs.lstatSync(filePath).isDirectory()) {
-        isSingleFilePackage = false;
-        getPackageFilePromise = Promise<IPackageFile>((resolve: (file: IPackageFile) => void, reject: (reason: Error) => void): void => {
-            var directoryPath: string = filePath;
+    // Copy the command so that the original is not modified
+    var currentCommand: cli.IReleaseCommand = {
+        appName: command.appName,
+        appStoreVersion: command.appStoreVersion,
+        deploymentName: command.deploymentName,
+        description: command.description,
+        disabled: command.disabled,
+        mandatory: command.mandatory,
+        path: command.path,
+        rollout: command.rollout,
+        signingKeyPath: command.signingKeyPath,
+        type: command.type
+    };
 
-            recursiveFs.readdirr(directoryPath, (error?: any, directories?: string[], files?: string[]): void => {
+    var hooks: cli.ReleaseHook[] = [ signingReleaseHook.default, coreReleaseHook ];
+
+    var releaseHooksPromise = hooks.reduce((accumulatedPromise: Q.Promise<cli.IReleaseCommand>, hook: cli.ReleaseHook) => {
+        return accumulatedPromise
+            .then((modifiedCommand: cli.IReleaseCommand) => {
+                currentCommand = modifiedCommand || currentCommand;
+                return hook(currentCommand, command);
+            });
+    }, Q(currentCommand));
+
+    return releaseHooksPromise
+        .then(() => {});
+}
+
+var coreReleaseHook: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalCommand: cli.IReleaseCommand): Promise<cli.IReleaseCommand> => {
+    return Q(<void>null)
+        .then(() => {
+            var releaseFiles: ReleaseFile[] = [];
+
+            if (!fs.lstatSync(currentCommand.path).isDirectory()) {
+                releaseFiles.push({
+                    sourceLocation: currentCommand.path,
+                    targetLocation: path.basename(currentCommand.path)  // Put the file in the root
+                });
+                return Q(releaseFiles);
+            }
+
+            var deferred = Q.defer<ReleaseFile[]>();
+            var directoryPath: string = currentCommand.path;
+            var baseDirectoryPath = path.join(directoryPath, "..");     // For legacy reasons, put the root directory in the zip
+
+            recursiveFs.readdirr(currentCommand.path, (error?: any, directories?: string[], files?: string[]): void => {
                 if (error) {
-                    reject(error);
+                    deferred.reject(error);
                     return;
                 }
 
-                var baseDirectoryPath = path.dirname(directoryPath);
-                var fileName: string = generateRandomFilename(15) + ".zip";
+                files.forEach((filePath: string) => {
+                    var relativePath: string = path.relative(baseDirectoryPath, filePath);
+                    // yazl does not like backslash (\) in the metadata path.
+                    relativePath = slash(relativePath);
+                    releaseFiles.push({
+                        sourceLocation: filePath,
+                        targetLocation: relativePath
+                    });
+                });
+
+                deferred.resolve(releaseFiles);
+            });
+
+            return deferred.promise;
+        })
+        .then((releaseFiles: ReleaseFile[]) => {
+            return Promise<string>((resolve: (file: string) => void, reject: (reason: Error) => void): void => {
+
+                var packagePath: string = path.join(process.cwd(), generateRandomFilename(15) + ".zip");
                 var zipFile = new yazl.ZipFile();
-                var writeStream: fs.WriteStream = fs.createWriteStream(fileName);
+                var writeStream: fs.WriteStream = fs.createWriteStream(packagePath);
 
                 zipFile.outputStream.pipe(writeStream)
                     .on("error", (error: Error): void => {
                         reject(error);
                     })
                     .on("close", (): void => {
-                        filePath = path.join(process.cwd(), fileName);
 
-                        resolve({ isTemporary: true, path: filePath });
+                        resolve(packagePath);
                     });
 
-                for (var i = 0; i < files.length; ++i) {
-                    var file: string = files[i];
-                    var relativePath: string = path.relative(baseDirectoryPath, file);
-
-                    // yazl does not like backslash (\) in the metadata path.
-                    relativePath = slash(relativePath);
-
-                    zipFile.addFile(file, relativePath);
-                }
+                releaseFiles.forEach((releaseFile: ReleaseFile) => {
+                    zipFile.addFile(releaseFile.sourceLocation, releaseFile.targetLocation);
+                });
 
                 zipFile.end();
             });
-        });
-    } else {
-        getPackageFilePromise = Q({ isTemporary: false, path: filePath });
-    }
 
-    var lastTotalProgress = 0;
-    var progressBar = new progress("Upload progress:[:bar] :percent :etas", {
-        complete: "=",
-        incomplete: " ",
-        width: 50,
-        total: 100
-    });
+        })
+        .then((packagePath: string): Promise<cli.IReleaseCommand> => {
+            var lastTotalProgress = 0;
+            var progressBar = new progress("Upload progress:[:bar] :percent :etas", {
+                complete: "=",
+                incomplete: " ",
+                width: 50,
+                total: 100
+            });
 
-    var uploadProgress = (currentProgress: number): void => {
-        progressBar.tick(currentProgress - lastTotalProgress);
-        lastTotalProgress = currentProgress;
-    };
+            var uploadProgress = (currentProgress: number): void => {
+                progressBar.tick(currentProgress - lastTotalProgress);
+                lastTotalProgress = currentProgress;
+            };
 
-    var updateMetadata: PackageInfo = {
-        description: command.description,
-        isDisabled: command.disabled,
-        isMandatory: command.mandatory,
-        rollout: command.rollout
-    };
+            var updateMetadata: PackageInfo = {
+                description: currentCommand.description,
+                isDisabled: currentCommand.disabled,
+                isMandatory: currentCommand.mandatory,
+                rollout: currentCommand.rollout
+            };
 
-    return getPackageFilePromise
-        .then((file: IPackageFile): Promise<void> => {
-            return sdk.release(command.appName, command.deploymentName, file.path, command.appStoreVersion, updateMetadata, uploadProgress)
+            return sdk.release(currentCommand.appName, currentCommand.deploymentName, packagePath, currentCommand.appStoreVersion, updateMetadata, uploadProgress)
                 .then((): void => {
-                    log("Successfully released an update containing the \"" + command.package + "\" " + (isSingleFilePackage ? "file" : "directory") + " to the \"" + command.deploymentName + "\" deployment of the \"" + command.appName + "\" app.");
+                    log(`Successfully released an update containing the "${originalCommand.path}" `
+                        + `${fs.lstatSync(originalCommand.path).isDirectory()  ? "directory" : "file"}`
+                        + ` to the "${currentCommand.deploymentName}" deployment of the "${currentCommand.appName}" app.`);
                 })
-                .finally((): void => {
-                    if (file.isTemporary) {
-                        fs.unlinkSync(filePath);
-                    }
+                .then(() => currentCommand)
+                .finally(() => {
+                    fs.unlinkSync(packagePath);
                 });
         });
 }
@@ -1224,7 +1269,7 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
     var configPromise: Promise<any> = parseXml(configString);
     var releaseCommand: cli.IReleaseCommand = <any>command;
 
-    releaseCommand.package = outputFolder;
+    releaseCommand.path = outputFolder;
     releaseCommand.type = cli.CommandType.release;
 
     return configPromise
@@ -1255,7 +1300,7 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
     var outputFolder: string = path.join(os.tmpdir(), "CodePush");
     var platform: string = command.platform = command.platform.toLowerCase();
     var releaseCommand: cli.IReleaseCommand = <any>command;
-    releaseCommand.package = outputFolder;
+    releaseCommand.path = outputFolder;
 
     switch (platform) {
         case "android":

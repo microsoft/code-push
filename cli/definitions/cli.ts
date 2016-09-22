@@ -175,10 +175,11 @@ export interface IReleaseBaseCommand extends ICommand, IPackageInfo {
     appName: string;
     appStoreVersion: string;
     deploymentName: string;
+    signingKeyPath?: string;
 }
 
 export interface IReleaseCommand extends IReleaseBaseCommand {
-    package: string;
+    path: string;
 }
 
 export interface IReleaseCordovaCommand extends IReleaseBaseCommand {
@@ -210,3 +211,5 @@ export interface ISessionListCommand extends ICommand {
 export interface ISessionRemoveCommand extends ICommand {
     machineName: string;
 }
+
+export type ReleaseHook = (currentCommand: IReleaseCommand, originalCommand: IReleaseCommand) => Q.Promise<IReleaseCommand|void>;

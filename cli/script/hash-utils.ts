@@ -1,6 +1,8 @@
 /**
  * NOTE!!! This utility file is duplicated for use by the CodePush service (for server-driven hashing/
- * integrity checks) and Management SDK (for end-to-end code signing), please keep them in sync.
+ * integrity checks) and CLI (for end-to-end code signing), please keep them in sync.
+ *
+ * Also, the same hashing behavior must be preserved in the native SDK's.
  */
 
 import * as crypto from "crypto";
@@ -109,7 +111,7 @@ export function generatePackageManifestFromDirectory(directoryPath: string, base
         }
 
         if (!files || files.length === 0) {
-            deferred.reject("Error: Can't sign the release because no files were found.");
+            deferred.reject("Can't hash the directory because no files were found.");
             return;
         }
 
@@ -225,16 +227,19 @@ export class PackageManifest {
     }
 
     public static normalizePath(filePath: string): string {
-        return filePath.replace("\\", "/");
+        return filePath.replace(/\\/g, "/");
     }
 
     public static isIgnored(relativeFilePath: string): boolean {
         const __MACOSX = "__MACOSX/";
         const DS_STORE = ".DS_Store";
+        const CODEPUSH_METADATA = ".codepushrelease";
 
         return startsWith(relativeFilePath, __MACOSX)
             || relativeFilePath === DS_STORE
-            || endsWith(relativeFilePath, "/" + DS_STORE);
+            || endsWith(relativeFilePath, "/" + DS_STORE)
+            || relativeFilePath === CODEPUSH_METADATA
+            || endsWith(relativeFilePath, "/" + CODEPUSH_METADATA);
     }
 }
 

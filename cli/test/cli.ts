@@ -1044,7 +1044,7 @@ describe("CLI", () => {
             mandatory: false,
             rollout: null,
             appStoreVersion: "not semver",
-            package: "./resources"
+            path: "./resources"
         };
 
         releaseHelperFunction(command, done, "Please use a semver-compliant target binary version range, for example \"1.0.0\", \"*\" or \"^1.2.3\".");
@@ -1059,7 +1059,7 @@ describe("CLI", () => {
             mandatory: false,
             rollout: null,
             appStoreVersion: "1.0.0",
-            package: "/fake/path/test/file.zip"
+            path: "/fake/path/test/file.zip"
         };
 
         releaseHelperFunction(command, done, INVALID_RELEASE_FILE_ERROR_MESSAGE);
@@ -1074,7 +1074,7 @@ describe("CLI", () => {
             mandatory: false,
             rollout: null,
             appStoreVersion: "1.0.0",
-            package: "/fake/path/test/file.ipa"
+            path: "/fake/path/test/file.ipa"
         };
 
         releaseHelperFunction(command, done, INVALID_RELEASE_FILE_ERROR_MESSAGE);
@@ -1089,7 +1089,7 @@ describe("CLI", () => {
             mandatory: false,
             rollout: null,
             appStoreVersion: "1.0.0",
-            package: "/fake/path/test/file.apk"
+            path: "/fake/path/test/file.apk"
         };
 
         releaseHelperFunction(command, done, INVALID_RELEASE_FILE_ERROR_MESSAGE);
@@ -1211,7 +1211,7 @@ describe("CLI", () => {
         var oldWd: string = process.cwd();
         ensureInTestAppDirectory();
 
-        var expectedReleaseCommand: any = {
+        var expectedReleaseCommand = <cli.IReleaseCommand>{
             type: cli.CommandType.release,
             appName: "a",
             appStoreVersion: "0.0.1",
@@ -1220,9 +1220,9 @@ describe("CLI", () => {
             description: "Test config.xml app version read",
             mandatory: false,
             rollout: null,
-            package: path.join(process.cwd(), "platforms", "ios", "www"),
+            path: path.join(process.cwd(), "platforms", "ios", "www"),
             platform: "ios"
-        }
+        };
 
         var execSync: Sinon.SinonStub = sandbox.stub(cmdexec, "execSync", (command: string, options: any) => { });
         var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release");
@@ -1258,7 +1258,7 @@ describe("CLI", () => {
         var oldWd: string = process.cwd();
         ensureInTestAppDirectory();
 
-        var expectedReleaseCommand: any = {
+        var expectedReleaseCommand = <cli.IReleaseCommand>{
             type: cli.CommandType.release,
             appName: "a",
             appStoreVersion: "0.0.1",
@@ -1267,9 +1267,9 @@ describe("CLI", () => {
             description: "Test android package resolution",
             mandatory: false,
             rollout: null,
-            package: path.join(process.cwd(), "platforms", "android", "assets", "www"),
+            path: path.join(process.cwd(), "platforms", "android", "assets", "www"),
             platform: "android"
-        }
+        };
 
         var execSync: Sinon.SinonStub = sandbox.stub(cmdexec, "execSync", (command: string, options: any) => { });
         var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release");
@@ -1436,7 +1436,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>command;
-                releaseCommand.package = path.join(os.tmpdir(), "CodePush");
+                releaseCommand.path = path.join(os.tmpdir(), "CodePush");
                 releaseCommand.appStoreVersion = "1.2.3";
 
                 sinon.assert.calledOnce(spawn);
@@ -1473,7 +1473,7 @@ describe("CLI", () => {
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>clone(command);
                 var packagePath: string = path.join(os.tmpdir(), "CodePush");
-                releaseCommand.package = packagePath;
+                releaseCommand.path = packagePath;
                 releaseCommand.appStoreVersion = "1.2.3";
 
                 sinon.assert.calledOnce(spawn);
@@ -1510,7 +1510,7 @@ describe("CLI", () => {
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>clone(command);
                 var packagePath: string = path.join(os.tmpdir(), "CodePush");
-                releaseCommand.package = packagePath;
+                releaseCommand.path = packagePath;
                 releaseCommand.appStoreVersion = "1.0.0";
 
                 sinon.assert.calledOnce(spawn);
@@ -1547,7 +1547,7 @@ describe("CLI", () => {
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>clone(command);
                 var packagePath = path.join(os.tmpdir(), "CodePush");
-                releaseCommand.package = packagePath;
+                releaseCommand.path = packagePath;
                 releaseCommand.appStoreVersion = "1.0.0";
 
                 sinon.assert.calledOnce(spawn);
@@ -1587,7 +1587,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>command;
-                releaseCommand.package = path.join(os.tmpdir(), "CodePush");
+                releaseCommand.path = path.join(os.tmpdir(), "CodePush");
                 releaseCommand.appStoreVersion = "1.2.3";
 
                 sinon.assert.calledOnce(spawn);
@@ -1626,7 +1626,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>command;
-                releaseCommand.package = path.join(os.tmpdir(), "CodePush");
+                releaseCommand.path = path.join(os.tmpdir(), "CodePush");
                 releaseCommand.appStoreVersion = "1.2.3";
 
                 sinon.assert.calledOnce(spawn);
@@ -1665,7 +1665,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>command;
-                releaseCommand.package = path.join(os.tmpdir(), "CodePush");
+                releaseCommand.path = path.join(os.tmpdir(), "CodePush");
 
                 sinon.assert.calledOnce(spawn);
                 var spawnCommand: string = spawn.args[0][0];
