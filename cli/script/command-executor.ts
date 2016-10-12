@@ -1179,6 +1179,13 @@ export var release = (command: cli.IReleaseCommand): Promise<void> => {
                 .then((): void => {
                     log("Successfully released an update containing the \"" + command.package + "\" " + (isSingleFilePackage ? "file" : "directory") + " to the \"" + command.deploymentName + "\" deployment of the \"" + command.appName + "\" app.");
                 })
+                .catch((err: Error): void => {
+                    if (err.message === "Not Found") {
+                        err.message = "Release failed, the size of the upload may be too large.";
+                    }
+
+                    throw err;
+                })
                 .finally((): void => {
                     if (file.isTemporary) {
                         fs.unlinkSync(filePath);
