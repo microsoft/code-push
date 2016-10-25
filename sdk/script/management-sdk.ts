@@ -1,29 +1,22 @@
 import * as base64 from "base-64";
 import crypto = require("crypto");
+import * as fs from "fs";
 import * as os from "os";
+import * as path from "path";
 import Q = require("q");
+import slash = require("slash");
 import superagent = require("superagent");
+import * as recursiveFs from "recursive-fs";
+import * as yazl from "yazl";
 
 import Promise = Q.Promise;
 
-import { AccessKey, AccessKeyRequest, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
+import { AccessKey, AccessKeyRequest, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, IPackageFile, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
 
 var superproxy = require("superagent-proxy");
 superproxy(superagent);
 
 var packageJson = require("../package.json");
-
-declare var fs: any;
-
-if (typeof window === "undefined") {
-    fs = require("fs");
-} else {
-    fs = {
-        createReadStream: (fileOrPath: string): void => {
-            throw new Error("Tried to call a node fs function from the browser.");
-        }
-    }
-}
 
 interface JsonResponse {
     headers: Headers;
@@ -297,49 +290,54 @@ class AccountManager {
             .then((res: JsonResponse) => res.body.history);
     }
 
-    public release(appName: string, deploymentName: string, fileOrPath: File | string, targetBinaryVersion: string, updateMetadata: PackageInfo, uploadProgressCallback?: (progress: number) => void): Promise<void> {
+    public release(appName: string, deploymentName: string, filePath: string, targetBinaryVersion: string, updateMetadata: PackageInfo, uploadProgressCallback?: (progress: number) => void): Promise<void> {
+       
         return Promise<void>((resolve, reject, notify) => {
+           
             updateMetadata.appVersion = targetBinaryVersion;
             var request: superagent.Request<any> = superagent.post(this._serverUrl + urlEncode `/apps/${appName}/deployments/${deploymentName}/release`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
-
-            var file: any;
-            if (typeof fileOrPath === "string") {
-                file = fs.createReadStream(<string>fileOrPath);
-            } else {
-                file = fileOrPath;
-            }
-
-            request.attach("package", file)
-                .field("packageInfo", JSON.stringify(updateMetadata))
-                .on("progress", (event: any) => {
-                    if (uploadProgressCallback && event && event.total > 0) {
-                        var currentProgress: number = event.loaded / event.total * 100;
-                        uploadProgressCallback(currentProgress);
-                    }
-                })
-                .end((err: any, res: superagent.Response) => {
-                    if (err) {
-                        reject(this.getCodePushError(err, res));
-                        return;
-                    }
-
-                    if (res.ok) {
-                        resolve(<void>null);
-                    } else {
-                        try {
-                            var body = JSON.parse(res.text);
-                        } catch (err) {
+            
+            var getPackageFilePromise: Promise<IPackageFile> = this.packageFileFromPath(filePath);
+            
+            getPackageFilePromise.then((packageFile: IPackageFile) => {
+                var file: any = fs.createReadStream(packageFile.path);
+                request.attach("package", file)
+                    .field("packageInfo", JSON.stringify(updateMetadata))
+                    .on("progress", (event: any) => {
+                        if (uploadProgressCallback && event && event.total > 0) {
+                            var currentProgress: number = event.loaded / event.total * 100;
+                            uploadProgressCallback(currentProgress);
+                        }
+                    })
+                    .end((err: any, res: superagent.Response) => {
+                        
+                        if (file.isTemporary) {
+                            fs.unlinkSync(filePath);
+                        }
+                        
+                        if (err) {
+                            reject(this.getCodePushError(err, res));
+                            return;
                         }
 
-                        if (body) {
-                            reject(<CodePushError>{ message: body.message, statusCode: res && res.status });
+                        if (res.ok) {
+                            resolve(<void>null);
                         } else {
-                            reject(<CodePushError>{ message: res.text, statusCode: res && res.status });
+                            try {
+                                var body = JSON.parse(res.text);
+                            } catch (err) {
+                            }
+
+                            if (body) {
+                                reject(<CodePushError>{ message: body.message, statusCode: res && res.status });
+                            } else {
+                                reject(<CodePushError>{ message: res.text, statusCode: res && res.status });
+                            }
                         }
-                    }
-                });
+                    });
+            });
         });
     }
 
@@ -359,6 +357,63 @@ class AccountManager {
     public rollback(appName: string, deploymentName: string, targetRelease?: string): Promise<void> {
         return this.post(urlEncode `/apps/${appName}/deployments/${deploymentName}/rollback/${targetRelease || ``}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
+    }
+    
+    public packageFileFromPath(filePath: string): Promise<IPackageFile> {
+        var getPackageFilePromise: Promise<IPackageFile>;
+        if (fs.lstatSync(filePath).isDirectory()) {
+            getPackageFilePromise = Promise<IPackageFile>((resolve: (file: IPackageFile) => void, reject: (reason: Error) => void): void => {
+                var directoryPath: string = filePath;
+
+                recursiveFs.readdirr(directoryPath, (error?: any, directories?: string[], files?: string[]): void => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+
+                    var baseDirectoryPath = path.dirname(directoryPath);
+                    var fileName: string = this.generateRandomFilename(15) + ".zip";
+                    var zipFile = new yazl.ZipFile();
+                    var writeStream: fs.WriteStream = fs.createWriteStream(fileName);
+
+                    zipFile.outputStream.pipe(writeStream)
+                        .on("error", (error: Error): void => {
+                            reject(error);
+                        })
+                        .on("close", (): void => {
+                            filePath = path.join(process.cwd(), fileName);
+
+                            resolve({ isTemporary: true, path: filePath });
+                        });
+
+                    for (var i = 0; i < files.length; ++i) {
+                        var file: string = files[i];
+                        var relativePath: string = path.relative(baseDirectoryPath, file);
+
+                        // yazl does not like backslash (\) in the metadata path.
+                        relativePath = slash(relativePath);
+
+                        zipFile.addFile(file, relativePath);
+                    }
+
+                    zipFile.end();
+                });
+            });
+        } else {
+            getPackageFilePromise = Q({ isTemporary: false, path: filePath });
+        }
+        return getPackageFilePromise;
+    }
+    
+    private generateRandomFilename(length: number): string {
+        var filename: string = "";
+        var validChar: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < length; i++) {
+            filename += validChar.charAt(Math.floor(Math.random() * validChar.length));
+        }
+
+        return filename;
     }
 
     private get(endpoint: string, expectResponseBody: boolean = true): Promise<JsonResponse> {

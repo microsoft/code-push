@@ -17,7 +17,10 @@
     "base-64": "^0.1.0",
     "node-uuid": "^1.4.3",
     "q": "^1.4.1",
+    "recursive-fs": "0.1.4",
+    "slash": "1.0.0",
     "superagent": "^1.7.2",
-    "superagent-proxy": "^1.0.0"
+    "superagent-proxy": "^1.0.0",
+    "yazl": "^2.4.1"
   }
 }

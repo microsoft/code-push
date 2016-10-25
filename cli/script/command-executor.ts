@@ -15,17 +15,14 @@ var plist = require("plist");
 var progress = require("progress");
 var prompt = require("prompt");
 import * as Q from "q";
-import * as recursiveFs from "recursive-fs";
 var rimraf = require("rimraf");
 import * as semver from "semver";
 var simctl = require("simctl");
-import slash = require("slash");
 var Table = require("cli-table");
-import * as yazl from "yazl";
 var which = require("which");
 import wordwrap = require("wordwrap");
 import * as cli from "../definitions/cli";
-import { AccessKey, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, Session, UpdateMetrics } from "code-push/script/types";
+import { AccessKey, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, IPackageFile, Package, PackageInfo, Session, UpdateMetrics } from "code-push/script/types";
 
 var configFilePath: string = path.join(process.env.LOCALAPPDATA || process.env.HOME, ".code-push.config");
 var emailValidator = require("email-validator");
@@ -58,10 +55,7 @@ interface ILoginConnectionInfo {
     noProxy?: boolean; // To suppress the environment proxy setting, like HTTP_PROXY
 }
 
-interface IPackageFile {
-    isTemporary: boolean;
-    path: string;
-}
+
 
 export interface UpdateMetricsWithTotalActive extends UpdateMetrics {
     totalActive: number;
@@ -550,17 +544,6 @@ function fileDoesNotExistOrIsDirectory(filePath: string): boolean {
     } catch (error) {
         return true;
     }
-}
-
-function generateRandomFilename(length: number): string {
-    var filename: string = "";
-    var validChar: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < length; i++) {
-        filename += validChar.charAt(Math.floor(Math.random() * validChar.length));
-    }
-
-    return filename;
 }
 
 function getTotalActiveFromDeploymentMetrics(metrics: DeploymentMetrics): number {
@@ -1098,56 +1081,17 @@ function patch(command: cli.IPatchCommand): Promise<void> {
 }
 
 export var release = (command: cli.IReleaseCommand): Promise<void> => {
+    
     if (isBinaryOrZip(command.package)) {
         throw new Error("It is unnecessary to package releases in a .zip or binary file. Please specify the direct path to the update content's directory (e.g. /platforms/ios/www) or file (e.g. main.jsbundle).");
     }
-
+    
     throwForInvalidSemverRange(command.appStoreVersion);
     var filePath: string = command.package;
-    var getPackageFilePromise: Promise<IPackageFile>;
     var isSingleFilePackage: boolean = true;
-
+    
     if (fs.lstatSync(filePath).isDirectory()) {
         isSingleFilePackage = false;
-        getPackageFilePromise = Promise<IPackageFile>((resolve: (file: IPackageFile) => void, reject: (reason: Error) => void): void => {
-            var directoryPath: string = filePath;
-
-            recursiveFs.readdirr(directoryPath, (error?: any, directories?: string[], files?: string[]): void => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                var baseDirectoryPath = path.dirname(directoryPath);
-                var fileName: string = generateRandomFilename(15) + ".zip";
-                var zipFile = new yazl.ZipFile();
-                var writeStream: fs.WriteStream = fs.createWriteStream(fileName);
-
-                zipFile.outputStream.pipe(writeStream)
-                    .on("error", (error: Error): void => {
-                        reject(error);
-                    })
-                    .on("close", (): void => {
-                        filePath = path.join(process.cwd(), fileName);
-
-                        resolve({ isTemporary: true, path: filePath });
-                    });
-
-                for (var i = 0; i < files.length; ++i) {
-                    var file: string = files[i];
-                    var relativePath: string = path.relative(baseDirectoryPath, file);
-
-                    // yazl does not like backslash (\) in the metadata path.
-                    relativePath = slash(relativePath);
-
-                    zipFile.addFile(file, relativePath);
-                }
-
-                zipFile.end();
-            });
-        });
-    } else {
-        getPackageFilePromise = Q({ isTemporary: false, path: filePath });
     }
 
     var lastTotalProgress = 0;
@@ -1169,20 +1113,14 @@ export var release = (command: cli.IReleaseCommand): Promise<void> => {
         isMandatory: command.mandatory,
         rollout: command.rollout
     };
-
-    return getPackageFilePromise
-        .then((file: IPackageFile): Promise<void> => {
+    
+    return Promise<void>((resolve, reject) => {
             return sdk.isAuthenticated(true)
                 .then((isAuth: boolean): Promise<void> => {
-                    return sdk.release(command.appName, command.deploymentName, file.path, command.appStoreVersion, updateMetadata, uploadProgress);
+                    return sdk.release(command.appName, command.deploymentName, filePath, command.appStoreVersion, updateMetadata, uploadProgress);
                 })
                 .then((): void => {
                     log("Successfully released an update containing the \"" + command.package + "\" " + (isSingleFilePackage ? "file" : "directory") + " to the \"" + command.deploymentName + "\" deployment of the \"" + command.appName + "\" app.");
-                })
-                .finally((): void => {
-                    if (file.isTemporary) {
-                        fs.unlinkSync(filePath);
-                    }
                 })
                 .catch((err: CodePushError) => releaseErrorHandler(err, command));
         });
