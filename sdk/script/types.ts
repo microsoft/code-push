@@ -17,9 +17,4 @@ export interface Session {
     machineName: string;
 }
 
-export interface IPackageFile {
-    isTemporary: boolean;
-    path: string;
-}
-
 export type Headers = { [headerName: string]: string };

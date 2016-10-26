@@ -11,7 +11,7 @@ import * as yazl from "yazl";
 
 import Promise = Q.Promise;
 
-import { AccessKey, AccessKeyRequest, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, IPackageFile, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
+import { AccessKey, AccessKeyRequest, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
 
 var superproxy = require("superagent-proxy");
 superproxy(superagent);
@@ -21,6 +21,11 @@ var packageJson = require("../package.json");
 interface JsonResponse {
     headers: Headers;
     body?: any;
+}
+
+interface PackageFile {
+    isTemporary: boolean;
+    path: string;
 }
 
 // A template string tag function that URL encodes the substituted values
@@ -299,9 +304,9 @@ class AccountManager {
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
             
-            var getPackageFilePromise: Promise<IPackageFile> = this.packageFileFromPath(filePath);
+            var getPackageFilePromise: Promise<PackageFile> = this.packageFileFromPath(filePath);
             
-            getPackageFilePromise.then((packageFile: IPackageFile) => {
+            getPackageFilePromise.then((packageFile: PackageFile) => {
                 var file: any = fs.createReadStream(packageFile.path);
                 request.attach("package", file)
                     .field("packageInfo", JSON.stringify(updateMetadata))
@@ -359,10 +364,10 @@ class AccountManager {
             .then(() => null);
     }
     
-    public packageFileFromPath(filePath: string): Promise<IPackageFile> {
-        var getPackageFilePromise: Promise<IPackageFile>;
+    private packageFileFromPath(filePath: string): Promise<PackageFile> {
+        var getPackageFilePromise: Promise<PackageFile>;
         if (fs.lstatSync(filePath).isDirectory()) {
-            getPackageFilePromise = Promise<IPackageFile>((resolve: (file: IPackageFile) => void, reject: (reason: Error) => void): void => {
+            getPackageFilePromise = Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
                 var directoryPath: string = filePath;
 
                 recursiveFs.readdirr(directoryPath, (error?: any, directories?: string[], files?: string[]): void => {
