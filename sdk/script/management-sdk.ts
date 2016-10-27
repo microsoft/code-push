@@ -318,8 +318,8 @@ class AccountManager {
                     })
                     .end((err: any, res: superagent.Response) => {
                         
-                        if (file.isTemporary) {
-                            fs.unlinkSync(filePath);
+                        if (packageFile.isTemporary) {
+                            fs.unlinkSync(packageFile.path);
                         }
                         
                         if (err) {
