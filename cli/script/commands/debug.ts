@@ -20,8 +20,17 @@ class AndroidDebugPlatform implements IDebugPlatform {
             throw new Error("ADB command not found. Please ensure it is installed and available on your path.");
         }
 
-        if (!this.isDeviceAvailable()) {
+        const numberOfAvailableDevices = this.getNumberOfAvailableDevices();
+        if (numberOfAvailableDevices === 0) {
             throw new Error("No Android devices found. Re-run this command after starting one.");
+        }
+
+        // For now there is no ability to specify device for debug like:
+        // code-push debug android "192.168.121.102:5555"
+        // So we have to throw an error in case more than 1 android device was attached 
+        // otherwise we will very likely run into an exception while trying to read ‘adb logcat’ from device which codepushified app is not running on.
+        if (numberOfAvailableDevices > 1) { 
+            throw new Error(`Found "${numberOfAvailableDevices}" android devices. Please leave only one device you need to debug.`);
         }
 
         return childProcess.spawn("adb", ["logcat"]);
@@ -31,10 +40,15 @@ class AndroidDebugPlatform implements IDebugPlatform {
     // like when running the "adb devices" command.
     //
     // List of devices attached
-    // emulator-5554	device
-    private isDeviceAvailable(): boolean {
+    // emulator-5554    device
+    // 192.168.121.102:5555    device
+    private getNumberOfAvailableDevices(): number {
         const output = childProcess.execSync("adb devices").toString();
-        return output.search(/^[\w-]+\s+device$/mi) > -1;
+        const matches = output.match(/\b(device)\b/mig);
+        if (matches != null) {
+            return matches.length;
+        }
+        return 0;
     }
 
     public normalizeLogMessage(message: string): string {
