@@ -902,15 +902,31 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
                 throw new Error(`Unable to parse the "${buildGradlePath}" file. Please ensure it is a well-formed Gradle file.`);
             })
             .then((buildGradle: any) => {
-                if (!buildGradle.android || !buildGradle.android.defaultConfig || !buildGradle.android.defaultConfig.versionName) {
+                let versionName: string = null;
+
+                // First 'if' statement was implemented as workaround for case
+                // when 'build.gradle' file contains several 'android' nodes.
+                // In this case 'buildGradle.android' prop represents array instead of object
+                // due to parsing issue in 'g2js.parseFile' method.
+                if (buildGradle.android instanceof Array) {
+                    for (var i = 0; i < buildGradle.android.length; i++) {
+                        var gradlePart = buildGradle.android[i];
+                        if (gradlePart.defaultConfig && gradlePart.defaultConfig.versionName) {
+                            versionName = gradlePart.defaultConfig.versionName;
+                            break;
+                        }
+                    }
+                } else if (buildGradle.android && buildGradle.android.defaultConfig && buildGradle.android.defaultConfig.versionName) {
+                    versionName = buildGradle.android.defaultConfig.versionName;
+                } else {
                     throw new Error(`The "${buildGradlePath}" file doesn't specify a value for the "android.defaultConfig.versionName" property.`);
                 }
 
-                if (typeof buildGradle.android.defaultConfig.versionName !== "string") {
+                if (typeof versionName !== "string") {
                     throw new Error(`The "android.defaultConfig.versionName" property value in "${buildGradlePath}" is not a valid string. If this is expected, consider using the --targetBinaryVersion option to specify the value manually.`);
                 }
 
-                let appVersion: string = buildGradle.android.defaultConfig.versionName.replace(/"/g, "").trim();
+                let appVersion: string = versionName.replace(/"/g, "").trim();
 
                 if (isValidVersion(appVersion)) {
                     // The versionName property is a valid semver string,
