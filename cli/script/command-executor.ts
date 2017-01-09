@@ -934,14 +934,22 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
                     path.join("android", propertiesFileName)
                 ];
 
-                const propertiesFile: string = (<any>knownLocations).find(fileExists);
-                const propertiesContent: string = fs.readFileSync(propertiesFile).toString();
-
-                try {
-                    const parsedProperties: any = properties.parse(propertiesContent);
-                    appVersion = parsedProperties[propertyName];
-                } catch (e) {
-                    throw new Error(`Unable to parse "${propertiesFile}". Please ensure it is a well-formed properties file.`);
+                // Search for gradle properties across all `gradle.properties` files
+                var propertiesFile: string = null;
+                for (var i = 0; i < knownLocations.length; i++) {
+                    propertiesFile = knownLocations[i];
+                    if (fileExists(propertiesFile)) {
+                        const propertiesContent: string = fs.readFileSync(propertiesFile).toString();
+                        try {
+                            const parsedProperties: any = properties.parse(propertiesContent);
+                            appVersion = parsedProperties[propertyName];
+                            if (appVersion) {
+                                break;
+                            } 
+                        } catch (e) {
+                            throw new Error(`Unable to parse "${propertiesFile}". Please ensure it is a well-formed properties file.`);
+                        }
+                    }
                 }
 
                 if (!appVersion) {
