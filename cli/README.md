@@ -143,12 +143,14 @@ Before you can deploy any updates, you need to register an app with the CodePush
 code-push app add <appName>
 ```
 
-If your app targets both iOS and Android, we recommend creating separate apps with CodePush. One for each platform. This way, you can manage and release updates to them separately, which in the long run, tends to make things simpler. The naming convention that most folks use is to suffix the app name with `-iOS` and `-Android`. For example:
+If your app targets both iOS and Android, we highly recommend creating separate apps with CodePush. One for each platform. This way, you can manage and release updates to them separately, which in the long run, tends to make things simpler. The naming convention that most folks use is to suffix the app name with `-iOS` and `-Android`. For example:
 
 ```
 code-push app add MyApp-Android
 code-push app add MyApp-iOS
 ```
+
+*NOTE: Using the same app for iOS and Android may cause installation exceptions because the CodePush update package produced for iOS will have different content from the update produced for Android.*
 
 All new apps automatically come with two deployments (`Staging` and `Production`) so that you can begin distributing updates to multiple channels without needing to do anything extra (see deployment instructions below). After you create an app, the CLI will output the deployment keys for the `Staging` and `Production` deployments, which you can begin using to configure your mobile clients via their respective SDKs (details for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push) and [React Native](http://github.com/Microsoft/react-native-code-push)).
 
