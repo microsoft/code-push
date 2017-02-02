@@ -429,6 +429,7 @@ code-push release-react <appName> <platform>
 [--sourcemapOutput <sourcemapOutput>]
 [--targetBinaryVersion <targetBinaryVersion>]
 [--rollout <rolloutPercentage>]
+[--outputDir <outputDir>]
 ```
 
 The `release-react` command is a React Native-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same parameters (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
@@ -553,6 +554,12 @@ code-push release-react MyApp-iOS ios --pre "DEV-"
 This specifies the relative path to where the generated JS bundle's sourcemap file should be written. If left unspecified, sourcemaps will not be generated.
 
 *NOTE: This parameter can be set using either --sourcemapOutput or -s*
+
+#### Output directory parameter
+
+This specifies the relative path to where the assets, JS bundle and sourcemap files should be written. If left unspecified, the assets, JS bundle and sourcemap will be copied to the `/tmp/CodePush` folder.
+
+*NOTE: This parameter can be set using either --outputDir or -o*
 
 ### Releasing Updates (Cordova)
 

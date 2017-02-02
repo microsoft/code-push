@@ -197,6 +197,7 @@ export interface IReleaseReactCommand extends IReleaseBaseCommand {
     plistFile?: string;
     plistFilePrefix?: string;
     sourcemapOutput?: string;
+    outputDir?: string;
 }
 
 export interface IRollbackCommand extends ICommand {
