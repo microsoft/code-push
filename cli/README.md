@@ -363,7 +363,7 @@ This specifies which deployment you want to release the update to. This defaults
 
 This provides an optional "change log" for the deployment. The value is simply round tripped to the client so that when the update is detected, your app can choose to display it to the end-user (e.g. via a "What's new?" dialog). This string accepts control characters such as `\n` and `\t` so that you can include whitespace formatting within your descriptions for improved readability.
 
-*NOTE: This parameter can be set using either "--description" or "-desc"*
+*NOTE: This parameter can be set using either "--description" or "-des"*
 
 #### Disabled parameter
 
