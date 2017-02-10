@@ -950,14 +950,22 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
                     path.join("android", propertiesFileName)
                 ];
 
-                const propertiesFile: string = (<any>knownLocations).find(fileExists);
-                const propertiesContent: string = fs.readFileSync(propertiesFile).toString();
-
-                try {
-                    const parsedProperties: any = properties.parse(propertiesContent);
-                    appVersion = parsedProperties[propertyName];
-                } catch (e) {
-                    throw new Error(`Unable to parse "${propertiesFile}". Please ensure it is a well-formed properties file.`);
+                // Search for gradle properties across all `gradle.properties` files
+                var propertiesFile: string = null;
+                for (var i = 0; i < knownLocations.length; i++) {
+                    propertiesFile = knownLocations[i];
+                    if (fileExists(propertiesFile)) {
+                        const propertiesContent: string = fs.readFileSync(propertiesFile).toString();
+                        try {
+                            const parsedProperties: any = properties.parse(propertiesContent);
+                            appVersion = parsedProperties[propertyName];
+                            if (appVersion) {
+                                break;
+                            } 
+                        } catch (e) {
+                            throw new Error(`Unable to parse "${propertiesFile}". Please ensure it is a well-formed properties file.`);
+                        }
+                    }
                 }
 
                 if (!appVersion) {
@@ -1215,7 +1223,7 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
 export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => {
     var bundleName: string = command.bundleName;
     var entryFile: string = command.entryFile;
-    var outputFolder: string = path.join(os.tmpdir(), "CodePush");
+    var outputFolder: string = command.outputDir || path.join(os.tmpdir(), "CodePush");
     var platform: string = command.platform = command.platform.toLowerCase();
     var releaseCommand: cli.IReleaseCommand = <any>command;
     releaseCommand.package = outputFolder;
@@ -1272,6 +1280,10 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
         ? Q(command.appStoreVersion)
         : getReactNativeProjectAppVersion(command, projectName);
 
+    if (command.outputDir) {
+        command.sourcemapOutput = path.join(command.outputDir, bundleName + ".map");
+    }
+
     return appVersionPromise
         .then((appVersion: string) => {
             releaseCommand.appStoreVersion = appVersion;
@@ -1285,7 +1297,11 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
             log(chalk.cyan("\nReleasing update contents to CodePush:\n"));
             return release(releaseCommand);
         })
-        .then(() => deleteFolder(outputFolder))
+        .then(() => {
+            if (!command.outputDir) {
+                deleteFolder(outputFolder);
+            }
+        })
         .catch((err: Error) => {
             deleteFolder(outputFolder);
             throw err;

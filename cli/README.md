@@ -4,6 +4,8 @@ CodePush is a cloud service that enables Cordova and React Native developers to 
 
 ![CodePush CLI](https://cloud.githubusercontent.com/assets/116461/16246693/2e7df77c-37bb-11e6-9456-e392af7f7b84.png)
 
+<!-- CLI Catalog -->
+
 * [Installation](#installation)
 * [Getting Started](#getting-started)
 * [Account Management](#account-management)
@@ -25,6 +27,8 @@ CodePush is a cloud service that enables Cordova and React Native developers to 
 * [Clearing Release History](#clearing-release-history)
 
 [[Chinese version 中文版]](./README-cn.md)
+
+<!-- CLI Catalog -->
 
 ## Installation
 
@@ -143,12 +147,14 @@ Before you can deploy any updates, you need to register an app with the CodePush
 code-push app add <appName>
 ```
 
-If your app targets both iOS and Android, we recommend creating separate apps with CodePush. One for each platform. This way, you can manage and release updates to them separately, which in the long run, tends to make things simpler. The naming convention that most folks use is to suffix the app name with `-iOS` and `-Android`. For example:
+If your app targets both iOS and Android, we highly recommend creating separate apps with CodePush. One for each platform. This way, you can manage and release updates to them separately, which in the long run, tends to make things simpler. The naming convention that most folks use is to suffix the app name with `-iOS` and `-Android`. For example:
 
 ```
 code-push app add MyApp-Android
 code-push app add MyApp-iOS
 ```
+
+*NOTE: Using the same app for iOS and Android may cause installation exceptions because the CodePush update package produced for iOS will have different content from the update produced for Android.*
 
 All new apps automatically come with two deployments (`Staging` and `Production`) so that you can begin distributing updates to multiple channels without needing to do anything extra (see deployment instructions below). After you create an app, the CLI will output the deployment keys for the `Staging` and `Production` deployments, which you can begin using to configure your mobile clients via their respective SDKs (details for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push) and [React Native](http://github.com/Microsoft/react-native-code-push)).
 
@@ -361,7 +367,7 @@ This specifies which deployment you want to release the update to. This defaults
 
 This provides an optional "change log" for the deployment. The value is simply round tripped to the client so that when the update is detected, your app can choose to display it to the end-user (e.g. via a "What's new?" dialog). This string accepts control characters such as `\n` and `\t` so that you can include whitespace formatting within your descriptions for improved readability.
 
-*NOTE: This parameter can be set using either "--description" or "-desc"*
+*NOTE: This parameter can be set using either "--description" or "-des"*
 
 #### Disabled parameter
 
@@ -429,6 +435,7 @@ code-push release-react <appName> <platform>
 [--sourcemapOutput <sourcemapOutput>]
 [--targetBinaryVersion <targetBinaryVersion>]
 [--rollout <rolloutPercentage>]
+[--outputDir <outputDir>]
 ```
 
 The `release-react` command is a React Native-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same parameters (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
@@ -553,6 +560,12 @@ code-push release-react MyApp-iOS ios --pre "DEV-"
 This specifies the relative path to where the generated JS bundle's sourcemap file should be written. If left unspecified, sourcemaps will not be generated.
 
 *NOTE: This parameter can be set using either --sourcemapOutput or -s*
+
+#### Output directory parameter
+
+This specifies the relative path to where the assets, JS bundle and sourcemap files should be written. If left unspecified, the assets, JS bundle and sourcemap will be copied to the `/tmp/CodePush` folder.
+
+*NOTE: This parameter can be set using either --outputDir or -o*
 
 ### Releasing Updates (Cordova)
 
