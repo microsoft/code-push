@@ -306,7 +306,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " link")
-            .demand(/*count*/ 0, /*max*/ 0)  
+            .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
             .example("link", "Links an account on the CodePush server")
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
 
@@ -316,7 +316,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " login [options]")
-            .demand(/*count*/ 0, /*max*/ 0)  
+            .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
             .example("login", "Logs in to the CodePush server")
             .example("login --accessKey mykey", "Logs in on behalf of the user who owns and created the access key \"mykey\"")
             .example("login --proxy http://someproxy.com:455", "Logs in with the specified proxy url")
@@ -369,7 +369,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " register")
-            .demand(/*count*/ 0, /*max*/ 0)  
+            .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
             .example("register", "Registers a new CodePush account")
             .example("register --proxy http://someproxy.com:455", "Registers with the specified proxy url")
             .option("proxy", { default: null, demand: false, description: "URL of the proxy server to use", type: "string" })
