@@ -1071,6 +1071,7 @@ function promote(command: cli.IPromoteCommand): Promise<void> {
     var packageInfo: PackageInfo = {
         appVersion: command.appStoreVersion,
         description: command.description,
+        label: command.label,
         isDisabled: getYargsBooleanOrNull(command.disabled),
         isMandatory: getYargsBooleanOrNull(command.mandatory),
         rollout: command.rollout

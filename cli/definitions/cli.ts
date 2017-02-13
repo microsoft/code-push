@@ -146,6 +146,7 @@ export interface ILoginCommand extends ICommand {
 
 export interface IPackageInfo {
     description?: string;
+    label?: string;
     disabled?: boolean;
     mandatory?: boolean;
     rollout?: number;

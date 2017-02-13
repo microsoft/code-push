@@ -356,6 +356,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .example("promote MyApp Staging Production", "Promotes the latest release within the \"Staging\" deployment of \"MyApp\" to \"Production\"")
             .example("promote MyApp Staging Production --des \"Production rollout\" -r 25", "Promotes the latest release within the \"Staging\" deployment of \"MyApp\" to \"Production\", with an updated description, and targeting only 25% of the users")
             .option("description", { alias: "des", default: null, demand: false, description: "Description of the changes made to the app with this release. If omitted, the description from the release being promoted will be used.", type: "string" })
+            .option("label", { alias: "l", default: null, demand: false, description: "Label of the source release that will be taken. If omitted, the latest release being promoted will be used.", type: "string" })
             .option("disabled", { alias: "x", default: null, demand: false, description: "Specifies whether this release should be immediately downloadable. If omitted, the disabled attribute from the release being promoted will be used.", type: "boolean" })
             .option("mandatory", { alias: "m", default: null, demand: false, description: "Specifies whether this release should be considered mandatory. If omitted, the mandatory property from the release being promoted will be used.", type: "boolean" })
             .option("noDuplicateReleaseError", { default: false, demand: false, description: "When this flag is set, promoting a package that is identical to the latest release on the target deployment will produce a warning instead of an error", type: "boolean" })
@@ -751,6 +752,7 @@ function createCommand(): cli.ICommand {
                     deploymentPromoteCommand.sourceDeploymentName = arg2;
                     deploymentPromoteCommand.destDeploymentName = arg3;
                     deploymentPromoteCommand.description = argv["description"] ? backslash(argv["description"]) : "";
+                    deploymentPromoteCommand.label = argv["label"];
                     deploymentPromoteCommand.disabled = argv["disabled"];
                     deploymentPromoteCommand.mandatory = argv["mandatory"];
                     deploymentPromoteCommand.noDuplicateReleaseError = argv["noDuplicateReleaseError"];
