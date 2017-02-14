@@ -732,6 +732,7 @@ Once you've tested an update against a specific deployment (e.g. `Staging`), and
 ```
 code-push promote <appName> <sourceDeploymentName> <destDeploymentName>
 [--description <description>]
+[--label <label>]
 [--disabled <disabled>]
 [--mandatory]
 [--noDuplicateReleaseError]
@@ -750,6 +751,10 @@ We recommend that all users take advantage of the automatically created `Staging
 ### Description parameter
 
 This is the same parameter as the one described in the [above section](#description-parameter), and simply allows you to override the description that will be used for the promoted release. If unspecified, the new release will inherit the description from the release being promoted.
+
+### Label parameter
+
+This optional parameter allows you to pick up the corresponding label from source deployment and promote to destination deployment. If unspecified, the latest label will be used from the release being promoted..
 
 ### Disabled parameter
 

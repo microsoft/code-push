@@ -1079,7 +1079,7 @@ function promote(command: cli.IPromoteCommand): Promise<void> {
 
     return sdk.promote(command.appName, command.sourceDeploymentName, command.destDeploymentName, packageInfo)
         .then((): void => {
-            log("Successfully promoted the \"" + command.sourceDeploymentName + "\" deployment of the \"" + command.appName + "\" app to the \"" + command.destDeploymentName + "\" deployment.");
+            log("Successfully promoted " + (command.label !== null ? "\"" + command.label + "\" of " : "") + "the \"" + command.sourceDeploymentName + "\" deployment of the \"" + command.appName + "\" app to the \"" + command.destDeploymentName + "\" deployment.");
         })
         .catch((err: CodePushError) => releaseErrorHandler(err, command));
 }
