@@ -754,7 +754,7 @@ This is the same parameter as the one described in the [above section](#descript
 
 ### Label parameter
 
-This optional parameter allows you to pick up the corresponding label from source deployment and promote to destination deployment. If unspecified, the latest label will be used from the release being promoted..
+This optional parameter allows you to pick the specified label from the source deployment and promote it to the destination deployment. If unspecified, the latest release on the source deployment will be promoted.
 
 ### Disabled parameter
 
