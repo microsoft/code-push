@@ -1348,7 +1348,7 @@ function requestAccessKey(): Promise<string> {
 
 export var runReactNativeBundleCommand = (bundleName: string, development: boolean, entryFile: string, outputFolder: string, platform: string, sourcemapOutput: string): Promise<void> => {
     let reactNativeBundleArgs: string[] = [];
-    let envNodeArgs: string = process.env.NODE_ARGS;
+    let envNodeArgs: string = process.env.CODE_PUSH_NODE_ARGS;
 
     if (typeof envNodeArgs !== "undefined") {
       Array.prototype.push.apply(reactNativeBundleArgs, envNodeArgs.trim().split(/\s+/));

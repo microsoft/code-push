@@ -1681,7 +1681,7 @@ describe("CLI", () => {
             .done();
     });
 
-    it("release-react applies arguments to node binary provided via the NODE_ARGS env var", (done: MochaDone): void => {
+    it("release-react applies arguments to node binary provided via the CODE_PUSH_NODE_ARGS env var", (done: MochaDone): void => {
         var bundleName = "bundle.js";
         var command: cli.IReleaseReactCommand = {
             type: cli.CommandType.releaseReact,
@@ -1699,8 +1699,8 @@ describe("CLI", () => {
 
         var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release", () => { return Q(<void>null) });
 
-        var _NODE_ARGS: string = process.env.NODE_ARGS;
-        process.env.NODE_ARGS = "  --foo=bar    --baz  ";
+        var _CODE_PUSH_NODE_ARGS: string = process.env.CODE_PUSH_NODE_ARGS;
+        process.env.CODE_PUSH_NODE_ARGS = "  --foo=bar    --baz  ";
 
         cmdexec.execute(command)
             .then(() => {
@@ -1718,7 +1718,7 @@ describe("CLI", () => {
                 );
                 assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
 
-                process.env.NODE_ARGS = _NODE_ARGS;
+                process.env.CODE_PUSH_NODE_ARGS = _CODE_PUSH_NODE_ARGS;
 
                 done();
             })
