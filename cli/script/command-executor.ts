@@ -1347,14 +1347,21 @@ function requestAccessKey(): Promise<string> {
 }
 
 export var runReactNativeBundleCommand = (bundleName: string, development: boolean, entryFile: string, outputFolder: string, platform: string, sourcemapOutput: string): Promise<void> => {
-    var reactNativeBundleArgs = [
-        path.join("node_modules", "react-native", "local-cli", "cli.js"), "bundle",
-        "--assets-dest", outputFolder,
-        "--bundle-output", path.join(outputFolder, bundleName),
-        "--dev", development,
-        "--entry-file", entryFile,
-        "--platform", platform,
-    ];
+    let reactNativeBundleArgs: string[] = [];
+    let envNodeArgs: string = process.env.NODE_ARGS;
+
+    if (typeof envNodeArgs !== "undefined") {
+      Array.prototype.push.apply(reactNativeBundleArgs, envNodeArgs.trim().split(/\s+/));
+    }
+
+    Array.prototype.push.apply(reactNativeBundleArgs, [
+      path.join("node_modules", "react-native", "local-cli", "cli.js"), "bundle",
+      "--assets-dest", outputFolder,
+      "--bundle-output", path.join(outputFolder, bundleName),
+      "--dev", development,
+      "--entry-file", entryFile,
+      "--platform", platform,
+    ]);
 
     if (sourcemapOutput) {
         reactNativeBundleArgs.push("--sourcemap-output", sourcemapOutput);
