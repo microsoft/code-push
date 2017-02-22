@@ -1149,58 +1149,66 @@ export var release = (command: cli.IReleaseCommand): Promise<void> => {
 }
 
 export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void> => {
-    var platform: string = command.platform.toLowerCase();
-    var projectRoot: string = process.cwd();
-    var platformFolder: string = path.join(projectRoot, "platforms", platform);
-    var platformCordova: string = path.join(platformFolder, "cordova");
-    var outputFolder: string;
-
-    if (platform === "ios") {
-        outputFolder = path.join(platformFolder, "www");
-    } else if (platform === "android") {
-        outputFolder = path.join(platformFolder, "assets", "www");
-    } else {
-        throw new Error("Platform must be either \"ios\" or \"android\".");
-    }
-
-    var cordovaCommand: string = command.build ? "build" : "prepare";
-    var cordovaCLI: string = "cordova";
-
-    // Check whether the Cordova or PhoneGap CLIs are
-    // installed, and if not, fail early
-    try {
-        which.sync(cordovaCLI);
-    } catch (e) {
-        try {
-            cordovaCLI = "phonegap";
-            which.sync(cordovaCLI);
-        } catch (e) {
-            throw new Error(`Unable to ${cordovaCommand} project. Please ensure that either the Cordova or PhoneGap CLI is installed.`);
-        }
-    }
-
-    log(chalk.cyan(`Running "${cordovaCLI} ${cordovaCommand}" command:\n`));
-    try {
-        execSync([cordovaCLI, cordovaCommand, platform, "--verbose"].join(" "), { stdio: "inherit" });
-    } catch (error) {
-        throw new Error(`Unable to ${cordovaCommand} project. Please ensure that the CWD represents a Cordova project and that the "${platform}" platform was added by running "${cordovaCLI} platform add ${platform}".`);
-    }
-
-    try {
-        var configString: string = fs.readFileSync(path.join(projectRoot, "config.xml"), { encoding: "utf8" });
-    } catch (error) {
-        throw new Error(`Unable to find or read "config.xml" in the CWD. The "release-cordova" command must be executed in a Cordova project folder.`);
-    }
-
-    var configPromise: Promise<any> = parseXml(configString);
     var releaseCommand: cli.IReleaseCommand = <any>command;
+    // Check for app and deployment exist before releasing an update.
+    // This validation helps to save about 1 minute or more in case user has typed wrong app or deployment name.
+    return sdk.getDeployment(command.appName, command.deploymentName)
+        .then((): any => {
+            var platform: string = command.platform.toLowerCase();
+            var projectRoot: string = process.cwd();
+            var platformFolder: string = path.join(projectRoot, "platforms", platform);
+            var platformCordova: string = path.join(platformFolder, "cordova");
+            var outputFolder: string;
 
-    releaseCommand.package = outputFolder;
-    releaseCommand.type = cli.CommandType.release;
+            if (platform === "ios") {
+                outputFolder = path.join(platformFolder, "www");
+            } else if (platform === "android") {
+                outputFolder = path.join(platformFolder, "assets", "www");
+            } else {
+                throw new Error("Platform must be either \"ios\" or \"android\".");
+            }
 
-    return configPromise
-        .catch((err: any) => {
-            throw new Error(`Unable to parse "config.xml" in the CWD. Ensure that the contents of "config.xml" is valid XML.`);
+            var cordovaCommand: string = command.build ? "build" : "prepare";
+            var cordovaCLI: string = "cordova";
+
+            // Check whether the Cordova or PhoneGap CLIs are
+            // installed, and if not, fail early
+            try {
+                which.sync(cordovaCLI);
+            } catch (e) {
+                try {
+                    cordovaCLI = "phonegap";
+                    which.sync(cordovaCLI);
+                } catch (e) {
+                    throw new Error(`Unable to ${cordovaCommand} project. Please ensure that either the Cordova or PhoneGap CLI is installed.`);
+                }
+            }
+
+            log(chalk.cyan(`Running "${cordovaCLI} ${cordovaCommand}" command:\n`));
+            try {
+                execSync([cordovaCLI, cordovaCommand, platform, "--verbose"].join(" "), { stdio: "inherit" });
+            } catch (error) {
+                throw new Error(`Unable to ${cordovaCommand} project. Please ensure that the CWD represents a Cordova project and that the "${platform}" platform was added by running "${cordovaCLI} platform add ${platform}".`);
+            }
+
+            try {
+                var configString: string = fs.readFileSync(path.join(projectRoot, "config.xml"), { encoding: "utf8" });
+            } catch (error) {
+                throw new Error(`Unable to find or read "config.xml" in the CWD. The "release-cordova" command must be executed in a Cordova project folder.`);
+            }
+
+            var configPromise: Promise<any> = parseXml(configString);
+
+            releaseCommand.package = outputFolder;
+            releaseCommand.type = cli.CommandType.release;
+
+            return configPromise
+                .catch((err: any) => {
+                    throw new Error(`Unable to parse "config.xml" in the CWD. Ensure that the contents of "config.xml" is valid XML.`);
+                });
+        })
+        .catch((err: Error) => {
+            throw err;
         })
         .then((parsedConfig: any) => {
             var config: any = parsedConfig.widget;
@@ -1226,65 +1234,70 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
     var outputFolder: string = command.outputDir || path.join(os.tmpdir(), "CodePush");
     var platform: string = command.platform = command.platform.toLowerCase();
     var releaseCommand: cli.IReleaseCommand = <any>command;
-    releaseCommand.package = outputFolder;
+    // Check for app and deployment exist before releasing an update.
+    // This validation helps to save about 1 minute or more in case user has typed wrong app or deployment name.
+    return sdk.getDeployment(command.appName, command.deploymentName)
+        .then((): any => {
+            releaseCommand.package = outputFolder;
 
-    switch (platform) {
-        case "android":
-        case "ios":
-        case "windows":
-            if (!bundleName) {
-                bundleName = platform === "ios"
-                    ? "main.jsbundle"
-                    : `index.${platform}.bundle`;
+            switch (platform) {
+                case "android":
+                case "ios":
+                case "windows":
+                    if (!bundleName) {
+                        bundleName = platform === "ios"
+                            ? "main.jsbundle"
+                            : `index.${platform}.bundle`;
+                    }
+
+                    break;
+                default:
+                    throw new Error("Platform must be either \"android\", \"ios\" or \"windows\".");
             }
 
-            break;
-        default:
-            throw new Error("Platform must be either \"android\", \"ios\" or \"windows\".");
-    }
+            try {
+                var projectPackageJson: any = require(path.join(process.cwd(), "package.json"));
+                var projectName: string = projectPackageJson.name;
+                if (!projectName) {
+                    throw new Error("The \"package.json\" file in the CWD does not have the \"name\" field set.");
+                }
 
-    try {
-        var projectPackageJson: any = require(path.join(process.cwd(), "package.json"));
-        var projectName: string = projectPackageJson.name;
-        if (!projectName) {
-            throw new Error("The \"package.json\" file in the CWD does not have the \"name\" field set.");
-        }
+                if (!projectPackageJson.dependencies["react-native"]) {
+                    throw new Error("The project in the CWD is not a React Native project.");
+                }
+            } catch (error) {
+                throw new Error("Unable to find or read \"package.json\" in the CWD. The \"release-react\" command must be executed in a React Native project folder.");
+            }
 
-        if (!projectPackageJson.dependencies["react-native"]) {
-            throw new Error("The project in the CWD is not a React Native project.");
-        }
-    } catch (error) {
-        throw new Error("Unable to find or read \"package.json\" in the CWD. The \"release-react\" command must be executed in a React Native project folder.");
-    }
+            if (!entryFile) {
+                entryFile = `index.${platform}.js`;
+                if (fileDoesNotExistOrIsDirectory(entryFile)) {
+                    entryFile = "index.js";
+                }
 
-    if (!entryFile) {
-        entryFile = `index.${platform}.js`;
-        if (fileDoesNotExistOrIsDirectory(entryFile)) {
-            entryFile = "index.js";
-        }
+                if (fileDoesNotExistOrIsDirectory(entryFile)) {
+                    throw new Error(`Entry file "index.${platform}.js" or "index.js" does not exist.`);
+                }
+            } else {
+                if (fileDoesNotExistOrIsDirectory(entryFile)) {
+                    throw new Error(`Entry file "${entryFile}" does not exist.`);
+                }
+            }
 
-        if (fileDoesNotExistOrIsDirectory(entryFile)) {
-            throw new Error(`Entry file "index.${platform}.js" or "index.js" does not exist.`);
-        }
-    } else {
-        if (fileDoesNotExistOrIsDirectory(entryFile)) {
-            throw new Error(`Entry file "${entryFile}" does not exist.`);
-        }
-    }
+            if (command.appStoreVersion) {
+                throwForInvalidSemverRange(command.appStoreVersion);
+            }
 
-    if (command.appStoreVersion) {
-        throwForInvalidSemverRange(command.appStoreVersion);
-    }
+            var appVersionPromise: Promise<string> = command.appStoreVersion
+                ? Q(command.appStoreVersion)
+                : getReactNativeProjectAppVersion(command, projectName);
 
-    var appVersionPromise: Promise<string> = command.appStoreVersion
-        ? Q(command.appStoreVersion)
-        : getReactNativeProjectAppVersion(command, projectName);
+            if (command.outputDir) {
+                command.sourcemapOutput = path.join(command.outputDir, bundleName + ".map");
+            }
 
-    if (command.outputDir) {
-        command.sourcemapOutput = path.join(command.outputDir, bundleName + ".map");
-    }
-
-    return appVersionPromise
+            return appVersionPromise;
+        })
         .then((appVersion: string) => {
             releaseCommand.appStoreVersion = appVersion;
             return createEmptyTempReleaseFolder(outputFolder);
