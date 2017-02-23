@@ -72,7 +72,8 @@ export var execSync = childProcess.execSync;
 
 var connectionInfo: ILoginConnectionInfo;
 
-export var confirm = (message: string = "Are you sure? (Y/n):"): Promise<boolean> => {
+export var confirm = (message: string = "Are you sure?"): Promise<boolean> => {
+    message += " (y/N):";
     return Promise<boolean>((resolve, reject, notify): void => {
         prompt.message = "";
         prompt.delimiter = "";
@@ -86,13 +87,13 @@ export var confirm = (message: string = "Are you sure? (Y/n):"): Promise<boolean
                 }
             }
         }, (err: any, result: any): void => {
-            var accepted = result.response && result.response === "Y";
-            var invalidResponse = result.response && result.response !== "n" && result.response !== "";
+            var accepted = result.response && result.response.toLowerCase() === "y";
+            var rejected = !result.response || result.response.toLowerCase() === "n";
 
             if (accepted){
                 resolve(true);
             } else {
-                if (invalidResponse){
+                if (!rejected){
                     console.log("Invalid response: \"" + result.response + "\"");               
                 } 
                 resolve(false);
@@ -184,7 +185,7 @@ function appList(command: cli.IAppListCommand): Promise<void> {
 }
 
 function appRemove(command: cli.IAppRemoveCommand): Promise<void> {
-    return confirm("Are you sure you want to remove the app? It will not be possible to recover it in future. (Y/n)")
+    return confirm("Are you sure you want to remove the app? It will not be possible to recover it in future.")
         .then((wasConfirmed: boolean): Promise<void> => {
             if (wasConfirmed) {
                 return sdk.removeApp(command.appName)
@@ -342,7 +343,7 @@ export var deploymentList = (command: cli.IDeploymentListCommand, showPackage: b
 }
 
 function deploymentRemove(command: cli.IDeploymentRemoveCommand): Promise<void> {
-    return confirm("Are you sure? Any deployment keys associated with this deployment will be lost FOREVER. (Y/n)")
+    return confirm("Are you sure? Any deployment keys associated with this deployment will be lost FOREVER.")
         .then((wasConfirmed: boolean): Promise<void> => {
             if (wasConfirmed) {
                 return sdk.removeDeployment(command.appName, command.deploymentName)
