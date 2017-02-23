@@ -1207,9 +1207,6 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
                     throw new Error(`Unable to parse "config.xml" in the CWD. Ensure that the contents of "config.xml" is valid XML.`);
                 });
         })
-        .catch((err: Error) => {
-            throw err;
-        })
         .then((parsedConfig: any) => {
             var config: any = parsedConfig.widget;
 
