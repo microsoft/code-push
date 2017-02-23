@@ -185,7 +185,7 @@ function appList(command: cli.IAppListCommand): Promise<void> {
 }
 
 function appRemove(command: cli.IAppRemoveCommand): Promise<void> {
-    return confirm("Are you sure you want to remove the app? It will not be possible to recover it in future.")
+    return confirm("Are you sure you want to remove this app? Note that its deployment keys will be PERMANENTLY unrecoverable.")
         .then((wasConfirmed: boolean): Promise<void> => {
             if (wasConfirmed) {
                 return sdk.removeApp(command.appName)
@@ -343,7 +343,7 @@ export var deploymentList = (command: cli.IDeploymentListCommand, showPackage: b
 }
 
 function deploymentRemove(command: cli.IDeploymentRemoveCommand): Promise<void> {
-    return confirm("Are you sure? Any deployment keys associated with this deployment will be lost FOREVER.")
+    return confirm("Are you sure you want to remove this deployment? Note that its deployment key will be PERMANENTLY unrecoverable.")
         .then((wasConfirmed: boolean): Promise<void> => {
             if (wasConfirmed) {
                 return sdk.removeDeployment(command.appName, command.deploymentName)
