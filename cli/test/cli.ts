@@ -1147,7 +1147,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, `Unable to ${cordovaCommand} project. Please ensure that the CWD represents a Cordova project and that the "${command.platform}" platform was added by running "cordova platform add ${command.platform}".`);
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseCordova, "Error");
                 done();
             })
             .done();
@@ -1177,7 +1176,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, `Unable to find or read "config.xml" in the CWD. The "release-cordova" command must be executed in a Cordova project folder.`);
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseCordova, "Error");
                 sinon.assert.calledOnce(execSync);
                 done();
             })
@@ -1207,7 +1205,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, "Platform must be either \"ios\" or \"android\".");
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseCordova, "Error");
                 sinon.assert.notCalled(spawn);
                 done();
             })
@@ -1330,7 +1327,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, "Unable to find or read \"package.json\" in the CWD. The \"release-react\" command must be executed in a React Native project folder.");
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseReact, "Error");
                 sinon.assert.notCalled(spawn);
                 done();
             })
@@ -1362,7 +1358,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, "Entry file \"doesntexist.js\" does not exist.");
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseReact, "Error");
                 sinon.assert.notCalled(spawn);
                 done();
             })
@@ -1393,7 +1388,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, "Platform must be either \"android\", \"ios\" or \"windows\".");
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseReact, "Error");
                 sinon.assert.notCalled(spawn);
                 done();
             })
@@ -1427,7 +1421,6 @@ describe("CLI", () => {
             .catch((err) => {
                 assert.equal(err.message, "Please use a semver-compliant target binary version range, for example \"1.0.0\", \"*\" or \"^1.2.3\".");
                 sinon.assert.notCalled(release);
-                sinon.assert.threw(releaseReact, "Error");
                 sinon.assert.notCalled(spawn);
                 done();
             })
