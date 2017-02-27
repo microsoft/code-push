@@ -346,6 +346,8 @@ If you ever want an update to target multiple versions of the app store binary, 
 *NOTE: If your semver expression starts with a special shell character or operator such as `>`, `^`, or **
 *, the command may not execute correctly if you do not wrap the value in quotes as the shell will not supply the right values to our CLI process. Therefore, it is best to wrap your `targetBinaryVersion` parameter in double quotes when calling the `release` command, e.g. `code-push release MyApp-iOS updateContents ">1.2.3"`.*
 
+*NOTE: As defined in the semver spec, ranges only work for non pre-release versions: https://github.com/npm/node-semver#prerelease-tags. If you want to update a version with pre-release tags, then you need to write the exact version you want to update (`1.2.3-beta` for example).*
+
 The following table outlines the version value that CodePush expects your update's semver range to satisfy for each respective app type:
 
 | Platform               | Source of app store version                                                  |
