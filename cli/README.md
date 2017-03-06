@@ -580,6 +580,7 @@ code-push release-cordova <appName> <platform>
 [--targetBinaryVersion <targetBinaryVersion>]
 [--rollout <rolloutPercentage>]
 [--build]
+[--isReleaseBuildType]
 ```
 
 The `release-cordova` command is a Cordova-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same parameters (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
@@ -642,6 +643,10 @@ This is the same parameter as the one described in the [above section](#disabled
 #### Build parameter
 
 Specifies whether you want to run `cordova build` instead of `cordova prepare` (which is the default behavior), when generating your updated web assets. This is valuable if your project includes before and/or after build hooks (e.g. to transpile TypeScript), and therefore, having CodePush simply run `cordova prepare` isn't sufficient to create and release an update. If left unspecified, this defaults to `false`.
+
+#### IsReleaseBuildType parameter
+
+If `build` option is true specifies whether perform a release build. If left unspecified, this defaults to `debug`.
 
 *NOTE: This parameter can be set using either --build or -b*
 

@@ -1175,7 +1175,9 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
                 throw new Error("Platform must be either \"ios\" or \"android\".");
             }
 
-            var cordovaCommand: string = command.build ? "build" : "prepare";
+            var cordovaCommand: string = command.build ? 
+                (command.isReleaseBuildType ? "build --release" : "build") :
+                "prepare";
             var cordovaCLI: string = "cordova";
 
             // Check whether the Cordova or PhoneGap CLIs are
