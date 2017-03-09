@@ -1078,8 +1078,8 @@ function promote(command: cli.IPromoteCommand): Promise<void> {
         appVersion: command.appStoreVersion,
         description: command.description,
         label: command.label,
-        isDisabled: getYargsBooleanOrNull(command.disabled),
-        isMandatory: getYargsBooleanOrNull(command.mandatory),
+        isDisabled: command.disabled,
+        isMandatory: command.mandatory,
         rollout: command.rollout
     };
 
@@ -1094,8 +1094,8 @@ function patch(command: cli.IPatchCommand): Promise<void> {
     var packageInfo: PackageInfo = {
         appVersion: command.appStoreVersion,
         description: command.description,
-        isMandatory: getYargsBooleanOrNull(command.mandatory),
-        isDisabled: getYargsBooleanOrNull(command.disabled),
+        isMandatory: command.mandatory,
+        isDisabled: command.disabled,
         rollout: command.rollout
     };
 
@@ -1458,11 +1458,6 @@ function isBinaryOrZip(path: string): boolean {
     return path.search(/\.zip$/i) !== -1
         || path.search(/\.apk$/i) !== -1
         || path.search(/\.ipa$/i) !== -1;
-}
-
-function getYargsBooleanOrNull(value: any): boolean {
-    // Yargs treats a boolean argument as an array of size 2 for null, third is the value of boolean.
-    return value && value.length > 2 ? value[2] : null;
 }
 
 function throwForInvalidEmail(email: string): void {
