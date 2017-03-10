@@ -573,14 +573,14 @@ This specifies the relative path to where the assets, JS bundle and sourcemap fi
 
 ```shell
 code-push release-cordova <appName> <platform>
+[--build]
 [--deploymentName <deploymentName>]
 [--description <description>]
+[--isReleaseBuildType]
 [--mandatory]
 [--noDuplicateReleaseError]
-[--targetBinaryVersion <targetBinaryVersion>]
 [--rollout <rolloutPercentage>]
-[--build]
-[--isReleaseBuildType]
+[--targetBinaryVersion <targetBinaryVersion>]
 ```
 
 The `release-cordova` command is a Cordova-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same parameters (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
@@ -612,6 +612,12 @@ This is the same parameter as the one described in the [above section](#app-name
 
 This specifies which platform the current update is targeting, and can be either `ios` or `android` (case-insensitive).
 
+#### Build parameter
+
+Specifies whether you want to run `cordova build` instead of `cordova prepare` (which is the default behavior), when generating your updated web assets. This is valuable if your project includes before and/or after build hooks (e.g. to transpile TypeScript), and therefore, having CodePush simply run `cordova prepare` isn't sufficient to create and release an update. If left unspecified, this defaults to `false`.
+
+*NOTE: This parameter can be set using either --build or -b*
+
 #### Deployment name parameter
 
 This is the same parameter as the one described in the [above section](#deployment-name-parameter).
@@ -619,6 +625,14 @@ This is the same parameter as the one described in the [above section](#deployme
 #### Description parameter
 
 This is the same parameter as the one described in the [above section](#description-parameter).
+
+#### Disabled parameter
+
+This is the same parameter as the one described in the [above section](#disabled-parameter).
+
+#### IsReleaseBuildType parameter
+
+If `build` option is true specifies whether perform a release build. If left unspecified, this defaults to `debug`.
 
 #### Mandatory parameter
 
@@ -635,20 +649,6 @@ This is the same parameter as the one described in the [above section](#rollout-
 #### Target binary version parameter
 
 This is the same parameter as the one described in the [above section](#target-binary-version-parameter). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
-
-#### Disabled parameter
-
-This is the same parameter as the one described in the [above section](#disabled-parameter).
-
-#### Build parameter
-
-Specifies whether you want to run `cordova build` instead of `cordova prepare` (which is the default behavior), when generating your updated web assets. This is valuable if your project includes before and/or after build hooks (e.g. to transpile TypeScript), and therefore, having CodePush simply run `cordova prepare` isn't sufficient to create and release an update. If left unspecified, this defaults to `false`.
-
-#### IsReleaseBuildType parameter
-
-If `build` option is true specifies whether perform a release build. If left unspecified, this defaults to `debug`.
-
-*NOTE: This parameter can be set using either --build or -b*
 
 ## Debugging CodePush Integration
 
