@@ -836,7 +836,9 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
         catch (e) { return false }
     };
 
-    const isValidVersion = (version: string): boolean => !!semver.valid(version) || /^\d+\.\d+$/.test(version);
+    // Allow plain integer versions (as well as '1.0' values) for now, e.g. '1' is valid here and we assume that it is equal to '1.0.0'. 
+    // (missing minor/patch values will be added on server side to pass semver.satisfies check)
+    const isValidVersion = (version: string): boolean => !!semver.valid(version) || /^\d+\.\d+$/.test(version) || /^\d+$/.test(version);
 
     log(chalk.cyan(`Detecting ${command.platform} app version:\n`));
 

@@ -357,7 +357,7 @@ The following table outlines the version value that CodePush expects your update
 | React Native (iOS)     | The `CFBundleShortVersionString` key in the `Info.plist` file                |
 | React Native (Windows) | The `<Identity Version>` key in the `Package.appxmanifest` file                                |
 
-*NOTE: If the app store version in the metadata files are missing a patch version, e.g. `2.0`, it will be treated as having a patch version of `0`, i.e. `2.0 -> 2.0.0`.*
+*NOTE: If the app store version in the metadata files are missing a patch version, e.g. `2.0`, it will be treated as having a patch version of `0`, i.e. `2.0 -> 2.0.0`. The same is true for app store version equal to plain integer number, `1` will be treated as `1.0.0` in this case.*
 
 #### Deployment name parameter
 
