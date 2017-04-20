@@ -197,7 +197,9 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         yargs.usage(USAGE_PREFIX + " access-key <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Create a new access key associated with your account", (yargs: yargs.Argv) => accessKeyAdd("add", yargs))
+            /*
             .command("patch", "Update the name and/or TTL of an existing access key", (yargs: yargs.Argv) => accessKeyPatch("patch", yargs))
+            */
             .command("remove", "Remove an existing access key", (yargs: yargs.Argv) => accessKeyRemove("remove", yargs))
             .command("rm", "Remove an existing access key", (yargs: yargs.Argv) => accessKeyRemove("rm", yargs))
             .command("list", "List the access keys associated with your account", (yargs: yargs.Argv) => accessKeyList("list", yargs))
@@ -230,25 +232,28 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             })
             .command("list", "Lists the apps associated with your account", (yargs: yargs.Argv) => appList("list", yargs))
             .command("ls", "Lists the apps associated with your account", (yargs: yargs.Argv) => appList("ls", yargs))
+            /*
             .command("transfer", "Transfer the ownership of an app to another account", (yargs: yargs.Argv) => {
                 yargs.usage(USAGE_PREFIX + " app transfer <appName> <email>")
-                    .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+                    .demand(2, 2)  // Require exactly two non-option arguments
                     .example("app transfer MyApp foo@bar.com", "Transfers the ownership of app \"MyApp\" to an account with email \"foo@bar.com\"");
 
                 addCommonConfiguration(yargs);
             })
+            */
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
 
         addCommonConfiguration(yargs);
     })
+    /*
     .command("collaborator", "View and manage app collaborators", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         yargs.usage(USAGE_PREFIX + " collaborator <command>")
-            .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
+            .demand(2, 2)  // Require exactly two non-option arguments.
             .command("add", "Add a new collaborator to an app", (yargs: yargs.Argv): void => {
                 isValidCommand = true;
                 yargs.usage(USAGE_PREFIX + " collaborator add <appName> <email>")
-                    .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+                    .demand(2, 2)  // Require exactly two non-option arguments
                     .example("collaborator add MyApp foo@bar.com", "Adds foo@bar.com as a collaborator to app \"MyApp\"");
 
                 addCommonConfiguration(yargs);
@@ -261,6 +266,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
+    */
     .command("debug", "View the CodePush debug logs for a running app", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
@@ -447,10 +453,11 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
+    /*
     .command("session", "View and manage the current login sessions associated with your account", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         yargs.usage(USAGE_PREFIX + " session <command>")
-            .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
+            .demand(2, 2)  // Require exactly two non-option arguments.
             .command("remove", "Remove an existing login session", (yargs: yargs.Argv) => sessionRemove("remove", yargs))
             .command("rm", "Remove an existing login session", (yargs: yargs.Argv) => sessionRemove("rm", yargs))
             .command("list", "List the current login sessions associated with your account", (yargs: yargs.Argv) => sessionList("list", yargs))
@@ -459,6 +466,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
+    */
     .command("whoami", "Display the account info for the current login session", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;

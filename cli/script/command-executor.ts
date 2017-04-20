@@ -1487,7 +1487,7 @@ function throwForInvalidOutputFormat(format: string): void {
 function whoami(command: cli.ICommand): Promise<void> {
     return sdk.getAccountInfo()
         .then((account): void => {
-            var accountInfo = `${account.email} (${account.linkedProviders.join(", ")})`;
+            var accountInfo = `${account.email}`;
 
             var connectionInfo = deserializeConnectionInfo();
             if (connectionInfo.noProxy || connectionInfo.proxy) {
