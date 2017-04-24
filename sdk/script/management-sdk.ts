@@ -214,8 +214,12 @@ class AccountManager {
             .then((res: JsonResponse) => res.body.app);
     }
 
-    public addApp(appName: string): Promise<App> {
-        var app: App = { name: appName };
+    public addApp(appName: string, appOs: string, appPlatform: string): Promise<App> {
+        var app: App = {
+            name: appName,
+            os: appOs,
+            platform: appPlatform
+        };
         return this.post(urlEncode `/apps/`, JSON.stringify(app), /*expectResponseBody=*/ false)
             .then(() => app);
     }

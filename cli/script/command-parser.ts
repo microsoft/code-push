@@ -214,9 +214,10 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Add a new app to your account", (yargs: yargs.Argv): void => {
                 isValidCommand = true;
-                yargs.usage(USAGE_PREFIX + " app add <appName>")
-                    .demand(/*count*/ 1, /*max*/ 1)  // Require exactly one non-option arguments
-                    .example("app add MyApp", "Adds app \"MyApp\"");
+                yargs.usage(USAGE_PREFIX + " app add <appName> <os> <platform>")
+                    .demand(/*count*/ 3, /*max*/ 3)  // Require exactly three non-option arguments
+                    .example("app add MyApp ios react-native", "Adds app \"MyApp\", indicating that it's an iOS React Native app")
+                    .example("app add MyApp android cordova", "Adds app \"MyApp\", indicating that it's an Android Cordova app");
 
                 addCommonConfiguration(yargs);
             })
@@ -551,7 +552,11 @@ function createCommand(): cli.ICommand {
                         if (arg2) {
                             cmd = { type: cli.CommandType.appAdd };
 
-                            (<cli.IAppAddCommand>cmd).appName = arg2;
+                            var appAddCommand = <cli.IAppAddCommand>cmd;
+
+                            appAddCommand.appName = arg2;
+                            appAddCommand.os = arg3;
+                            appAddCommand.platform = arg4;
                         }
                         break;
 

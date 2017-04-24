@@ -59,6 +59,8 @@ export interface IAccessKeyRemoveCommand extends ICommand {
 
 export interface IAppAddCommand extends ICommand {
     appName: string;
+    os: string;
+    platform: string;
 }
 
 export interface IAppListCommand extends ICommand {

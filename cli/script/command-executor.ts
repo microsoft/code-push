@@ -161,7 +161,35 @@ function accessKeyRemove(command: cli.IAccessKeyRemoveCommand): Promise<void> {
 }
 
 function appAdd(command: cli.IAppAddCommand): Promise<void> {
-    return sdk.addApp(command.appName)
+    // Validate the OS and platform, doing a case insensitve comparison. Note that for CLI examples we
+    // present these values in all lower case, per CLI conventions, but when passed to the REST API the
+    // are in mixed case, per Mobile Center API naming conventions
+
+    var os: string;
+    const normalizedOs = command.os.toLowerCase();
+    if (normalizedOs === "ios") {
+        os = "iOS";
+    }
+    else if (normalizedOs === "android") {
+        os = "Android";
+    }
+    else {
+        return Q.reject<void>(new Error(`"${command.os}" is an unsupported OS. Available options are "ios" and "android".`));
+    }
+
+    var platform: string;
+    const normalizedPlatform = command.platform.toLowerCase();
+    if (normalizedPlatform === "react-native") {
+        platform = "React-Native";
+    }
+    else if (normalizedPlatform === "cordova") {
+        platform = "Cordova";
+    }
+    else {
+        return Q.reject<void>(new Error(`"${command.platform}" is an unsupported platform. Available options are "react-native" and "cordova".`));
+    }
+
+    return sdk.addApp(command.appName, os, platform)
         .then((app: App): Promise<void> => {
             log("Successfully added the \"" + command.appName + "\" app, along with the following default deployments:");
             var deploymentListCommand: cli.IDeploymentListCommand = {

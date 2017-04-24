@@ -74,9 +74,11 @@ export class SdkStub {
         });
     }
 
-    public addApp(name: string): Promise<codePush.App> {
+    public addApp(name: string, os: string, platform: string): Promise<codePush.App> {
         return Q(<codePush.App>{
-            name: name
+            name: name,
+            os: os,
+            platform: platform
         });
     }
 
@@ -459,7 +461,9 @@ describe("CLI", () => {
     it("appAdd reports new app name and ID", (done: MochaDone): void => {
         var command: cli.IAppAddCommand = {
             type: cli.CommandType.appAdd,
-            appName: "a"
+            appName: "a",
+            os: "ios",
+            platform: "react-native"
         };
 
         var addApp: Sinon.SinonSpy = sandbox.spy(cmdexec.sdk, "addApp");
