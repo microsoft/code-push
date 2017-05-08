@@ -18,7 +18,8 @@
     "push",
     "cordova",
     "react-native",
-    "react"
+    "react",
+    "nativescript"
   ],
   "homepage": "https://microsoft.github.io/code-push",
   "author": "Microsoft Corporation",
