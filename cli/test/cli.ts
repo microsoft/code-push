@@ -1860,7 +1860,7 @@ describe("CLI", () => {
                 done(new Error("Did not throw error."));
             })
             .catch((err) => {
-                assert.equal(err.message, "When requesting a release build for Android, these parameters are required: keystorePassword, keystoreAlias and keystoreAliasPassword.");
+                assert.equal(err.message, "When requesting a release build for Android, these parameters are required: keystorePath, keystorePassword, keystoreAlias and keystoreAliasPassword.");
                 sinon.assert.notCalled(release);
                 sinon.assert.notCalled(spawn);
                 done();

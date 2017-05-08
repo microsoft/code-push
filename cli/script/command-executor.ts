@@ -1066,11 +1066,8 @@ function getNativeScriptProjectAppVersion(command: cli.IReleaseReactCommand): Pr
             })
             .then((parsedAndroidManifest: any) => {
                 try {
-                    console.log("----- parsedAndroidManifest: " + parsedAndroidManifest);
-                    console.log("----- parsedAndroidManifest.manifest[0]: " + parsedAndroidManifest.manifest[0]);
-                    console.log('----- parsedAndroidManifest.manifest[0]["$"]: ' + parsedAndroidManifest.manifest[0]["$"]);
-                    console.log('----- parsedAndroidManifest.manifest[0]["$"]["android:versionName"]: ' + parsedAndroidManifest.manifest[0]["$"]["android:versionName"]);
-                    return parsedAndroidManifest.manifest[0]["$"]["android:versionName"].match(/^\d+\.\d+\.\d+/)[0];
+                    var version = parsedAndroidManifest.manifest["$"]["android:versionName"];
+                    return version.match(/^[0-9.]+/)[0];
                 } catch (e) {
                     throw new Error(`Unable to parse the package version from the "${androidManifest}" file.`);
                 }
@@ -1422,7 +1419,6 @@ export var releaseNativeScript = (command: cli.IReleaseNativeScriptCommand): Pro
             var platformFolder: string = path.join(projectRoot, "platforms", platform);
             var iOSFolder = path.basename(projectRoot);
             var outputFolder: string;
-            console.log("##### using iOSFolder: " + iOSFolder);
 
             if (platform === "ios") {
                 outputFolder = path.join(platformFolder, iOSFolder, "app");
@@ -1432,7 +1428,9 @@ export var releaseNativeScript = (command: cli.IReleaseNativeScriptCommand): Pro
                 throw new Error("Platform must be either \"android\" or \"ios\".");
             }
 
-            console.log("##### using outputFolder: " + outputFolder);
+            if (command.appStoreVersion) {
+                throwForInvalidSemverRange(command.appStoreVersion);
+            }
 
             if (command.build) {
                 var nativeScriptCLI: string = "tns";
@@ -1449,9 +1447,9 @@ export var releaseNativeScript = (command: cli.IReleaseNativeScriptCommand): Pro
                     nativeScriptCommand += " --release";
                     if (platform === "android") {
                         if (!command.keystorePath || !command.keystorePassword || !command.keystoreAlias || !command.keystoreAliasPassword) {
-                            throw new Error(`When requesting a release build for Android, these parameters are required: keystorePassword, keystoreAlias and keystoreAliasPassword.`);
+                            throw new Error(`When requesting a release build for Android, these parameters are required: keystorePath, keystorePassword, keystoreAlias and keystoreAliasPassword.`);
                         }
-                        nativeScriptCommand += ` --key-store-path ${command.keystorePath} --key-store-password ${command.keystorePassword} --key-store-alias ${command.keystoreAlias} --key-store-alias-password ${command.keystoreAliasPassword}`;
+                        nativeScriptCommand += ` --key-store-path "${command.keystorePath}" --key-store-password ${command.keystorePassword} --key-store-alias ${command.keystoreAlias} --key-store-alias-password ${command.keystoreAliasPassword}`;
                     }
                 }
 
@@ -1464,22 +1462,15 @@ export var releaseNativeScript = (command: cli.IReleaseNativeScriptCommand): Pro
 
             } else {
                 // if a build was not requested we expect a 'ready to go' ${outputFolder} folder
-                if (fileDoesNotExistOrIsDirectory(`${outputFolder}`)) {
+                try {
+                    fs.lstatSync(outputFolder).isDirectory();
+                } catch (error) {
                     throw new Error(`No "build" folder found - perform a "tns build" first, or add the "--build" flag to the "codepush" command.`);
                 }
             }
 
-            // TODO remove this
-            if (fileDoesNotExistOrIsDirectory("blaaaaaa")) {
-                throw new Error(`xxxx No "build" folder found - perform a "tns build" first, or add the "--build" flag to the "codepush" command.`);
-            }
-
             releaseCommand.package = outputFolder;
             releaseCommand.type = cli.CommandType.release;
-
-            if (command.appStoreVersion) {
-                throwForInvalidSemverRange(command.appStoreVersion);
-            }
 
             return command.appStoreVersion
                 ? Q(command.appStoreVersion)

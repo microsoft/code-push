@@ -1,6 +1,6 @@
 # CodePush Management CLI
 
-CodePush is a cloud service that enables Cordova and React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using the provided client SDKs for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push) and [React Native](http://github.com/Microsoft/react-native-code-push)). This allows you to have a more deterministic and direct engagement model with your user base, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
+CodePush is a cloud service that enables Cordova and React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using the provided client SDKs for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push), [React Native](http://github.com/Microsoft/react-native-code-push) and  [NativeScript](http://github.com/EddyVerbruggen/nativescript-code-push)). This allows you to have a more deterministic and direct engagement model with your user base, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
 
 ![CodePush CLI](https://cloud.githubusercontent.com/assets/116461/16246693/2e7df77c-37bb-11e6-9456-e392af7f7b84.png)
 
@@ -325,8 +325,8 @@ It's important that the path you specify refers to the platform-specific, prepar
 | React Native w/assets (Android)  | `react-native bundle --platform android --entry-file <entryFile> --bundle-output <releaseFolder>/<bundleOutput> --assets-dest <releaseFolder> --dev false` | Value of the `--assets-dest` option, which should represent a newly created directory that includes your assets and JS bundle |
 | React Native wo/assets (iOS)     | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <bundleOutput> --dev false`                                                   | Value of the `--bundle-output` option                                                                 |
 | React Native w/assets (iOS)      | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <releaseFolder>/<bundleOutput> --assets-dest <releaseFolder> --dev false`     | Value of the `--assets-dest` option, which should represent a newly created directory that includes your assets and JS bundle |
-| NativeScript (iOS)               | `tns build ios [--release]`                                                                                                                                | `./platforms/ios/<appname>` directory           |
-| NativeScript (Android)           | `tns build android [--release]`                                                                                                                            | `./platforms/android/src/main/assets` directory |
+| NativeScript (iOS)               | `tns build ios [--release]`                                                                                                                                | `./platforms/ios/<appname>/app` directory           |
+| NativeScript (Android)           | `tns build android [--release]`                                                                                                                            | `./platforms/android/src/main/assets/app` directory |
 
 #### Target binary version parameter
 
@@ -658,7 +658,110 @@ This is the same parameter as the one described in the [above section](#rollout-
 This is the same parameter as the one described in the [above section](#target-binary-version-parameter). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
 
 ### Releasing Updates (NativeScript)
-TODO
+TODO (last task before a PR can be sent)
+
+
+```shell
+code-push release-nativescript <appName> <platform>
+[--build]
+[--deploymentName <deploymentName>]
+[--description <description>]
+[--isReleaseBuildType]
+[--keystorePath]
+[--keystorePassword]
+[--keystoreAlias]
+[--keystoreAliasPassword]
+[--mandatory]
+[--noDuplicateReleaseError]
+[--rollout <rolloutPercentage>]
+[--targetBinaryVersion <targetBinaryVersion>]
+```
+
+The `release-nativescript` command is a NativeScript-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same parameters (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
+
+1. Running the `tns build` command in order to generate the [update contents](#update-contents-parameter) (`/platform`'s app folder) that will be released to the CodePush server.
+
+2. Inferring the [`targetBinaryVersion`](#target-binary-version-parameter) of this release by using the version name that is specified in your project's `app/App_Resources/iOS/Info.plist` (iOS) or `app/App_Resources/Android/AndroidManifest.xml` (Android) file.
+
+To illustrate the difference that the `release-nativescript` command can make, the following is an example of how you might generate and release an update for a NativeScript app using the "vanilla" `release` command:
+
+```shell
+tns build ios --release
+code-push release MyApp-iOS platforms/ios/myapp/app 1.0.0
+```
+
+Achieving the equivalent behavior with the `release-nativescript` command would simply require the following command, which is generally less error-prone:
+
+```shell
+code-push release-nativescript MyApp-iOS ios
+```
+
+#### App name parameter
+
+This is the same parameter as the one described in the [above section](#app-name-parameter).
+
+#### Platform parameter
+
+This specifies which platform the current update is targeting, and can be either `ios` or `android` (case-insensitive).
+
+#### Build parameter
+
+Specifies whether you want to run `tns build` instead of publishing anything already in the platform's `app` folder (which is the default behavior).
+
+*NOTE: If you build your app differently (Webpack for instance) do your specialized build as usual and omit this parameter.*
+
+*NOTE: This parameter can be set using either --build or -b*
+
+#### Deployment name parameter
+
+This is the same parameter as the one described in the [above section](#deployment-name-parameter).
+
+#### Description parameter
+
+This is the same parameter as the one described in the [above section](#description-parameter).
+
+#### Disabled parameter
+
+This is the same parameter as the one described in the [above section](#disabled-parameter).
+
+#### IsReleaseBuildType parameter
+
+If `build` option is true specifies whether perform a release build. If left unspecified, this defaults to `debug`.
+
+*NOTE: If you use TypeScript this flag will also remove any `.ts` files from your distributed package, which is probably what you want.*
+
+#### keystorePath parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the path to the .keystore file.
+
+#### keystorePassword parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the password for the .keystore file.
+
+#### keystoreAlias parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the alias in the .keystore file.
+
+#### keystoreAliasPassword parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the password for the alias in the .keystore file.
+
+#### Mandatory parameter
+
+This is the same parameter as the one described in the [above section](#mandatory-parameter).
+
+#### No duplicate release error parameter
+
+This is the same parameter as the one described in the [above section](#no-duplicate-release-error-parameter).
+
+#### Rollout parameter
+
+This is the same parameter as the one described in the [above section](#rollout-parameter). If left unspecified, the release will be made available to all users.
+
+#### Target binary version parameter
+
+This is the same parameter as the one described in the [above section](#target-binary-version-parameter). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
+
 
 ## Debugging CodePush Integration
 

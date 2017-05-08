@@ -445,10 +445,10 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .example("release-nativescript MyApp android -d Production", "Releases the NativeScript Android project in the current working directory to the \"MyApp\" app's \"Production\" deployment")
             .option("build", { alias: "b", default: false, demand: false, description: "Invoke \"tns build\" instead of assuming there's aleady a build waiting to be pushed", type: "boolean" })
             .option("isReleaseBuildType", { alias: "rb", default: false, demand: false, description: "If \"build\" option is true specifies whether to perform a release build", type: "boolean" })
-            .option("keystorePath", { alias: "ksp", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the path to the .keystore file", type: "string" })
-            .option("keystorePassword", { alias: "kspw", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the password for the .keystore file", type: "string" })
-            .option("keystoreAlias", { alias: "ksa", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the alias in the .keystore file", type: "string" })
-            .option("keystoreAliasPassword", { alias: "ksapwd", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the password for the alias in the .keystore file", type: "string" })
+            .option("keystorePath", { alias: "kp", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the path to the .keystore file", type: "string" })
+            .option("keystorePassword", { alias: "kpw", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the password for the .keystore file", type: "string" })
+            .option("keystoreAlias", { alias: "ka", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the alias in the .keystore file", type: "string" })
+            .option("keystoreAliasPassword", { alias: "kapw", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the password for the alias in the .keystore file", type: "string" })
             .option("deploymentName", { alias: "d", default: "Staging", demand: false, description: "Deployment to release the update to", type: "string" })
             .option("description", { alias: "des", default: null, demand: false, description: "Description of the changes made to the app in this release", type: "string" })
             .option("disabled", { alias: "x", default: false, demand: false, description: "Specifies whether this release should be immediately downloadable", type: "boolean" })
@@ -878,6 +878,10 @@ function createCommand(): cli.ICommand {
                     releaseNativeScriptCommand.rollout = getRolloutValue(argv["rollout"]);
                     releaseNativeScriptCommand.appStoreVersion = argv["targetBinaryVersion"];
                     releaseNativeScriptCommand.isReleaseBuildType = argv["isReleaseBuildType"];
+                    releaseNativeScriptCommand.keystorePath = argv["keystorePath"];
+                    releaseNativeScriptCommand.keystorePassword = argv["keystorePassword"];
+                    releaseNativeScriptCommand.keystoreAlias = argv["keystoreAlias"];
+                    releaseNativeScriptCommand.keystoreAliasPassword = argv["keystoreAliasPassword"];
                 }
                 break;
 
