@@ -658,8 +658,6 @@ This is the same parameter as the one described in the [above section](#rollout-
 This is the same parameter as the one described in the [above section](#target-binary-version-parameter). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
 
 ### Releasing Updates (NativeScript)
-TODO (last task before a PR can be sent)
-
 
 ```shell
 code-push release-nativescript <appName> <platform>
