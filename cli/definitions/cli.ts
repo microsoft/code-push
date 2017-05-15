@@ -104,6 +104,7 @@ export interface IDebugCommand extends ICommand {
 export interface IDeploymentAddCommand extends ICommand {
     appName: string;
     deploymentName: string;
+    default: boolean;
 }
 
 export interface IDeploymentHistoryClearCommand extends ICommand {

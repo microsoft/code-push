@@ -284,8 +284,10 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Add a new deployment to an app", (yargs: yargs.Argv): void => {
                 isValidCommand = true;
-                yargs.usage(USAGE_PREFIX + " deployment add <appName> <deploymentName>")
-                    .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+                yargs.usage(USAGE_PREFIX + " deployment add <appName> [deploymentName]")
+                    .demand(/*count*/ 1, /*max*/ 2)  // Require the app name, with deploymentName optional (either deploymentName or --default needs to be specified)
+                    .option("default", { alias: "d", demand: false, description: "Add the default \"Staging\" and \"Production\" deployments",  type: "boolean" })
+                    .example("deployment add MyApp --default", "Adds default \"Staging\" and \"Production\" deployments to app \"MyApp\"")
                     .example("deployment add MyApp MyDeployment", "Adds deployment \"MyDeployment\" to app \"MyApp\"");
 
                 addCommonConfiguration(yargs);
@@ -645,13 +647,14 @@ function createCommand(): cli.ICommand {
             case "deployment":
                 switch (arg1) {
                     case "add":
-                        if (arg2 && arg3) {
+                        if (arg2 && (arg3 || argv["default"])) {
                             cmd = { type: cli.CommandType.deploymentAdd };
 
                             var deploymentAddCommand = <cli.IDeploymentAddCommand>cmd;
 
                             deploymentAddCommand.appName = arg2;
                             deploymentAddCommand.deploymentName = arg3;
+                            deploymentAddCommand.default = argv["default"];
                         }
                         break;
 

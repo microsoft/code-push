@@ -74,11 +74,12 @@ export class SdkStub {
         });
     }
 
-    public addApp(name: string, os: string, platform: string): Promise<codePush.App> {
+    public addApp(name: string, os: string, platform: string, manuallyProvisionDeployments: boolean = false): Promise<codePush.App> {
         return Q(<codePush.App>{
             name: name,
             os: os,
-            platform: platform
+            platform: platform,
+            manuallyProvisionDeployments: manuallyProvisionDeployments
         });
     }
 
@@ -665,7 +666,8 @@ describe("CLI", () => {
         var command: cli.IDeploymentAddCommand = {
             type: cli.CommandType.deploymentAdd,
             appName: "a",
-            deploymentName: "b"
+            deploymentName: "b",
+            default: false
         };
 
         var addDeployment: Sinon.SinonSpy = sandbox.spy(cmdexec.sdk, "addDeployment");

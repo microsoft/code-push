@@ -9,7 +9,7 @@ import * as yazl from "yazl";
 
 import Promise = Q.Promise;
 
-import { AccessKey, AccessKeyRequest, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
+import { AccessKey, AccessKeyRequest, Account, App, AppCreationRequest, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
 
 var superproxy = require("superagent-proxy");
 superproxy(superagent);
@@ -214,11 +214,12 @@ class AccountManager {
             .then((res: JsonResponse) => res.body.app);
     }
 
-    public addApp(appName: string, appOs: string, appPlatform: string): Promise<App> {
-        var app: App = {
+    public addApp(appName: string, appOs: string, appPlatform: string, manuallyProvisionDeployments: boolean = false): Promise<App> {
+        var app: AppCreationRequest = {
             name: appName,
             os: appOs,
-            platform: appPlatform
+            platform: appPlatform,
+            manuallyProvisionDeployments: manuallyProvisionDeployments
         };
         return this.post(urlEncode `/apps/`, JSON.stringify(app), /*expectResponseBody=*/ false)
             .then(() => app);

@@ -189,16 +189,9 @@ function appAdd(command: cli.IAppAddCommand): Promise<void> {
         return Q.reject<void>(new Error(`"${command.platform}" is an unsupported platform. Available options are "react-native" and "cordova".`));
     }
 
-    return sdk.addApp(command.appName, os, platform)
-        .then((app: App): Promise<void> => {
-            log("Successfully added the \"" + command.appName + "\" app, along with the following default deployments:");
-            var deploymentListCommand: cli.IDeploymentListCommand = {
-                type: cli.CommandType.deploymentList,
-                appName: app.name,
-                format: "table",
-                displayKeys: true
-            };
-            return deploymentList(deploymentListCommand, /*showPackage=*/ false);
+    return sdk.addApp(command.appName, os, platform, true)
+        .then((app: App): void => {
+            log("Successfully added the \"" + command.appName + "\" app.\n" + "Use \"code-push deployment add\" to add deployment(s) to the app.");
         });
 }
 
@@ -313,10 +306,28 @@ function deleteFolder(folderPath: string): Promise<void> {
 }
 
 function deploymentAdd(command: cli.IDeploymentAddCommand): Promise<void> {
-    return sdk.addDeployment(command.appName, command.deploymentName)
-        .then((deployment: Deployment): void => {
-            log("Successfully added the \"" + command.deploymentName + "\" deployment with key \"" + deployment.key + "\" to the \"" + command.appName + "\" app.");
-        });
+    if (command.default) {
+        return sdk.addDeployment(command.appName, "Staging")
+            .then((deployment: Deployment): Promise<Deployment> => {
+                return sdk.addDeployment(command.appName, "Production");
+            })
+            .then((deployment: Deployment): Promise<void> => {
+                log("Successfully added the \"Staging\" and \"Production\" default deployments:");
+                var deploymentListCommand: cli.IDeploymentListCommand = {
+                    type: cli.CommandType.deploymentList,
+                    appName: command.appName,
+                    format: "table",
+                    displayKeys: true
+                };
+                return deploymentList(deploymentListCommand, /*showPackage=*/ false);
+            });
+    }
+    else {
+        return sdk.addDeployment(command.appName, command.deploymentName)
+            .then((deployment: Deployment): void => {
+                log("Successfully added the \"" + command.deploymentName + "\" deployment with key \"" + deployment.key + "\" to the \"" + command.appName + "\" app.");
+            });
+    }
 }
 
 function deploymentHistoryClear(command: cli.IDeploymentHistoryClearCommand): Promise<void> {
@@ -1186,7 +1197,7 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
     var releaseCommand: cli.IReleaseCommand = <any>command;
     // Check for app and deployment exist before releasing an update.
     // This validation helps to save about 1 minute or more in case user has typed wrong app or deployment name.
-    return sdk.getDeployment(command.appName, command.deploymentName)
+    return validateDeployment(command.appName, command.deploymentName)
         .then((): any => {
             var platform: string = command.platform.toLowerCase();
             var projectRoot: string = process.cwd();
@@ -1269,7 +1280,7 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
     var releaseCommand: cli.IReleaseCommand = <any>command;
     // Check for app and deployment exist before releasing an update.
     // This validation helps to save about 1 minute or more in case user has typed wrong app or deployment name.
-    return sdk.getDeployment(command.appName, command.deploymentName)
+    return validateDeployment(command.appName, command.deploymentName)
         .then((): any => {
             releaseCommand.package = outputFolder;
 
@@ -1350,6 +1361,16 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
         })
         .catch((err: Error) => {
             deleteFolder(outputFolder);
+            throw err;
+        });
+}
+
+function validateDeployment(appName: string,  deploymentName: string): Promise<void> {
+    return sdk.getDeployment(appName, deploymentName)
+        .catch((err: any) => {
+            if (err.statusCode === AccountManager.ERROR_NOT_FOUND) {
+                err.message = err.message + "\nUse \"code-push deployment list\" to view any existing deployments and \"code-push deployment add\" to add deployment(s) to the app.";
+            }
             throw err;
         });
 }
