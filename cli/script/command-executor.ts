@@ -600,13 +600,25 @@ function getTotalActiveFromDeploymentMetrics(metrics: DeploymentMetrics): number
 }
 
 function initiateExternalAuthenticationAsync(action: string, serverUrl?: string): void {
-    var message: string = `A browser is being launched to authenticate your account. Follow the instructions ` +
-        `it displays to complete your ${action === "register" ? "registration" : action}.`;
+    var message: string;
 
-    log(message);
-    var hostname: string = os.hostname();
-    var url: string = `${serverUrl || AccountManager.SERVER_URL}/auth/${action}?hostname=${hostname}`;
-    opener(url);
+    if (action === "link") {
+        message = `Please login to Mobile Center in the browser window we've just opened.\nIf you login with an additional authentication provider (e.g. GitHub) that shares the same email address, it will be linked to your current Mobile Center account.`;
+
+        // For "link" there shouldn't be a token prompt, so we go straight to the Mobile Center URL to avoid that
+        log(message);
+        var url: string = serverUrl || AccountManager.MOBILE_CENTER_SERVER_URL;
+        opener(url);
+    }
+    else {
+        // We use this now for both login & register
+        message = `Please login to Mobile Center in the browser window we've just opened.`;
+
+        log(message);
+        var hostname: string = os.hostname();
+        var url: string = `${serverUrl || AccountManager.SERVER_URL}/auth/${action}?hostname=${hostname}`;
+        opener(url);
+    }
 }
 
 function link(command: cli.ILinkCommand): Promise<void> {
@@ -650,7 +662,7 @@ function loginWithExternalAuthentication(action: string, serverUrl?: string, pro
                     if (isAuthenticated) {
                         serializeConnectionInfo(accessKey, /*preserveAccessKeyOnLogout*/ false, serverUrl, proxy, noProxy);
                     } else {
-                        throw new Error("Invalid access key.");
+                        throw new Error("Invalid token.");
                     }
                 });
         });
@@ -1400,7 +1412,7 @@ function requestAccessKey(): Promise<string> {
         prompt.get({
             properties: {
                 response: {
-                    description: chalk.cyan("Enter your access key: ")
+                    description: chalk.cyan("Enter your token from the browser: ")
                 }
             }
         }, (err: any, result: any): void => {

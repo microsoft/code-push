@@ -24,7 +24,7 @@ export function showHelp(showRootDescription?: boolean): void {
             console.log(chalk.cyan("\\___/\\___/\\_,_/\\__/" + chalk.green("_/   \\_,_/___/_//_/")) + "    CLI v" + packageJson.version);
             console.log(chalk.cyan("======================================"));
             console.log("");
-            console.log("CodePush is a service that enables you to deploy mobile app updates directly to your users' devices.\n");
+            console.log("Mobile Center CodePush is a service that enables you to deploy mobile app updates directly to your users' devices.\n");
             updateCheck();
         }
 
@@ -311,25 +311,25 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
-    .command("link", "Link an additional authentication provider (e.g. GitHub) to an existing CodePush account", (yargs: yargs.Argv) => {
+    .command("link", "Link an additional authentication provider (e.g. GitHub) to an existing Mobile Center account", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " link")
             .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
-            .example("link", "Links an account on the CodePush server")
+            .example("link", "Links an account on the Mobile Center server")
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
 
         addCommonConfiguration(yargs);
     })
-    .command("login", "Authenticate with the CodePush server in order to begin managing your apps", (yargs: yargs.Argv) => {
+    .command("login", "Authenticate in order to begin managing your apps", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " login [options]")
             .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
-            .example("login", "Logs in to the CodePush server")
+            .example("login", "Logs in to the Mobile Center server")
             .example("login --accessKey mykey", "Logs in on behalf of the user who owns and created the access key \"mykey\"")
             .example("login --proxy http://someproxy.com:455", "Logs in with the specified proxy url")
-            .option("accessKey", { alias: "key", default: null, demand: false, description: "Access key to authenticate against the CodePush server with, instead of providing your username and password credentials", type: "string" })
+            .option("accessKey", { alias: "key", default: null, demand: false, description: "Access key to authenticate against the Mobile Center server with, instead of providing your username and password credentials", type: "string" })
             .option("proxy", { default: null, demand: false, description: "URL of the proxy server to use", type: "string" })
             .option("noProxy", { default: false, demand: false, description: "Bypass the system-wide proxy settings", type: "boolean" })
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
@@ -375,12 +375,12 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
-    .command("register", "Register a new CodePush account", (yargs: yargs.Argv) => {
+    .command("register", "Register a new Mobile Center account", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " register")
             .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
-            .example("register", "Registers a new CodePush account")
+            .example("register", "Registers a new Mobile Center account")
             .example("register --proxy http://someproxy.com:455", "Registers with the specified proxy url")
             .option("proxy", { default: null, demand: false, description: "URL of the proxy server to use", type: "string" })
             .option("noProxy", { default: false, demand: false, description: "Bypass the system-wide proxy settings", type: "boolean" })
