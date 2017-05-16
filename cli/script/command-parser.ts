@@ -246,7 +246,6 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
-    /*
     .command("collaborator", "View and manage app collaborators", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         yargs.usage(USAGE_PREFIX + " collaborator <command>")
@@ -267,7 +266,6 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
-    */
     .command("debug", "View the CodePush debug logs for a running app", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
