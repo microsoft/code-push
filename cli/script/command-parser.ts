@@ -44,9 +44,9 @@ function accessKeyAdd(commandName: string, yargs: yargs.Argv): void {
     isValidCommand = true;
     yargs.usage(USAGE_PREFIX + " access-key " + commandName + " <accessKeyName>")
         .demand(/*count*/ 1, /*max*/ 1)  // Require exactly one non-option arguments
-        .example("access-key " + commandName + " \"VSTS Integration\"", "Creates a new access key with the name \"VSTS Integration\", which expires in 60 days")
-        .example("access-key " + commandName + " \"One time key\" --ttl 5m", "Creates a new access key with the name \"One time key\", which expires in 5 minutes")
-        .option("ttl", { default: "60d", demand: false, description: "Duration string which specifies the amount of time that the access key should remain valid for (e.g 5m, 60d, 1y)", type: "string" });
+        .example("access-key " + commandName + " \"VSTS Integration\"", "Creates a new access key with the name \"VSTS Integration\"")
+        //.example("access-key " + commandName + " \"One time key\" --ttl 5m", "Creates a new access key with the name \"One time key\", which expires in 5 minutes")
+        //.option("ttl", { default: "60d", demand: false, description: "Duration string which specifies the amount of time that the access key should remain valid for (e.g 5m, 60d, 1y)", type: "string" });
 
     addCommonConfiguration(yargs);
 }
@@ -197,6 +197,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         yargs.usage(USAGE_PREFIX + " access-key <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Create a new access key associated with your account", (yargs: yargs.Argv) => accessKeyAdd("add", yargs))
+            // Mobile Center doesn't support renaming access keys or changing their TTL (which never expire), so we no longer support patch
             /*
             .command("patch", "Update the name and/or TTL of an existing access key", (yargs: yargs.Argv) => accessKeyPatch("patch", yargs))
             */
@@ -503,10 +504,14 @@ function createCommand(): cli.ICommand {
                             cmd = { type: cli.CommandType.accessKeyAdd };
                             var accessKeyAddCmd = <cli.IAccessKeyAddCommand>cmd;
                             accessKeyAddCmd.name = arg2;
+                            /*
                             var ttlOption: string = argv["ttl"];
                             if (isDefined(ttlOption)) {
                                 accessKeyAddCmd.ttl = parseDurationMilliseconds(ttlOption);
                             }
+                            */
+                            // Mobile Center access keys never expire, so this setting doesn't matter (it just needs to be something)
+                            accessKeyAddCmd.ttl = parseDurationMilliseconds("60d");
                         }
                         break;
 

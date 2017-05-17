@@ -1066,18 +1066,19 @@ function printAccessKeys(format: string, keys: AccessKey[]): void {
     if (format === "json") {
         printJson(keys);
     } else if (format === "table") {
-        printTable(["Name", "Created", "Expires"], (dataSource: any[]): void => {
+        printTable(["Name", "Created" /*, "Expires" */], (dataSource: any[]): void => {
             var now = new Date().getTime();
 
             function isExpired(key: AccessKey): boolean {
                 return now >= key.expires;
             }
 
+            // Access keys never expire in Mobile Center (at least for now--maybe that feature will get added later), so don't show the Expires column anymore
             function keyToTableRow(key: AccessKey, dim: boolean): string[] {
                 var row: string[] = [
                     key.name,
-                    key.createdTime ? formatDate(key.createdTime) : "",
-                    formatDate(key.expires)
+                    key.createdTime ? formatDate(key.createdTime) : ""
+                    /* formatDate(key.expires) */
                 ];
 
                 if (dim) {
