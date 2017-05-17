@@ -173,8 +173,11 @@ function appAdd(command: cli.IAppAddCommand): Promise<void> {
     else if (normalizedOs === "android") {
         os = "Android";
     }
+    else if (normalizedOs === "windows") {
+        os = "Windows";
+    }
     else {
-        return Q.reject<void>(new Error(`"${command.os}" is an unsupported OS. Available options are "ios" and "android".`));
+        return Q.reject<void>(new Error(`"${command.os}" is an unsupported OS. Available options are "ios", "android", and "windows".`));
     }
 
     var platform: string;
