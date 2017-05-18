@@ -1312,7 +1312,7 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
 
                     break;
                 default:
-                    throw new Error("Platform must be either \"android\", \"ios\" or \"windows\".");
+                    throw new Error("Platform must be \"android\", \"ios\", or \"windows\".");
             }
 
             try {

@@ -218,6 +218,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
                 yargs.usage(USAGE_PREFIX + " app add <appName> <os> <platform>")
                     .demand(/*count*/ 3, /*max*/ 3)  // Require exactly three non-option arguments
                     .example("app add MyApp ios react-native", "Adds app \"MyApp\", indicating that it's an iOS React Native app")
+                    .example("app add MyApp windows react-native", "Adds app \"MyApp\", indicating that it's a Windows React Native app")
                     .example("app add MyApp android cordova", "Adds app \"MyApp\", indicating that it's an Android Cordova app");
 
                 addCommonConfiguration(yargs);
