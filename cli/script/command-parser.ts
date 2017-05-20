@@ -24,7 +24,7 @@ export function showHelp(showRootDescription?: boolean): void {
             console.log(chalk.cyan("\\___/\\___/\\_,_/\\__/" + chalk.green("_/   \\_,_/___/_//_/")) + "    CLI v" + packageJson.version);
             console.log(chalk.cyan("======================================"));
             console.log("");
-            console.log("CodePush is a service that enables you to deploy mobile app updates directly to your users' devices.\n");
+            console.log("Mobile Center CodePush is a service that enables you to deploy mobile app updates directly to your users' devices.\n");
             updateCheck();
         }
 
@@ -44,9 +44,9 @@ function accessKeyAdd(commandName: string, yargs: yargs.Argv): void {
     isValidCommand = true;
     yargs.usage(USAGE_PREFIX + " access-key " + commandName + " <accessKeyName>")
         .demand(/*count*/ 1, /*max*/ 1)  // Require exactly one non-option arguments
-        .example("access-key " + commandName + " \"VSTS Integration\"", "Creates a new access key with the name \"VSTS Integration\", which expires in 60 days")
-        .example("access-key " + commandName + " \"One time key\" --ttl 5m", "Creates a new access key with the name \"One time key\", which expires in 5 minutes")
-        .option("ttl", { default: "60d", demand: false, description: "Duration string which specifies the amount of time that the access key should remain valid for (e.g 5m, 60d, 1y)", type: "string" });
+        .example("access-key " + commandName + " \"VSTS Integration\"", "Creates a new access key with the name \"VSTS Integration\"")
+        //.example("access-key " + commandName + " \"One time key\" --ttl 5m", "Creates a new access key with the name \"One time key\", which expires in 5 minutes")
+        //.option("ttl", { default: "60d", demand: false, description: "Duration string which specifies the amount of time that the access key should remain valid for (e.g 5m, 60d, 1y)", type: "string" });
 
     addCommonConfiguration(yargs);
 }
@@ -197,7 +197,10 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         yargs.usage(USAGE_PREFIX + " access-key <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Create a new access key associated with your account", (yargs: yargs.Argv) => accessKeyAdd("add", yargs))
+            // Mobile Center doesn't support renaming access keys or changing their TTL (which never expire), so we no longer support patch
+            /*
             .command("patch", "Update the name and/or TTL of an existing access key", (yargs: yargs.Argv) => accessKeyPatch("patch", yargs))
+            */
             .command("remove", "Remove an existing access key", (yargs: yargs.Argv) => accessKeyRemove("remove", yargs))
             .command("rm", "Remove an existing access key", (yargs: yargs.Argv) => accessKeyRemove("rm", yargs))
             .command("list", "List the access keys associated with your account", (yargs: yargs.Argv) => accessKeyList("list", yargs))
@@ -212,9 +215,11 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Add a new app to your account", (yargs: yargs.Argv): void => {
                 isValidCommand = true;
-                yargs.usage(USAGE_PREFIX + " app add <appName>")
-                    .demand(/*count*/ 1, /*max*/ 1)  // Require exactly one non-option arguments
-                    .example("app add MyApp", "Adds app \"MyApp\"");
+                yargs.usage(USAGE_PREFIX + " app add <appName> <os> <platform>")
+                    .demand(/*count*/ 3, /*max*/ 3)  // Require exactly three non-option arguments
+                    .example("app add MyApp ios react-native", "Adds app \"MyApp\", indicating that it's an iOS React Native app")
+                    .example("app add MyApp windows react-native", "Adds app \"MyApp\", indicating that it's a Windows React Native app")
+                    .example("app add MyApp android cordova", "Adds app \"MyApp\", indicating that it's an Android Cordova app");
 
                 addCommonConfiguration(yargs);
             })
@@ -230,13 +235,15 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             })
             .command("list", "Lists the apps associated with your account", (yargs: yargs.Argv) => appList("list", yargs))
             .command("ls", "Lists the apps associated with your account", (yargs: yargs.Argv) => appList("ls", yargs))
+            /*
             .command("transfer", "Transfer the ownership of an app to another account", (yargs: yargs.Argv) => {
                 yargs.usage(USAGE_PREFIX + " app transfer <appName> <email>")
-                    .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+                    .demand(2, 2)  // Require exactly two non-option arguments
                     .example("app transfer MyApp foo@bar.com", "Transfers the ownership of app \"MyApp\" to an account with email \"foo@bar.com\"");
 
                 addCommonConfiguration(yargs);
             })
+            */
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
 
         addCommonConfiguration(yargs);
@@ -244,11 +251,11 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
     .command("collaborator", "View and manage app collaborators", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         yargs.usage(USAGE_PREFIX + " collaborator <command>")
-            .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
+            .demand(2, 2)  // Require exactly two non-option arguments.
             .command("add", "Add a new collaborator to an app", (yargs: yargs.Argv): void => {
                 isValidCommand = true;
                 yargs.usage(USAGE_PREFIX + " collaborator add <appName> <email>")
-                    .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+                    .demand(2, 2)  // Require exactly two non-option arguments
                     .example("collaborator add MyApp foo@bar.com", "Adds foo@bar.com as a collaborator to app \"MyApp\"");
 
                 addCommonConfiguration(yargs);
@@ -277,8 +284,10 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
             .command("add", "Add a new deployment to an app", (yargs: yargs.Argv): void => {
                 isValidCommand = true;
-                yargs.usage(USAGE_PREFIX + " deployment add <appName> <deploymentName>")
-                    .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+                yargs.usage(USAGE_PREFIX + " deployment add <appName> [deploymentName]")
+                    .demand(/*count*/ 1, /*max*/ 2)  // Require the app name, with deploymentName optional (either deploymentName or --default needs to be specified)
+                    .option("default", { alias: "d", demand: false, description: "Add the default \"Staging\" and \"Production\" deployments",  type: "boolean" })
+                    .example("deployment add MyApp --default", "Adds default \"Staging\" and \"Production\" deployments to app \"MyApp\"")
                     .example("deployment add MyApp MyDeployment", "Adds deployment \"MyDeployment\" to app \"MyApp\"");
 
                 addCommonConfiguration(yargs);
@@ -302,25 +311,25 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
-    .command("link", "Link an additional authentication provider (e.g. GitHub) to an existing CodePush account", (yargs: yargs.Argv) => {
+    .command("link", "Link an additional authentication provider (e.g. GitHub) to an existing Mobile Center account", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " link")
             .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
-            .example("link", "Links an account on the CodePush server")
+            .example("link", "Links an account on the Mobile Center server")
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
 
         addCommonConfiguration(yargs);
     })
-    .command("login", "Authenticate with the CodePush server in order to begin managing your apps", (yargs: yargs.Argv) => {
+    .command("login", "Authenticate in order to begin managing your apps", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " login [options]")
             .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
-            .example("login", "Logs in to the CodePush server")
+            .example("login", "Logs in to the Mobile Center server")
             .example("login --accessKey mykey", "Logs in on behalf of the user who owns and created the access key \"mykey\"")
             .example("login --proxy http://someproxy.com:455", "Logs in with the specified proxy url")
-            .option("accessKey", { alias: "key", default: null, demand: false, description: "Access key to authenticate against the CodePush server with, instead of providing your username and password credentials", type: "string" })
+            .option("accessKey", { alias: "key", default: null, demand: false, description: "Access key to authenticate against the Mobile Center server with, instead of providing your username and password credentials", type: "string" })
             .option("proxy", { default: null, demand: false, description: "URL of the proxy server to use", type: "string" })
             .option("noProxy", { default: false, demand: false, description: "Bypass the system-wide proxy settings", type: "boolean" })
             .check((argv: any, aliases: { [aliases: string]: string }): any => isValidCommand);  // Report unrecognized, non-hyphenated command category.
@@ -366,12 +375,12 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
-    .command("register", "Register a new CodePush account", (yargs: yargs.Argv) => {
+    .command("register", "Register a new Mobile Center account", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " register")
             .demand(/*count*/ 0, /*max*/ 1)  //set 'max' to one to allow usage of serverUrl undocument parameter for testing
-            .example("register", "Registers a new CodePush account")
+            .example("register", "Registers a new Mobile Center account")
             .example("register --proxy http://someproxy.com:455", "Registers with the specified proxy url")
             .option("proxy", { default: null, demand: false, description: "URL of the proxy server to use", type: "string" })
             .option("noProxy", { default: false, demand: false, description: "Bypass the system-wide proxy settings", type: "boolean" })
@@ -469,10 +478,11 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
+    /*
     .command("session", "View and manage the current login sessions associated with your account", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         yargs.usage(USAGE_PREFIX + " session <command>")
-            .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments.
+            .demand(2, 2)  // Require exactly two non-option arguments.
             .command("remove", "Remove an existing login session", (yargs: yargs.Argv) => sessionRemove("remove", yargs))
             .command("rm", "Remove an existing login session", (yargs: yargs.Argv) => sessionRemove("rm", yargs))
             .command("list", "List the current login sessions associated with your account", (yargs: yargs.Argv) => sessionList("list", yargs))
@@ -481,6 +491,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
+    */
     .command("whoami", "Display the account info for the current login session", (yargs: yargs.Argv) => {
         isValidCommandCategory = true;
         isValidCommand = true;
@@ -516,10 +527,14 @@ function createCommand(): cli.ICommand {
                             cmd = { type: cli.CommandType.accessKeyAdd };
                             var accessKeyAddCmd = <cli.IAccessKeyAddCommand>cmd;
                             accessKeyAddCmd.name = arg2;
+                            /*
                             var ttlOption: string = argv["ttl"];
                             if (isDefined(ttlOption)) {
                                 accessKeyAddCmd.ttl = parseDurationMilliseconds(ttlOption);
                             }
+                            */
+                            // Mobile Center access keys never expire, so this setting doesn't matter (it just needs to be something)
+                            accessKeyAddCmd.ttl = parseDurationMilliseconds("60d");
                         }
                         break;
 
@@ -565,7 +580,11 @@ function createCommand(): cli.ICommand {
                         if (arg2) {
                             cmd = { type: cli.CommandType.appAdd };
 
-                            (<cli.IAppAddCommand>cmd).appName = arg2;
+                            var appAddCommand = <cli.IAppAddCommand>cmd;
+
+                            appAddCommand.appName = arg2;
+                            appAddCommand.os = arg3;
+                            appAddCommand.platform = arg4;
                         }
                         break;
 
@@ -654,13 +673,14 @@ function createCommand(): cli.ICommand {
             case "deployment":
                 switch (arg1) {
                     case "add":
-                        if (arg2 && arg3) {
+                        if (arg2 && (arg3 || argv["default"])) {
                             cmd = { type: cli.CommandType.deploymentAdd };
 
                             var deploymentAddCommand = <cli.IDeploymentAddCommand>cmd;
 
                             deploymentAddCommand.appName = arg2;
                             deploymentAddCommand.deploymentName = arg3;
+                            deploymentAddCommand.default = argv["default"];
                         }
                         break;
 

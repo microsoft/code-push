@@ -80,9 +80,12 @@ export class SdkStub {
         });
     }
 
-    public addApp(name: string): Promise<codePush.App> {
+    public addApp(name: string, os: string, platform: string, manuallyProvisionDeployments: boolean = false): Promise<codePush.App> {
         return Q(<codePush.App>{
-            name: name
+            name: name,
+            os: os,
+            platform: platform,
+            manuallyProvisionDeployments: manuallyProvisionDeployments
         });
     }
 
@@ -355,6 +358,7 @@ describe("CLI", () => {
     });
 
 
+    /*
     it("accessKeyPatch updates access key with new ttl", (done: MochaDone): void => {
         var ttl = 10000;
         var command: cli.IAccessKeyPatchCommand = {
@@ -397,6 +401,7 @@ describe("CLI", () => {
                 done();
             });
     });
+    */
 
     it("accessKeyList lists access key name and expires fields", (done: MochaDone): void => {
         var command: cli.IAccessKeyListCommand = {
@@ -465,7 +470,9 @@ describe("CLI", () => {
     it("appAdd reports new app name and ID", (done: MochaDone): void => {
         var command: cli.IAppAddCommand = {
             type: cli.CommandType.appAdd,
-            appName: "a"
+            appName: "a",
+            os: "ios",
+            platform: "react-native"
         };
 
         var addApp: Sinon.SinonSpy = sandbox.spy(cmdexec.sdk, "addApp");
@@ -474,9 +481,9 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .done((): void => {
                 sinon.assert.calledOnce(addApp);
-                sinon.assert.calledTwice(log);
-                sinon.assert.calledWithExactly(log, "Successfully added the \"a\" app, along with the following default deployments:");
-                sinon.assert.calledOnce(deploymentList);
+                sinon.assert.calledOnce(log);
+                sinon.assert.calledWithExactly(log, "Successfully added the \"a\" app.\nUse \"code-push deployment add\" to add deployment(s) to the app.");
+                //sinon.assert.calledOnce(deploymentList);
                 done();
             });
     });
@@ -667,7 +674,8 @@ describe("CLI", () => {
         var command: cli.IDeploymentAddCommand = {
             type: cli.CommandType.deploymentAdd,
             appName: "a",
-            deploymentName: "b"
+            deploymentName: "b",
+            default: false
         };
 
         var addDeployment: Sinon.SinonSpy = sandbox.spy(cmdexec.sdk, "addDeployment");

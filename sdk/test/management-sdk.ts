@@ -23,7 +23,7 @@ describe("Management SDK", () => {
         mockReturn("Text", 404);
 
         var methodsWithErrorHandling: any[] = [
-            manager.addApp.bind(manager, "appName"),
+            manager.addApp.bind(manager, "appName", "appOs", "appPlatform"),
             manager.getApp.bind(manager, "appName"),
             manager.renameApp.bind(manager, "appName", {}),
             manager.removeApp.bind(manager, "appName"),
@@ -116,7 +116,7 @@ describe("Management SDK", () => {
 
     it("addApp handles successful response", (done: MochaDone) => {
         mockReturn(JSON.stringify({ success: true }), 201, { location: "/appName" });
-        manager.addApp("appName")
+        manager.addApp("appName", "iOS", "React-Native")
             .done((obj) => {
                 assert.ok(obj);
                 done();
@@ -125,7 +125,7 @@ describe("Management SDK", () => {
 
     it("addApp handles error response", (done: MochaDone) => {
         mockReturn(JSON.stringify({ success: false }), 404, {});
-        manager.addApp("appName")
+        manager.addApp("appName", "iOS", "React-Native")
             .done((obj) => {
                 throw new Error("Call should not complete successfully");
             }, (error: Error) => done());

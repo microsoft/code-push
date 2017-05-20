@@ -9,7 +9,7 @@ import * as yazl from "yazl";
 
 import Promise = Q.Promise;
 
-import { AccessKey, AccessKeyRequest, Account, App, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
+import { AccessKey, AccessKeyRequest, Account, App, AppCreationRequest, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
 
 var superproxy = require("superagent-proxy");
 superproxy(superagent);
@@ -45,6 +45,7 @@ class AccountManager {
         COLLABORATOR: "Collaborator"
     };
     public static SERVER_URL = "https://codepush-management.azurewebsites.net";
+    public static MOBILE_CENTER_SERVER_URL = "https://mobile.azure.com";
 
     private static API_VERSION: number = 2;
 
@@ -60,7 +61,7 @@ class AccountManager {
     private _proxy: string;
 
     constructor(accessKey: string, customHeaders?: Headers, serverUrl?: string, proxy?: string) {
-        if (!accessKey) throw new Error("An access key must be specified.");
+        if (!accessKey) throw new Error("A token must be specified.");
 
         this._accessKey = accessKey;
         this._customHeaders = customHeaders;
@@ -214,8 +215,13 @@ class AccountManager {
             .then((res: JsonResponse) => res.body.app);
     }
 
-    public addApp(appName: string): Promise<App> {
-        var app: App = { name: appName };
+    public addApp(appName: string, appOs: string, appPlatform: string, manuallyProvisionDeployments: boolean = false): Promise<App> {
+        var app: AppCreationRequest = {
+            name: appName,
+            os: appOs,
+            platform: appPlatform,
+            manuallyProvisionDeployments: manuallyProvisionDeployments
+        };
         return this.post(urlEncode `/apps/`, JSON.stringify(app), /*expectResponseBody=*/ false)
             .then(() => app);
     }
