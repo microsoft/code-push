@@ -1384,7 +1384,8 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
 function validateDeployment(appName: string,  deploymentName: string): Promise<void> {
     return sdk.getDeployment(appName, deploymentName)
         .catch((err: any) => {
-            if (err.statusCode === AccountManager.ERROR_NOT_FOUND) {
+            // If we get an error that the deployment doesn't exist (but not the app doesn't exist), then tack on a more descriptive error message telling the user what to do
+            if (err.statusCode === AccountManager.ERROR_NOT_FOUND && err.message.indexOf("Deployment") !== -1) {
                 err.message = err.message + "\nUse \"code-push deployment list\" to view any existing deployments and \"code-push deployment add\" to add deployment(s) to the app.";
             }
             throw err;
