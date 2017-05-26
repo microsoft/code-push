@@ -37,7 +37,7 @@ CodePush是一个云服务，它能让Cordova和React Native的开发者将手�
 ## 快速开始
 
 1. 使用CodePush CLI创建一个[CodePush 账号](#创建账号)
-2. 注册你的CodePush[应用](#应用管理), 并[分享](#应用合作)给你团队的其它开发者 
+2. 注册你的CodePush[应用](#应用管理), 并[分享](#应用合作)给你团队的其它开发者
 3. 用[Cordova插件](http://github.com/Microsoft/cordova-plugin-code-push) 或 [React Native插件](http://github.com/Microsoft/react-native-code-push)配置好CodePush并指向你希望的部署环境
 4. [发布](#发布更新)更新
 5. 活的长而成功！[详细资料](https://en.wikipedia.org/wiki/Vulcan_salute)
@@ -114,12 +114,14 @@ code-push login --accessKey <accessKey>
 code-push app add <appName>
 ```
 
-如果你的App既有IOS又有Android，我们推荐你创建单独的App。一个平台一个。这样你可以单独的管理和发布更新，从长远来看这会让事情更简单。大部分人的命名约定会在App名加后缀`-IOS`和`-Android`。例如：
+如果你的App既有iOS又有Android，请*为不同平台创建单独的App*（详情参照下文的注解）。一个平台一个。这样你可以单独的管理和发布更新，从长远来看这会让事情更简单。大部分人的命名约定会在App名加后缀`-IOS`和`-Android`。例如：
 
 ```
 code-push app add MyApp-Android
 code-push app add MyApp-iOS
 ```
+
+*注意：在iOS和Android使用相同的app可能会导致安装异常，因为CodePush在iOS和Android的更新包内容会有差异。*
 
 所有新的Apps自动会出现有个部署环境（`Staging`和`Production`），为了你可以开始发布更新到不同的渠道而不需要做任何其它的事（参考下面的部署指南）。你创建一个App之后，CLI将显示`Staging`和`Production`环境的开发密钥，你就可以使用不同的SDKs(详细请看[Cordova](http://github.com/Microsoft/cordova-plugin-code-push) 和 [React Native](http://github.com/Microsoft/react-native-code-push))来配置你的手机端App了。
 
@@ -193,7 +195,7 @@ code-push app transfer <appName> <newOwnerEmail>
 
 *注意：就像`code-push collaborator add`命令一样，这期望新的拥有者已经用指定的e-mail注册了CodePush。*
 
-一经确认，该指定的开发者成为App的拥有者，而且立即接收到该角色的相关权限。除了拥有权转移外，其它的任何都没有被修改（比如：部署环境，发布历史，合作者）。这意味着你还仍然是该App的一个合作者，所以如果你想移除你自己，那你可以在成功转让拥有全后简单的运行`code-push collaborator rm`命令。 
+一经确认，该指定的开发者成为App的拥有者，而且立即接收到该角色的相关权限。除了拥有权转移外，其它的任何都没有被修改（比如：部署环境，发布历史，合作者）。这意味着你还仍然是该App的一个合作者，所以如果你想移除你自己，那你可以在成功转让拥有全后简单的运行`code-push collaborator rm`命令。
 
 ## 部署管理
 
@@ -312,6 +314,8 @@ code-push release <appName> <updateContents> <targetBinaryVersion>
 
 *注意：如果语义表达式以特殊字符开始如`>`,`^`或***，如果你没有用引号括起来的话命令可能执行不对，因为shell在CLI里不支持右边的值。所以，当调用`release`命令时最好能把你的`targetBinaryVersion`参数用双引号括起来，如：`code-push release MyApp updateContents ">1.2.3"`。*
 
+*注意：根据语义版本规范，版本范围仅对非预发布版本生效：(https://github.com/npm/node-semver#prerelease-tags) 。当你想要发布更新到一个预发布的版本上时，则需要明确指定你想要升级的版本号（比如`1.2.3-beta`）。*
+
 如下表格分别概括了每个应用类型的CodePush更新的语义版本范围的版本值：
 
 | 平台               | 应用商店版本来源 |
@@ -395,7 +399,7 @@ code-push release-react <appName> <platform>
 [--rollout <rolloutPercentage>]
 ```
 `release-react`命令是React Native特有的[`发布`](#发布更新)命令，支持相同的所有参数（如：`--mandatory`,`--description`），然而通过如下额外的动作简化了发布更新过程：
- 
+
 1. 运行`react-native bundle`命令去生成将要发布到CodePush服务的[更新](#update-contents-params)(JS Bundle和资源)。它尽可能使用合理的默认值(如：创建一个non-dev构建,假设一个iOS入口文件被命名为“index.ios.js”)，但也暴露了有关`react-native bundle`参数使得灵活（如：`--sourcemapOutput`）。
 
 2. 通过使用定义在项目文件`info.plist`(IOS)和`build.gradle`(Android)里的版本名，推断[`targetBinaryVersion`](#target-binary-version-目标二进制版本-参数)的值。
@@ -650,7 +654,7 @@ code-push promote <appName> <sourceDeploymentName> <destDeploymentName>
 相同的参数在[上面的章节](#target-binary-version-参数)描述过，简单的允许你覆写使用的提升版本的版本号(target binary version)。如果没有指定，新的版本将继承被提升版本的版本号。
 
 ```shell
-# Promote the release to production and make it 
+# Promote the release to production and make it
 # available to all versions using that deployment
 code-push promote MyApp Staging Production -t "*"
 ```
