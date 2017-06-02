@@ -111,7 +111,7 @@ code-push login --accessKey <accessKey>
 在你发布更新前，你需要用如下命令在CodePush服务上注册一个App：
 
 ```
-code-push app add <appName>
+code-push app add <appName> <os> <platform>
 ```
 
 如果你的App既有IOS又有Android，我们推荐你创建单独的App。一个平台一个。这样你可以单独的管理和发布更新，从长远来看这会让事情更简单。大部分人的命名约定会在App名加后缀`-IOS`和`-Android`。例如：

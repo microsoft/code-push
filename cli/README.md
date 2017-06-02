@@ -144,7 +144,7 @@ Additionally, if at any time you want to see what proxy settings (if any) are be
 Before you can deploy any updates, you need to register an app with the CodePush service using the following command:
 
 ```
-code-push app add <appName>
+code-push app add <appName> <os> <platform>
 ```
 
 If your app targets both iOS and Android, please *create separate apps for each platform* with CodePush (see the note below for details). This way, you can manage and release updates to them separately, which in the long run, also tends to make things simpler. The naming convention that most folks use is to suffix the app name with `-iOS` and `-Android`. For example:
@@ -202,7 +202,6 @@ Once added, all collaborators will immediately have the following permissions wi
 Inversely, that means that an app collaborator cannot do any of the following:
 
 1. Rename or delete the app
-1. Transfer ownership of the app
 1. Create, rename or delete new deployments within the app
 1. Clear a deployment's release history
 1. Add or remove collaborators from the app (*)
@@ -220,16 +219,6 @@ If at any time you want to list all collaborators that have been added to an app
 ```shell
 code-push collaborator ls <appName>
 ```
-
-Finally, if at some point, you (as the app owner) will no longer be working on the app, and you want to transfer it to another developer (or a client), you can run the following command:
-
-```shell
-code-push app transfer <appName> <newOwnerEmail>
-```
-
-*NOTE: Just like with the `code-push collaborator add` command, this expects that the new owner has already registered with CodePush using the specified e-mail address.*
-
-Once confirmed, the specified developer becomes the app's owner and immediately receives the permissions associated with that role. Besides the transfer of ownership, nothing else about the app is modified (e.g. deployments, release history, collaborators). This means that you will still be a collaborator of the app, and therefore, if you want to remove yourself, you simply need to run the `code-push collaborator rm` command after successfully transferring ownership.
 
 ### Deployment Management
 
