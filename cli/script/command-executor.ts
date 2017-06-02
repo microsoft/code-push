@@ -192,9 +192,16 @@ function appAdd(command: cli.IAppAddCommand): Promise<void> {
         return Q.reject<void>(new Error(`"${command.platform}" is an unsupported platform. Available options are "react-native" and "cordova".`));
     }
 
-    return sdk.addApp(command.appName, os, platform, true)
-        .then((app: App): void => {
-            log("Successfully added the \"" + command.appName + "\" app.\n" + "Use \"code-push deployment add\" to add deployment(s) to the app.");
+    return sdk.addApp(command.appName, os, platform, false)
+        .then((app: App): Promise<void> => {
+            log("Successfully added the \"" + command.appName + "\" app, along with the following default deployments:");
+            var deploymentListCommand: cli.IDeploymentListCommand = {
+                type: cli.CommandType.deploymentList,
+                appName: app.name,
+                format: "table",
+                displayKeys: true
+            };
+            return deploymentList(deploymentListCommand, /*showPackage=*/ false);
         });
 }
 
