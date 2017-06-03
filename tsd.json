@@ -78,6 +78,9 @@
     },
     "update-notifier/update-notifier.d.ts": {
       "commit": "715df764419937a75a25dcd76bfc954157bc7b96"
+    },
+    "es6-shim/es6-shim.d.ts": {
+      "commit": "067edc80b9b70a1a4f342a53e7dc1dd00708d3fd"
     }
   }
 }

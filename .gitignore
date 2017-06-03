@@ -31,6 +31,7 @@ node_modules
 bin/
 definitions/external/
 definitions/generated/
+plugin-testing-framework/typings/
 
 # Environment variables
 *.env

@@ -34,7 +34,7 @@ export function showHelp(showRootDescription?: boolean): void {
 }
 
 function updateCheck(): void {
-    var notifier: updateNotifier.IResult = updateNotifier({ pkg: packageJson });
+    var notifier: updateNotifier.IResult = updateNotifier({ packagePath: packageJson });
     if (notifier.update) {
         notifier.notify();
     }

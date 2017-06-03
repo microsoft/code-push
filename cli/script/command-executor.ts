@@ -60,7 +60,7 @@ export interface UpdateMetricsWithTotalActive extends UpdateMetrics {
     totalActive: number;
 }
 
-export interface PackageWithMetrics {
+export interface PackageWithMetrics extends Package {
     metrics?: UpdateMetricsWithTotalActive;
 }
 

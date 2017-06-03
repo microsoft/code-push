@@ -8,6 +8,7 @@ var mochaConfig = {
     timeout: parseInt(process.env.TIMEOUT) || 5000
 };
 
+// don't include plugin in projects here because there are no tests on the testing framework
 var projects = {
     "sdk": ["build-sdk"],
     "cli": ["build-cli"]

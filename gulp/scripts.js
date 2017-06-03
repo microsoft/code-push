@@ -11,8 +11,9 @@ var merge = require("merge2");
 var dtsGenerator = require("dts-generator");
 
 var generatedDefinitionDependencies = {
-    sdk: [],
-    cli: ["code-push"]
+    "sdk": [],
+    "plugin-testing-framework": ["code-push-plugin-testing-framework"],
+    "cli": ["code-push"]
 };
 
 function tsJsxPipe(file, enc, cb) {
@@ -71,6 +72,7 @@ function makeExecutable(path) {
 gulp.task("scripts-external", ["tsd"]);
 
 gulp.task("scripts-compile-sdk", ["scripts-external"], function() { return scriptTask("sdk"); });
+gulp.task("scripts-compile-plugin", ["scripts-external"], function() { return scriptTask("plugin-testing-framework"); });
 gulp.task("scripts-compile-cli", ["scripts-sdk", "scripts-external"], function() { return scriptTask("cli"); });
 
 gulp.task("scripts-chmod-cli", ["scripts-compile-cli"], function() {
@@ -87,5 +89,16 @@ gulp.task("scripts-dtsbundle-sdk", ["scripts-compile-sdk"], function () {
     });
 });
 
+gulp.task("scripts-dtsbundle-plugin", ["scripts-compile-plugin"], function () {
+    dtsGenerator.generate({
+        name: "code-push-plugin-testing-framework",
+        main: "code-push-plugin-testing-framework/script/index",
+        baseDir: "plugin-testing-framework/bin/definitions",
+        files: ["script/index.d.ts"],
+        out: "plugin-testing-framework/bin/typings/code-push-plugin-testing-framework.d.ts"
+    });
+});
+
 gulp.task("scripts-sdk", ["scripts-dtsbundle-sdk"]);
+gulp.task("scripts-plugin", ["scripts-dtsbundle-plugin"]);
 gulp.task("scripts-cli", ["scripts-chmod-cli"]);

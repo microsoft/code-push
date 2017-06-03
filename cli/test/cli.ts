@@ -850,7 +850,7 @@ describe("CLI", () => {
                 assert.equal(log.args[0].length, 1);
 
                 var actual: string = log.args[0][0];
-                var expected: codePush.Package[] = [
+                var expected: cmdexec.PackageWithMetrics[] = [
                     {
                         description: null,
                         appVersion: "1.0.0",
