@@ -556,6 +556,8 @@ This specifies the relative path to where the generated JS bundle's sourcemap fi
 
 This specifies the relative path to where the assets, JS bundle and sourcemap files should be written. If left unspecified, the assets, JS bundle and sourcemap will be copied to the `/tmp/CodePush` folder.
 
+*NOTE: All contents within specified folder will be deleted before copying*
+
 *NOTE: This parameter can be set using either --outputDir or -o*
 
 ### Releasing Updates (Cordova)
