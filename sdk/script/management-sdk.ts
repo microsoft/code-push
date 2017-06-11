@@ -211,7 +211,7 @@ class AccountManager {
     }
 
     public getApp(appName: string): Promise<App> {
-        return this.get(urlEncode `/apps/${appName}`)
+        return this.get(urlEncode `/apps/${this.appNameParam(appName)}`)
             .then((res: JsonResponse) => res.body.app);
     }
 
@@ -227,75 +227,75 @@ class AccountManager {
     }
 
     public removeApp(appName: string): Promise<void> {
-        return this.del(urlEncode `/apps/${appName}`)
+        return this.del(urlEncode `/apps/${this.appNameParam(appName)}`)
             .then(() => null);
     }
 
     public renameApp(oldAppName: string, newAppName: string): Promise<void> {
-        return this.patch(urlEncode `/apps/${oldAppName}`, JSON.stringify({ name: newAppName }))
+        return this.patch(urlEncode `/apps/${this.appNameParam(oldAppName)}`, JSON.stringify({ name: newAppName }))
             .then(() => null);
     }
 
     public transferApp(appName: string, email: string): Promise<void> {
-        return this.post(urlEncode `/apps/${appName}/transfer/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
+        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/transfer/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
     // Collaborators
     public getCollaborators(appName: string): Promise<CollaboratorMap> {
-        return this.get(urlEncode `/apps/${appName}/collaborators`)
+        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/collaborators`)
             .then((res: JsonResponse) => res.body.collaborators);
     }
 
     public addCollaborator(appName: string, email: string): Promise<void> {
-        return this.post(urlEncode `/apps/${appName}/collaborators/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
+        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/collaborators/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
     public removeCollaborator(appName: string, email: string): Promise<void> {
-        return this.del(urlEncode `/apps/${appName}/collaborators/${email}`)
+        return this.del(urlEncode `/apps/${this.appNameParam(appName)}/collaborators/${email}`)
             .then(() => null);
     }
 
     // Deployments
     public addDeployment(appName: string, deploymentName: string): Promise<Deployment> {
         var deployment = <Deployment>{ name: deploymentName };
-        return this.post(urlEncode `/apps/${appName}/deployments/`, JSON.stringify(deployment), /*expectResponseBody=*/ true)
+        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/`, JSON.stringify(deployment), /*expectResponseBody=*/ true)
             .then((res: JsonResponse) => res.body.deployment);
     }
 
     public clearDeploymentHistory(appName: string, deploymentName: string): Promise<void> {
-        return this.del(urlEncode `/apps/${appName}/deployments/${deploymentName}/history`)
+        return this.del(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/history`)
             .then(() => null);
     }
 
     public getDeployments(appName: string): Promise<Deployment[]> {
-        return this.get(urlEncode `/apps/${appName}/deployments/`)
+        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/`)
             .then((res: JsonResponse) => res.body.deployments);
     }
 
     public getDeployment(appName: string, deploymentName: string): Promise<Deployment> {
-        return this.get(urlEncode `/apps/${appName}/deployments/${deploymentName}`)
+        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
             .then((res: JsonResponse) => res.body.deployment);
     }
 
     public renameDeployment(appName: string, oldDeploymentName: string, newDeploymentName: string): Promise<void> {
-        return this.patch(urlEncode `/apps/${appName}/deployments/${oldDeploymentName}`, JSON.stringify({ name: newDeploymentName }))
+        return this.patch(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${oldDeploymentName}`, JSON.stringify({ name: newDeploymentName }))
             .then(() => null);
     }
 
     public removeDeployment(appName: string, deploymentName: string): Promise<void> {
-        return this.del(urlEncode `/apps/${appName}/deployments/${deploymentName}`)
+        return this.del(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
             .then(() => null);
     }
 
     public getDeploymentMetrics(appName: string, deploymentName: string): Promise<DeploymentMetrics> {
-        return this.get(urlEncode `/apps/${appName}/deployments/${deploymentName}/metrics`)
+        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/metrics`)
             .then((res: JsonResponse) => res.body.metrics);
     }
 
     public getDeploymentHistory(appName: string, deploymentName: string): Promise<Package[]> {
-        return this.get(urlEncode `/apps/${appName}/deployments/${deploymentName}/history`)
+        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/history`)
             .then((res: JsonResponse) => res.body.history);
     }
 
@@ -304,7 +304,7 @@ class AccountManager {
         return Promise<void>((resolve, reject, notify) => {
 
             updateMetadata.appVersion = targetBinaryVersion;
-            var request: superagent.Request<any> = superagent.post(this._serverUrl + urlEncode `/apps/${appName}/deployments/${deploymentName}/release`);
+            var request: superagent.Request<any> = superagent.post(this._serverUrl + urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
 
@@ -353,18 +353,18 @@ class AccountManager {
     public patchRelease(appName: string, deploymentName: string, label: string, updateMetadata: PackageInfo): Promise<void> {
         updateMetadata.label = label;
         var requestBody: string = JSON.stringify({ packageInfo: updateMetadata });
-        return this.patch(urlEncode `/apps/${appName}/deployments/${deploymentName}/release`, requestBody, /*expectResponseBody=*/ false)
+        return this.patch(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`, requestBody, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
     public promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string,  updateMetadata: PackageInfo): Promise<void> {
         var requestBody: string = JSON.stringify({ packageInfo: updateMetadata });
-        return this.post(urlEncode `/apps/${appName}/deployments/${sourceDeploymentName}/promote/${destinationDeploymentName}`, requestBody, /*expectResponseBody=*/ false)
+        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${sourceDeploymentName}/promote/${destinationDeploymentName}`, requestBody, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
     public rollback(appName: string, deploymentName: string, targetRelease?: string): Promise<void> {
-        return this.post(urlEncode `/apps/${appName}/deployments/${deploymentName}/rollback/${targetRelease || ``}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
+        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/rollback/${targetRelease || ``}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
@@ -515,6 +515,21 @@ class AccountManager {
         request.set("Accept", `application/vnd.code-push.v${AccountManager.API_VERSION}+json`);
         request.set("Authorization", `Bearer ${this._accessKey}`);
         request.set("X-CodePush-SDK-Version", packageJson.version);
+    }
+
+    // IIS and Azure web apps have this annoying behavior where %2F (URL encoded slashes) in the URL are URL decoded
+    // BEFORE the requests reach node. That essentially means there's no good way to encode a "/" in the app name--
+    // URL encodeing will work when running locally but when running on Azure it gets decoded before express sees it,
+    // so app names with slashes don't get routed properly. See https://github.com/tjanczuk/iisnode/issues/343 (or other sites
+    // that complain about the same) for some more info. I explored some IIS config based workarounds, but the previous
+    // link seems to say they won't work, so I eventually gave up on that.
+    // Anyway, to workaround this issue, we now allow the client to encode / characters as ~~ (two tildes, URL encoded).
+    // The CLI now converts / to ~~ if / appears in an app name, before passing that as part of the URL. This code below
+    // does the encoding. It's hack, but seems like the least bad option here.
+    // Eventually, this service will go away & we'll all be on Max's new service. That's hosted in docker, no more IIS,
+    // so this issue should go away then.
+    private appNameParam(appName: string) {
+        return appName.replace("/", "~~");
     }
 }
 
