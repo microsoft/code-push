@@ -475,9 +475,9 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .done((): void => {
                 sinon.assert.calledOnce(addApp);
-                sinon.assert.calledOnce(log);
-                sinon.assert.calledWithExactly(log, "Successfully added the \"a\" app.\nUse \"code-push deployment add\" to add deployment(s) to the app.");
-                //sinon.assert.calledOnce(deploymentList);
+                sinon.assert.calledTwice(log);
+                sinon.assert.calledWithExactly(log, "Successfully added the \"a\" app, along with the following default deployments:");
+                sinon.assert.calledOnce(deploymentList);
                 done();
             });
     });
@@ -612,7 +612,7 @@ describe("CLI", () => {
             .done((): void => {
                 sinon.assert.calledOnce(addCollaborator);
                 sinon.assert.calledOnce(log);
-                sinon.assert.calledWithExactly(log, "Successfully added \"b@b.com\" as a collaborator to the app \"a\".");
+                sinon.assert.calledWithExactly(log, "Collaborator invitation email for \"a\" sent to \"b@b.com\".");
 
                 done();
             });
@@ -1394,7 +1394,7 @@ describe("CLI", () => {
                 done(new Error("Did not throw error."));
             })
             .catch((err) => {
-                assert.equal(err.message, "Platform must be either \"android\", \"ios\" or \"windows\".");
+                assert.equal(err.message, "Platform must be \"android\", \"ios\", or \"windows\".");
                 sinon.assert.notCalled(release);
                 sinon.assert.notCalled(spawn);
                 done();

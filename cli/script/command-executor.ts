@@ -263,7 +263,7 @@ function addCollaborator(command: cli.ICollaboratorAddCommand): Promise<void> {
 
     return sdk.addCollaborator(command.appName, command.email)
         .then((): void => {
-            log("Successfully added \"" + command.email + "\" as a collaborator to the app \"" + command.appName + "\".");
+            log("Collaborator invitation email for \"" + command.appName + "\" sent to \"" + command.email + "\".");
         });
 }
 
