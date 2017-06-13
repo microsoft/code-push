@@ -1329,7 +1329,9 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
                     throw new Error("The \"package.json\" file in the CWD does not have the \"name\" field set.");
                 }
 
-                if (!projectPackageJson.dependencies["react-native"]) {
+                const isReactNativeProject: boolean = projectPackageJson.dependencies["react-native"] ||
+                    (projectPackageJson.devDependencies && projectPackageJson.devDependencies["react-native"]);
+                if (!isReactNativeProject) {
                     throw new Error("The project in the CWD is not a React Native project.");
                 }
             } catch (error) {
