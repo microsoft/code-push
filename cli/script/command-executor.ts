@@ -573,6 +573,9 @@ export function execute(command: cli.ICommand): Promise<void> {
                 case cli.CommandType.releaseReact:
                     return releaseReact(<cli.IReleaseReactCommand>command);
 
+                case cli.CommandType.releaseNativeScript:
+                    return releaseNativeScript(<cli.IReleaseNativeScriptCommand>command);
+
                 case cli.CommandType.rollback:
                     return rollback(<cli.IRollbackCommand>command);
 
@@ -1068,6 +1071,73 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
     }
 }
 
+function getNativeScriptProjectAppVersion(command: cli.IReleaseReactCommand): Promise<string> {
+    const fileExists = (file: string): boolean => {
+        try { return fs.statSync(file).isFile() }
+        catch (e) { return false }
+    };
+
+    const isValidVersion = (version: string): boolean => !!semver.valid(version) || /^\d+\.\d+$/.test(version);
+
+    log(chalk.cyan(`Detecting ${command.platform} app version:\n`));
+
+    var projectRoot: string = process.cwd();
+    var appResourcesFolder: string = path.join(projectRoot, "app", "App_Resources");
+
+    if (command.platform === "ios") {
+
+        var iOSResourcesFolder: string = path.join(appResourcesFolder, "iOS");
+        var plistFile: string = path.join(iOSResourcesFolder, "Info.plist");
+
+        if (!fileExists(plistFile)) {
+            throw new Error(`There's no Info.plist file at ${plistFile}. Please check that the iOS project is valid.`);
+        }
+
+        const plistContents = fs.readFileSync(plistFile).toString();
+
+        try {
+            var parsedPlist = plist.parse(plistContents);
+        } catch (e) {
+            throw new Error(`Unable to parse "${plistFile}". Please ensure it is a well-formed plist file.`);
+        }
+
+        if (parsedPlist && parsedPlist.CFBundleShortVersionString) {
+            if (isValidVersion(parsedPlist.CFBundleShortVersionString)) {
+                log(`Using the target binary version value "${parsedPlist.CFBundleShortVersionString}" from "${plistFile}".\n`);
+                return Q(parsedPlist.CFBundleShortVersionString);
+            } else {
+                throw new Error(`The "CFBundleShortVersionString" key in the "${plistFile}" file needs to specify a valid semver string, containing both a major and minor version (e.g. 1.3.2, 1.1).`);
+            }
+        } else {
+            throw new Error(`The "CFBundleShortVersionString" key doesn't exist within the "${plistFile}" file.`);
+        }
+    } else if (command.platform === "android") {
+        var androidResourcesFolder: string = path.join(appResourcesFolder, "Android");
+        var androidManifest: string = path.join(androidResourcesFolder, "AndroidManifest.xml");
+
+        try {
+            var androidManifestContents: string = fs.readFileSync(androidManifest).toString();
+        } catch (err) {
+            throw new Error(`Unable to find or read "${androidManifest}".`);
+        }
+
+        return parseXml(androidManifestContents)
+            .catch((err: any) => {
+                throw new Error(`Unable to parse the "${androidManifest}" file, it could be malformed.`);
+            })
+            .then((parsedAndroidManifest: any) => {
+                try {
+                    var version = parsedAndroidManifest.manifest["$"]["android:versionName"];
+                    return version.match(/^[0-9.]+/)[0];
+                } catch (e) {
+                    throw new Error(`Unable to parse the package version from the "${androidManifest}" file.`);
+                }
+            });
+    } else {
+        throw new Error(`Unknown platform '${command.platform}' (expected 'ios' or 'android'), can't extract version information.`);
+    }
+}
+
 function printJson(object: any): void {
     log(JSON.stringify(object, /*replacer=*/ null, /*spacing=*/ 2));
 }
@@ -1385,6 +1455,93 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
         .catch((err: Error) => {
             deleteFolder(outputFolder);
             throw err;
+        });
+}
+
+export var releaseNativeScript = (command: cli.IReleaseNativeScriptCommand): Promise<void> => {
+    var releaseCommand: cli.IReleaseCommand = <any>command;
+    // Check for app and deployment exist before releasing an update.
+    // This validation helps to save about 1 minute or more in case user has typed wrong app or deployment name.
+    return sdk.getDeployment(command.appName, command.deploymentName)
+        .then((): any => {
+
+            var projectPackageJson: any;
+            try {
+                projectPackageJson = require(path.join(process.cwd(), "package.json"));
+            } catch (error) {
+                throw new Error("Unable to find or read \"package.json\" in the CWD. The \"release-nativescript\" command must be executed in a NativeScript project folder.");
+            }
+
+            if (!projectPackageJson.nativescript) {
+                throw new Error("The project in the CWD is not a NativeScript project.");
+            }
+
+            var platform: string = command.platform.toLowerCase();
+            var projectRoot: string = process.cwd();
+            var platformFolder: string = path.join(projectRoot, "platforms", platform);
+            var iOSFolder = path.basename(projectRoot);
+            var outputFolder: string;
+
+            if (platform === "ios") {
+                outputFolder = path.join(platformFolder, iOSFolder, "app");
+            } else if (platform === "android") {
+                outputFolder = path.join(platformFolder, "src", "main", "assets", "app");
+            } else {
+                throw new Error("Platform must be either \"android\" or \"ios\".");
+            }
+
+            if (command.appStoreVersion) {
+                throwForInvalidSemverRange(command.appStoreVersion);
+            }
+
+            if (command.build) {
+                var nativeScriptCLI: string = "tns";
+                // Check whether the NativeScript CLIs is installed, and if not, fail early
+                try {
+                    which.sync(nativeScriptCLI);
+                } catch (e) {
+                    throw new Error(`Unable to run "${nativeScriptCLI} ${nativeScriptCommand}". Please ensure that the NativeScript CLI is installed.`);
+                }
+
+                var nativeScriptCommand: string = "build " + platform;
+
+                if (command.isReleaseBuildType) {
+                    nativeScriptCommand += " --release";
+                    if (platform === "android") {
+                        if (!command.keystorePath || !command.keystorePassword || !command.keystoreAlias || !command.keystoreAliasPassword) {
+                            throw new Error(`When requesting a release build for Android, these parameters are required: keystorePath, keystorePassword, keystoreAlias and keystoreAliasPassword.`);
+                        }
+                        nativeScriptCommand += ` --key-store-path "${command.keystorePath}" --key-store-password ${command.keystorePassword} --key-store-alias ${command.keystoreAlias} --key-store-alias-password ${command.keystoreAliasPassword}`;
+                    }
+                }
+
+                log(chalk.cyan(`Running "${nativeScriptCLI} ${nativeScriptCommand}" command:\n`));
+                try {
+                    execSync([nativeScriptCLI, nativeScriptCommand].join(" "), { stdio: "inherit" });
+                } catch (error) {
+                    throw new Error(`Unable to ${nativeScriptCommand} project. Please ensure that the CWD represents a NativeScript project and that the "${platform}" platform was added by running "${nativeScriptCLI} platform add ${platform}".`);
+                }
+
+            } else {
+                // if a build was not requested we expect a 'ready to go' ${outputFolder} folder
+                try {
+                    fs.lstatSync(outputFolder).isDirectory();
+                } catch (error) {
+                    throw new Error(`No "build" folder found - perform a "tns build" first, or add the "--build" flag to the "codepush" command.`);
+                }
+            }
+
+            releaseCommand.package = outputFolder;
+            releaseCommand.type = cli.CommandType.release;
+
+            return command.appStoreVersion
+                ? Q(command.appStoreVersion)
+                : getNativeScriptProjectAppVersion(command);
+        })
+        .then((appVersion: string) => {
+            releaseCommand.appStoreVersion = appVersion;
+            log(chalk.cyan("\nReleasing update contents to CodePush:\n"));
+            return release(releaseCommand);
         });
 }
 

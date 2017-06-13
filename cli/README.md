@@ -1,6 +1,6 @@
 # CodePush Management CLI
 
-CodePush is a cloud service that enables Cordova and React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using the provided client SDKs for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push) and [React Native](http://github.com/Microsoft/react-native-code-push)). This allows you to have a more deterministic and direct engagement model with your user base, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
+CodePush is a cloud service that enables Cordova and React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using the provided client SDKs for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push), [React Native](http://github.com/Microsoft/react-native-code-push) and  [NativeScript](http://github.com/EddyVerbruggen/nativescript-code-push)). This allows you to have a more deterministic and direct engagement model with your user base, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
 
 ![CodePush CLI](https://cloud.githubusercontent.com/assets/245892/26749409/feb439f6-47d7-11e7-98fd-07d750b856d8.png)
 
@@ -20,6 +20,7 @@ CodePush is a cloud service that enables Cordova and React Native developers to 
     * [Releasing Updates (General)](#releasing-updates-general)
     * [Releasing Updates (React Native)](#releasing-updates-react-native)
     * [Releasing Updates (Cordova)](#releasing-updates-cordova)
+    * [Releasing Updates (NativeScript)](#releasing-updates-nativescript)
 * [Debugging CodePush Integration](#debugging-codepush-integration)
 * [Patching Update Metadata](#patching-update-metadata)
 * [Promoting Updates](#promoting-updates)
@@ -40,7 +41,7 @@ CodePush is a cloud service that enables Cordova and React Native developers to 
 
 1. Create a [CodePush account](#account-creation) push using the CodePush CLI
 2. Register your [app](#app-management) with CodePush, and optionally [share it](#app-collaboration) with other developers on your team
-3. CodePush-ify your app and point it at the deployment you wish to use ([Cordova](http://github.com/Microsoft/cordova-plugin-code-push) and [React Native](http://github.com/Microsoft/react-native-code-push))
+3. CodePush-ify your app and point it at the deployment you wish to use ([Cordova](http://github.com/Microsoft/cordova-plugin-code-push), [React Native](http://github.com/Microsoft/react-native-code-push) and [NativeScript](http://github.com/EddyVerbruggen/nativescript-code-push))
 4. [Release](#releasing-updates) an update for your app
 5. Check out the [debug logs](#debugging-codepush-integration) to ensure everything is working as expected
 6. Live long and prosper! ([details](https://en.wikipedia.org/wiki/Vulcan_salute))
@@ -157,7 +158,7 @@ code-push app add MyApp-iOS ios react-native
 
 *NOTE: Using the same app for iOS and Android may cause installation exceptions because the CodePush update package produced for iOS will have different content from the update produced for Android.*
 
-All new apps automatically come with two deployments (`Staging` and `Production`) so that you can begin distributing updates to multiple channels without needing to do anything extra (see deployment instructions below). After you create an app, the CLI will output the deployment keys for the `Staging` and `Production` deployments, which you can begin using to configure your mobile clients via their respective SDKs (details for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push) and [React Native](http://github.com/Microsoft/react-native-code-push)).
+All new apps automatically come with two deployments (`Staging` and `Production`) so that you can begin distributing updates to multiple channels without needing to do anything extra (see deployment instructions below). After you create an app, the CLI will output the deployment keys for the `Staging` and `Production` deployments, which you can begin using to configure your mobile clients via their respective SDKs (details for [Cordova](http://github.com/Microsoft/cordova-plugin-code-push), [React Native](http://github.com/Microsoft/react-native-code-push) and [NativeScript](http://github.com/EddyVerbruggen/nativescript-code-push)).
 
 If you decide that you don't like the name you gave to an app, you can rename it at any time using the following command:
 
@@ -290,6 +291,8 @@ Once your app has been configured to query for updates against the CodePush serv
 
 3. [Cordova](#releasing-updates-cordova) - Performs the same functionality as the general release command, but also handles the task of preparing the app update for you, instead of requiring you to run both `cordova prepare` (or `phonegap prepare`)  and then `code-push release`.
 
+4. [NativeScript](#releasing-updates-nativescript) - Performs the same functionality as the general release command, but also handles the task of going into the platform build folder, instead of requiring you to figure out what that folder is and then running `code-push release` with the correct switches.
+
 Which of these commands you should use is mostly a matter of requirements and/or preference. However, we generally recommend using the relevant platform-specific command to start (since it greatly simplifies the experience), and then leverage the general-purpose `release` command if/when greater control is needed.
 
 ### Releasing Updates (General)
@@ -321,7 +324,9 @@ It's important that the path you specify refers to the platform-specific, prepar
 | React Native wo/assets (Android) | `react-native bundle --platform android --entry-file <entryFile> --bundle-output <bundleOutput> --dev false`                                               | Value of the `--bundle-output` option      																 |
 | React Native w/assets (Android)  | `react-native bundle --platform android --entry-file <entryFile> --bundle-output <releaseFolder>/<bundleOutput> --assets-dest <releaseFolder> --dev false` | Value of the `--assets-dest` option, which should represent a newly created directory that includes your assets and JS bundle |
 | React Native wo/assets (iOS)     | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <bundleOutput> --dev false`                                                   | Value of the `--bundle-output` option                                                                 |
-| React Native w/assets (iOS)      | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <releaseFolder>/<bundleOutput> --assets-dest <releaseFolder> --dev false` | Value of the `--assets-dest` option, which should represent a newly created directory that includes your assets and JS bundle |
+| React Native w/assets (iOS)      | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <releaseFolder>/<bundleOutput> --assets-dest <releaseFolder> --dev false`     | Value of the `--assets-dest` option, which should represent a newly created directory that includes your assets and JS bundle |
+| NativeScript (iOS)               | `tns build ios [--release]`                                                                                                                                | `./platforms/ios/<appname>/app` directory           |
+| NativeScript (Android)           | `tns build android [--release]`                                                                                                                            | `./platforms/android/src/main/assets/app` directory |
 
 #### Target binary version parameter
 
@@ -350,12 +355,14 @@ If you ever want an update to target multiple versions of the app store binary, 
 
 The following table outlines the version value that CodePush expects your update's semver range to satisfy for each respective app type:
 
-| Platform               | Source of app store version                                                  |
-|------------------------|------------------------------------------------------------------------------|
-| Cordova                | The `<widget version>` attribute in the `config.xml` file                    |
-| React Native (Android) | The `android.defaultConfig.versionName` property in your `build.gradle` file |
-| React Native (iOS)     | The `CFBundleShortVersionString` key in the `Info.plist` file                |
-| React Native (Windows) | The `<Identity Version>` key in the `Package.appxmanifest` file                                |
+| Platform               | Source of app store version                                                           |
+|------------------------|---------------------------------------------------------------------------------------|
+| Cordova                | The `<widget version>` attribute in the `config.xml` file                             |
+| React Native (Android) | The `android.defaultConfig.versionName` property in your `build.gradle` file          |
+| React Native (iOS)     | The `CFBundleShortVersionString` key in the `Info.plist` file                         |
+| React Native (Windows) | The `<Identity Version>` key in the `Package.appxmanifest` file                       |
+| NativeScript (iOS)     | The `CFBundleShortVersionString` key in the `App_Resources/iOS/Info.plist` file       |
+| NativeScript (Android) | The `android:versionName` key in the `App_Resources/Android/AndroidManifest.xml` file |
 
 *NOTE: If the app store version in the metadata files are missing a patch version, e.g. `2.0`, it will be treated as having a patch version of `0`, i.e. `2.0 -> 2.0.0`.*
 
@@ -652,9 +659,113 @@ This is the same parameter as the one described in the [above section](#rollout-
 
 This is the same parameter as the one described in the [above section](#target-binary-version-parameter). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
 
+### Releasing Updates (NativeScript)
+
+```shell
+code-push release-nativescript <appName> <platform>
+[--build]
+[--deploymentName <deploymentName>]
+[--description <description>]
+[--isReleaseBuildType]
+[--keystorePath]
+[--keystorePassword]
+[--keystoreAlias]
+[--keystoreAliasPassword]
+[--mandatory]
+[--noDuplicateReleaseError]
+[--rollout <rolloutPercentage>]
+[--targetBinaryVersion <targetBinaryVersion>]
+```
+
+The `release-nativescript` command is a NativeScript-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same parameters (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
+
+1. Running the `tns build` command in order to generate the [update contents](#update-contents-parameter) (`/platform`'s app folder) that will be released to the CodePush server.
+
+2. Inferring the [`targetBinaryVersion`](#target-binary-version-parameter) of this release by using the version name that is specified in your project's `app/App_Resources/iOS/Info.plist` (iOS) or `app/App_Resources/Android/AndroidManifest.xml` (Android) file.
+
+To illustrate the difference that the `release-nativescript` command can make, the following is an example of how you might generate and release an update for a NativeScript app using the "vanilla" `release` command:
+
+```shell
+tns build ios --release
+code-push release MyApp-iOS platforms/ios/myapp/app 1.0.0
+```
+
+Achieving the equivalent behavior with the `release-nativescript` command would simply require the following command, which is generally less error-prone:
+
+```shell
+code-push release-nativescript MyApp-iOS ios
+```
+
+#### App name parameter
+
+This is the same parameter as the one described in the [above section](#app-name-parameter).
+
+#### Platform parameter
+
+This specifies which platform the current update is targeting, and can be either `ios` or `android` (case-insensitive).
+
+#### Build parameter
+
+Specifies whether you want to run `tns build` instead of publishing anything already in the platform's `app` folder (which is the default behavior).
+
+*NOTE: If you build your app differently (Webpack for instance) do your specialized build as usual and omit this parameter.*
+
+*NOTE: This parameter can be set using either --build or -b*
+
+#### Deployment name parameter
+
+This is the same parameter as the one described in the [above section](#deployment-name-parameter).
+
+#### Description parameter
+
+This is the same parameter as the one described in the [above section](#description-parameter).
+
+#### Disabled parameter
+
+This is the same parameter as the one described in the [above section](#disabled-parameter).
+
+#### IsReleaseBuildType parameter
+
+If `build` option is true specifies whether perform a release build. If left unspecified, this defaults to `debug`.
+
+*NOTE: If you use TypeScript this flag will also remove any `.ts` files from your distributed package, which is probably what you want.*
+
+#### keystorePath parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the path to the .keystore file.
+
+#### keystorePassword parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the password for the .keystore file.
+
+#### keystoreAlias parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the alias in the .keystore file.
+
+#### keystoreAliasPassword parameter
+
+If `isReleaseBuildType` option is true and `platform` is `android` specifies the password for the alias in the .keystore file.
+
+#### Mandatory parameter
+
+This is the same parameter as the one described in the [above section](#mandatory-parameter).
+
+#### No duplicate release error parameter
+
+This is the same parameter as the one described in the [above section](#no-duplicate-release-error-parameter).
+
+#### Rollout parameter
+
+This is the same parameter as the one described in the [above section](#rollout-parameter). If left unspecified, the release will be made available to all users.
+
+#### Target binary version parameter
+
+This is the same parameter as the one described in the [above section](#target-binary-version-parameter). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
+
+
 ## Debugging CodePush Integration
 
-Once you've released an update, and the Cordova or React Native plugin has been integrated into your app, it can be helpful to diagnose how the plugin is behaving, especially if you run into an issue and want to understand why. In order to debug the CodePush update discovery experience, you can run the following command in order to easily view the diagnostic logs produced by the CodePush plugin within your app:
+Once you've released an update, and the Cordova, React Native or NativeScript plugin has been integrated into your app, it can be helpful to diagnose how the plugin is behaving, especially if you run into an issue and want to understand why. In order to debug the CodePush update discovery experience, you can run the following command in order to easily view the diagnostic logs produced by the CodePush plugin within your app:
 
 ```shell
 code-push debug <platform>
@@ -670,7 +781,7 @@ code-push debug android
 
 <img width="500" src="https://cloud.githubusercontent.com/assets/116461/16246597/bd49a9ac-37ba-11e6-9aa4-a2d3b2821a90.png" />
 
-Under the covers, this command simply automates the usage of the iOS system logs and ADB logcat, but provides a platform-agnostic, filtered view of all logs coming from the CodePush plugin, for both Cordova or React Native. This way, you don't need to learn and/or use another tool simply to be able to answer basic questions about how CodePush is behaving.
+Under the covers, this command simply automates the usage of the iOS system logs and ADB logcat, but provides a platform-agnostic, filtered view of all logs coming from the CodePush plugin, for Cordova, React Native or NativeScript. This way, you don't need to learn and/or use another tool simply to be able to answer basic questions about how CodePush is behaving.
 
 *NOTE: The debug command supports both emulators and devices for Android, but currently only supports listening to logs from the iOS simulator. We hope to add device support soon.*
 

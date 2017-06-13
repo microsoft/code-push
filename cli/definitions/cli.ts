@@ -28,6 +28,7 @@
     release,
     releaseCordova,
     releaseReact,
+    releaseNativeScript,
     rollback,
     sessionList,
     sessionRemove,
@@ -203,6 +204,16 @@ export interface IReleaseReactCommand extends IReleaseBaseCommand {
     plistFilePrefix?: string;
     sourcemapOutput?: string;
     outputDir?: string;
+}
+
+export interface IReleaseNativeScriptCommand extends IReleaseBaseCommand {
+    build?: boolean;
+    platform: string;
+    isReleaseBuildType?: boolean;
+    keystorePath?: string;
+    keystorePassword?: string;
+    keystoreAlias?: string;
+    keystoreAliasPassword?: string;
 }
 
 export interface IRollbackCommand extends ICommand {

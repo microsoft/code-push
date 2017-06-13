@@ -23,6 +23,12 @@ function ensureInTestAppDirectory(): void {
     }
 }
 
+function ensureNotInTestAppDirectory(): void {
+    if (!~__dirname.indexOf("/resources")) {
+        process.chdir(__dirname + "/resources");
+    }
+}
+
 function isDefined(object: any): boolean {
     return object !== undefined && object !== null;
 }
@@ -1740,6 +1746,164 @@ describe("CLI", () => {
 
                 process.env.CODE_PUSH_NODE_ARGS = _CODE_PUSH_NODE_ARGS;
 
+                done();
+            })
+            .done();
+    });
+
+    it("release-nativescript fails if CWD does not contain a package.json", (done: MochaDone): void => {
+        var command: cli.IReleaseNativeScriptCommand = {
+            type: cli.CommandType.releaseNativeScript,
+            appName: "a",
+            appStoreVersion: null,
+            deploymentName: "Staging",
+            description: "Test invalid folder",
+            mandatory: false,
+            rollout: null,
+            platform: "ios"
+        };
+
+        ensureNotInTestAppDirectory();
+
+        var release: Sinon.SinonSpy = sandbox.spy(cmdexec, "release");
+        var releaseNativeScript: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseNativeScript");
+
+        cmdexec.execute(command)
+            .then(() => {
+                done(new Error("Did not throw error."));
+            })
+            .catch((err) => {
+                assert.equal(err.message, "Unable to find or read \"package.json\" in the CWD. The \"release-nativescript\" command must be executed in a NativeScript project folder.");
+                sinon.assert.notCalled(release);
+                sinon.assert.notCalled(spawn);
+                done();
+            })
+            .done();
+    });
+
+    it("release-nativescript fails if platform is invalid", (done: MochaDone): void => {
+        var command: cli.IReleaseNativeScriptCommand = {
+            type: cli.CommandType.releaseNativeScript,
+            appName: "a",
+            appStoreVersion: null,
+            deploymentName: "Staging",
+            description: "Test invalid platform",
+            mandatory: false,
+            rollout: null,
+            platform: "blackberry",
+        };
+
+        ensureInTestAppDirectory();
+
+        var release: Sinon.SinonSpy = sandbox.spy(cmdexec, "release");
+        var releaseNativeScript: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseNativeScript");
+
+        cmdexec.execute(command)
+            .then(() => {
+                done(new Error("Did not throw error."));
+            })
+            .catch((err) => {
+                assert.equal(err.message, "Platform must be either \"android\" or \"ios\".");
+                sinon.assert.notCalled(release);
+                sinon.assert.notCalled(spawn);
+                done();
+            })
+            .done();
+    });
+
+    it("release-nativescript fails if the platforms/app build folder can't be found and the --build switch was false", (done: MochaDone): void => {
+        var bundleName = "bundle.js";
+        var command: cli.IReleaseNativeScriptCommand = {
+            type: cli.CommandType.releaseNativeScript,
+            appName: "a",
+            appStoreVersion: null,
+            deploymentName: "Staging",
+            description: "Test no build folder",
+            mandatory: false,
+            rollout: null,
+            build: false,
+            platform: "android"
+        };
+
+        ensureInTestAppDirectory();
+
+        var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release", () => { return Q(<void>null) });
+        var releaseNativeScript: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseNativeScript");
+
+        cmdexec.execute(command)
+            .then(() => {
+                done(new Error("Did not throw error."));
+            })
+            .catch((err) => {
+                assert.equal(err.message, "No \"build\" folder found - perform a \"tns build\" first, or add the \"--build\" flag to the \"codepush\" command.");
+                sinon.assert.notCalled(release);
+                sinon.assert.notCalled(spawn);
+                done();
+            })
+            .done();
+    });
+
+    it("release-nativescript fails if a release build was requested for Android without the keystore switches", (done: MochaDone): void => {
+        var bundleName = "bundle.js";
+        var command: cli.IReleaseNativeScriptCommand = {
+            type: cli.CommandType.releaseNativeScript,
+            appName: "a",
+            appStoreVersion: null,
+            deploymentName: "Staging",
+            description: "Test no build folder",
+            mandatory: false,
+            rollout: null,
+            build: true,
+            isReleaseBuildType: true,
+            platform: "android"
+        };
+
+        ensureInTestAppDirectory();
+
+        var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release", () => { return Q(<void>null) });
+        var releaseNativeScript: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseNativeScript");
+
+        cmdexec.execute(command)
+            .then(() => {
+                done(new Error("Did not throw error."));
+            })
+            .catch((err) => {
+                assert.equal(err.message, "When requesting a release build for Android, these parameters are required: keystorePath, keystorePassword, keystoreAlias and keystoreAliasPassword.");
+                sinon.assert.notCalled(release);
+                sinon.assert.notCalled(spawn);
+                done();
+            })
+            .done();
+    });
+
+    it("release-nativescript fails if targetBinaryRange is not a valid semver range expression", (done: MochaDone): void => {
+        var bundleName = "bundle.js";
+        var command: cli.IReleaseNativeScriptCommand = {
+            type: cli.CommandType.releaseNativeScript,
+            appName: "a",
+            appStoreVersion: "notsemver",
+            deploymentName: "Staging",
+            description: "Test uses targetBinaryRange",
+            mandatory: false,
+            rollout: null,
+            build: true,
+            isReleaseBuildType: false,
+            platform: "android"
+        };
+
+        ensureInTestAppDirectory();
+
+        var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release", () => { return Q(<void>null) });
+        var releaseNativeScript: Sinon.SinonSpy = sandbox.spy(cmdexec, "releaseNativeScript");
+
+        cmdexec.execute(command)
+            .then(() => {
+                done(new Error("Did not throw error."));
+            })
+            .catch((err) => {
+                assert.equal(err.message, "Please use a semver-compliant target binary version range, for example \"1.0.0\", \"*\" or \"^1.2.3\".");
+                sinon.assert.notCalled(release);
+                sinon.assert.notCalled(spawn);
                 done();
             })
             .done();

@@ -447,6 +447,28 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
 
         addCommonConfiguration(yargs);
     })
+    .command("release-nativescript", "Release a NativeScript update to an app deployment", (yargs: yargs.Argv) => {
+        yargs.usage(USAGE_PREFIX + " release-nativescript <appName> <platform> [options]")
+            .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
+            .example("release-nativescript MyApp ios", "Releases the NativeScript iOS project in the current working directory to the \"MyApp\" app's \"Staging\" deployment")
+            .example("release-nativescript MyApp android -d Production", "Releases the NativeScript Android project in the current working directory to the \"MyApp\" app's \"Production\" deployment")
+            .option("build", { alias: "b", default: false, demand: false, description: "Invoke \"tns build\" instead of assuming there's aleady a build waiting to be pushed", type: "boolean" })
+            .option("isReleaseBuildType", { alias: "rb", default: false, demand: false, description: "If \"build\" option is true specifies whether to perform a release build", type: "boolean" })
+            .option("keystorePath", { alias: "kp", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the path to the .keystore file", type: "string" })
+            .option("keystorePassword", { alias: "kpw", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the password for the .keystore file", type: "string" })
+            .option("keystoreAlias", { alias: "ka", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the alias in the .keystore file", type: "string" })
+            .option("keystoreAliasPassword", { alias: "kapw", default: null, demand: false, description: "If \"isReleaseBuildType\" option is true and \"platform\" is \"android\" specifies the password for the alias in the .keystore file", type: "string" })
+            .option("deploymentName", { alias: "d", default: "Staging", demand: false, description: "Deployment to release the update to", type: "string" })
+            .option("description", { alias: "des", default: null, demand: false, description: "Description of the changes made to the app in this release", type: "string" })
+            .option("disabled", { alias: "x", default: false, demand: false, description: "Specifies whether this release should be immediately downloadable", type: "boolean" })
+            .option("mandatory", { alias: "m", default: false, demand: false, description: "Specifies whether this release should be considered mandatory", type: "boolean" })
+            .option("noDuplicateReleaseError", { default: false, demand: false, description: "When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error", type: "boolean" })
+            .option("rollout", { alias: "r", default: "100%", demand: false, description: "Percentage of users this release should be immediately available to", type: "string" })
+            .option("targetBinaryVersion", { alias: "t", default: null, demand: false, description: "Semver expression that specifies the binary app version(s) this release is targeting (e.g. 1.1.0, ~1.2.3). If omitted, the release will target the exact version specified in the config.xml file.", type: "string" })
+            .check((argv: any, aliases: { [aliases: string]: string }): any => { return checkValidReleaseOptions(argv); });
+
+        addCommonConfiguration(yargs);
+    })
     .command("rollback", "Rollback the latest release for an app deployment", (yargs: yargs.Argv) => {
         yargs.usage(USAGE_PREFIX + " rollback <appName> <deploymentName> [options]")
             .demand(/*count*/ 2, /*max*/ 2)  // Require exactly two non-option arguments
@@ -855,6 +877,31 @@ function createCommand(): cli.ICommand {
                     releaseReactCommand.rollout = getRolloutValue(argv["rollout"]);
                     releaseReactCommand.sourcemapOutput = argv["sourcemapOutput"];
                     releaseReactCommand.outputDir = argv["outputDir"];
+                }
+                break;
+
+            case "release-nativescript":
+                if (arg1 && arg2) {
+                    cmd = { type: cli.CommandType.releaseNativeScript };
+
+                    var releaseNativeScriptCommand = <cli.IReleaseNativeScriptCommand>cmd;
+
+                    releaseNativeScriptCommand.appName = arg1;
+                    releaseNativeScriptCommand.platform = arg2;
+
+                    releaseNativeScriptCommand.build = argv["build"];
+                    releaseNativeScriptCommand.deploymentName = argv["deploymentName"];
+                    releaseNativeScriptCommand.description = argv["description"] ? backslash(argv["description"]) : "";
+                    releaseNativeScriptCommand.disabled = argv["disabled"];
+                    releaseNativeScriptCommand.mandatory = argv["mandatory"];
+                    releaseNativeScriptCommand.noDuplicateReleaseError = argv["noDuplicateReleaseError"];
+                    releaseNativeScriptCommand.rollout = getRolloutValue(argv["rollout"]);
+                    releaseNativeScriptCommand.appStoreVersion = argv["targetBinaryVersion"];
+                    releaseNativeScriptCommand.isReleaseBuildType = argv["isReleaseBuildType"];
+                    releaseNativeScriptCommand.keystorePath = argv["keystorePath"];
+                    releaseNativeScriptCommand.keystorePassword = argv["keystorePassword"];
+                    releaseNativeScriptCommand.keystoreAlias = argv["keystoreAlias"];
+                    releaseNativeScriptCommand.keystoreAliasPassword = argv["keystoreAliasPassword"];
                 }
                 break;
 
