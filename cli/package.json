@@ -27,7 +27,7 @@
     "backslash": "^0.1.7",
     "chalk": "^1.1.0",
     "cli-table": "^0.3.1",
-    "code-push": "2.0.1-beta",
+    "code-push": "2.0.2-beta",
     "email-validator": "^1.0.3",
     "gradle-to-js": "0.2.5",
     "moment": "^2.10.6",
