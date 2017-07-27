@@ -43,3 +43,4 @@ definitions/generated/
 
 # JSON Storage persisted file
 JsonStorage.json
+.idea/
