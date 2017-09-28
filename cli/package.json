@@ -30,7 +30,7 @@
     "cli-table": "^0.3.1",
     "code-push": "2.0.2-beta",
     "email-validator": "^1.0.3",
-    "gradle-to-js": "0.2.5",
+    "gradle-to-js": "^1.0.1",
     "jsonwebtoken": "^7.4.1",
     "moment": "^2.10.6",
     "opener": "^1.4.1",
