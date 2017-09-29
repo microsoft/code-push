@@ -975,19 +975,7 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
             .then((buildGradle: any) => {
                 let versionName: string = null;
 
-                // First 'if' statement was implemented as workaround for case
-                // when 'build.gradle' file contains several 'android' nodes.
-                // In this case 'buildGradle.android' prop represents array instead of object
-                // due to parsing issue in 'g2js.parseFile' method.
-                if (buildGradle.android instanceof Array) {
-                    for (var i = 0; i < buildGradle.android.length; i++) {
-                        var gradlePart = buildGradle.android[i];
-                        if (gradlePart.defaultConfig && gradlePart.defaultConfig.versionName) {
-                            versionName = gradlePart.defaultConfig.versionName;
-                            break;
-                        }
-                    }
-                } else if (buildGradle.android && buildGradle.android.defaultConfig && buildGradle.android.defaultConfig.versionName) {
+                if (buildGradle.android && buildGradle.android.defaultConfig && buildGradle.android.defaultConfig.versionName) {
                     versionName = buildGradle.android.defaultConfig.versionName;
                 } else {
                     throw new Error(`The "${buildGradlePath}" file doesn't specify a value for the "android.defaultConfig.versionName" property.`);
