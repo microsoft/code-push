@@ -419,6 +419,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .option("noDuplicateReleaseError", { default: false, demand: false, description: "When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error", type: "boolean" })
             .option("rollout", { alias: "r", default: "100%", demand: false, description: "Percentage of users this release should be immediately available to", type: "string" })
             .option("targetBinaryVersion", { alias: "t", default: null, demand: false, description: "Semver expression that specifies the binary app version(s) this release is targeting (e.g. 1.1.0, ~1.2.3). If omitted, the release will target the exact version specified in the config.xml file.", type: "string" })
+            .option("privateKeyPath", { alias: "k", default: false, demand: false, description: "Specifies the location of a RSA private key to sign the release with", type: "string" })
             .check((argv: any, aliases: { [aliases: string]: string }): any => { return checkValidReleaseOptions(argv); });
 
         addCommonConfiguration(yargs);
@@ -831,6 +832,7 @@ function createCommand(): cli.ICommand {
                     releaseCordovaCommand.rollout = getRolloutValue(argv["rollout"]);
                     releaseCordovaCommand.appStoreVersion = argv["targetBinaryVersion"];
                     releaseCordovaCommand.isReleaseBuildType = argv["isReleaseBuildType"];
+                    releaseCordovaCommand.privateKeyPath = argv["privateKeyPath"];
                 }
                 break;
 
