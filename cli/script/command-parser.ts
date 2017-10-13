@@ -398,7 +398,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .option("description", { alias: "des", default: null, demand: false, description: "Description of the changes made to the app in this release", type: "string" })
             .option("disabled", { alias: "x", default: false, demand: false, description: "Specifies whether this release should be immediately downloadable", type: "boolean" })
             .option("mandatory", { alias: "m", default: false, demand: false, description: "Specifies whether this release should be considered mandatory", type: "boolean" })
-            .option("privateKeyPath", { alias: "k", default: false, demand: false, description: "Specifies the location of a RSA private key to sign the release with. " + chalk.yellow("NOTICE:") + " use it for react native applications only, client SDK on other platforms will be ignoring signature verification for now!", type: "string" })
+            .option("privateKeyPath", { alias: "k", default: false, demand: false, description: "Specifies the location of a RSA private key to sign the release with", type: "string" })
             .option("noDuplicateReleaseError", { default: false, demand: false, description: "When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error", type: "boolean" })
             .option("rollout", { alias: "r", default: "100%", demand: false, description: "Percentage of users this release should be available to", type: "string" })
             .check((argv: any, aliases: { [aliases: string]: string }): any => { return checkValidReleaseOptions(argv); });
@@ -416,10 +416,10 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .option("description", { alias: "des", default: null, demand: false, description: "Description of the changes made to the app in this release", type: "string" })
             .option("disabled", { alias: "x", default: false, demand: false, description: "Specifies whether this release should be immediately downloadable", type: "boolean" })
             .option("mandatory", { alias: "m", default: false, demand: false, description: "Specifies whether this release should be considered mandatory", type: "boolean" })
+            .option("privateKeyPath", { alias: "k", default: false, demand: false, description: "Specifies the location of a RSA private key to sign the release with", type: "string" })
             .option("noDuplicateReleaseError", { default: false, demand: false, description: "When this flag is set, releasing a package that is identical to the latest release will produce a warning instead of an error", type: "boolean" })
             .option("rollout", { alias: "r", default: "100%", demand: false, description: "Percentage of users this release should be immediately available to", type: "string" })
             .option("targetBinaryVersion", { alias: "t", default: null, demand: false, description: "Semver expression that specifies the binary app version(s) this release is targeting (e.g. 1.1.0, ~1.2.3). If omitted, the release will target the exact version specified in the config.xml file.", type: "string" })
-            .option("privateKeyPath", { alias: "k", default: false, demand: false, description: "Specifies the location of a RSA private key to sign the release with", type: "string" })
             .check((argv: any, aliases: { [aliases: string]: string }): any => { return checkValidReleaseOptions(argv); });
 
         addCommonConfiguration(yargs);
