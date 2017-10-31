@@ -19,6 +19,14 @@ interface CodeSigningClaims {
 
 var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalCommand: cli.IReleaseCommand, sdk: AccountManager): q.Promise<cli.IReleaseCommand> => {
     if (!currentCommand.privateKeyPath) {
+        if (fs.lstatSync(currentCommand.package).isDirectory()) {
+            // If new update wasn't signed, but signature file for some reason still appears in the package directory - delete it
+            let signatureFilePath = path.join(currentCommand.package, METADATA_FILE_NAME);
+            if (fs.existsSync(signatureFilePath)) {
+                fs.unlinkSync(signatureFilePath);
+            }
+        }
+
         return q.resolve<cli.IReleaseCommand>(currentCommand);
     }
 
