@@ -17,9 +17,9 @@ interface CodeSigningClaims {
     contentHash: string;
 }
 
-var deletePreviousSignatureIfExists = (command: cli.IReleaseCommand): q.Promise<any> => {
-    var signatureFilePath = path.join(command.package, METADATA_FILE_NAME);
-    var prevSignatureExists = true;
+const deletePreviousSignatureIfExists = (package: string): q.Promise<any> => {
+    let signatureFilePath: string = path.join(package, METADATA_FILE_NAME);
+    let prevSignatureExists: boolean = true;
     try {
         fs.accessSync(signatureFilePath, fs.R_OK);
     } catch (err) {
@@ -38,7 +38,7 @@ var deletePreviousSignatureIfExists = (command: cli.IReleaseCommand): q.Promise<
         rimraf.sync(signatureFilePath);
     }
 
-    return q.resolve<cli.IReleaseCommand>(command);
+    return q.resolve(<void>null);
 }
 
 var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalCommand: cli.IReleaseCommand, sdk: AccountManager): q.Promise<cli.IReleaseCommand> => {
@@ -46,7 +46,7 @@ var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalComman
     if (!currentCommand.privateKeyPath) {
         if (fs.lstatSync(currentCommand.package).isDirectory()) {
             // If new update wasn't signed, but signature file for some reason still appears in the package directory - delete it
-            return deletePreviousSignatureIfExists(currentCommand).then(() => {
+            return deletePreviousSignatureIfExists(currentCommand.package).then(() => {
                 return q.resolve<cli.IReleaseCommand>(currentCommand); 
             });
         } else {
@@ -54,8 +54,8 @@ var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalComman
         }   
     }
 
-    var privateKey: Buffer;
-    var signatureFilePath: string;
+    let privateKey: Buffer;
+    let signatureFilePath: string;
 
     return q(<void>null)
         .then(() => {
@@ -78,7 +78,7 @@ var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalComman
                 currentCommand.package = outputFolderPath;
             }
 
-            return deletePreviousSignatureIfExists(currentCommand);    
+            return deletePreviousSignatureIfExists(currentCommand.package);    
         })
         .then(() => {
             return hashUtils.generatePackageHashFromDirectory(currentCommand.package, path.join(currentCommand.package, ".."));
