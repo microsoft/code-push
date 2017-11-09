@@ -17,22 +17,41 @@ interface CodeSigningClaims {
     contentHash: string;
 }
 
+var deletePreviousSignatureIfExists = (command: cli.IReleaseCommand): q.Promise<any> => {
+    var signatureFilePath = path.join(command.package, METADATA_FILE_NAME);
+    var prevSignatureExists = true;
+    try {
+        fs.accessSync(signatureFilePath, fs.R_OK);
+    } catch (err) {
+        if (err.code === "ENOENT") {
+            prevSignatureExists = false;
+        } else {
+            return q.reject(new Error(
+                `Could not delete previous release signature at ${signatureFilePath}.
+                Please, check your access rights.`)
+            );
+        }
+    }
+
+    if (prevSignatureExists) {
+        console.log(`Deleting previous release signature at ${signatureFilePath}`);
+        rimraf.sync(signatureFilePath);
+    }
+
+    return q.resolve<cli.IReleaseCommand>(command);
+}
+
 var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalCommand: cli.IReleaseCommand, sdk: AccountManager): q.Promise<cli.IReleaseCommand> => {
+
     if (!currentCommand.privateKeyPath) {
         if (fs.lstatSync(currentCommand.package).isDirectory()) {
             // If new update wasn't signed, but signature file for some reason still appears in the package directory - delete it
-            let signatureFilePath = path.join(currentCommand.package, METADATA_FILE_NAME);
-            try {
-                if (fs.existsSync(signatureFilePath)) {
-                    fs.unlinkSync(signatureFilePath);
-                }
-            } catch(e) {
-                return q.reject<cli.IReleaseCommand>(new Error(`Could not delete redundant signature file ("${signatureFilePath}").
-                Please make sure you have correct permissions for this file.`));
-            }
-        }
-
-        return q.resolve<cli.IReleaseCommand>(currentCommand);
+            return deletePreviousSignatureIfExists(currentCommand).then(() => {
+                return q.resolve<cli.IReleaseCommand>(currentCommand); 
+            });
+        } else {
+            return q.resolve<cli.IReleaseCommand>(currentCommand); 
+        }   
     }
 
     var privateKey: Buffer;
@@ -40,6 +59,7 @@ var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalComman
 
     return q(<void>null)
         .then(() => {
+            signatureFilePath = path.join(currentCommand.package, METADATA_FILE_NAME);
             try {
                 privateKey = fs.readFileSync(currentCommand.privateKeyPath);
             } catch (err) {
@@ -58,26 +78,9 @@ var sign: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, originalComman
                 currentCommand.package = outputFolderPath;
             }
 
-            signatureFilePath = path.join(currentCommand.package, METADATA_FILE_NAME);
-            var prevSignatureExists = true;
-            try {
-                fs.accessSync(signatureFilePath, fs.F_OK);
-            } catch (err) {
-                if (err.code === "ENOENT") {
-                    prevSignatureExists = false;
-                } else {
-                    return q.reject<string>(new Error(
-                        `Could not delete previous release signature at ${signatureFilePath}.
-                        Please, check your access rights.`)
-                    );
-                }
-            }
-
-            if (prevSignatureExists) {
-                console.log(`Deleting previous release signature at ${signatureFilePath}`);
-                rimraf.sync(signatureFilePath);
-            }
-
+            return deletePreviousSignatureIfExists(currentCommand);    
+        })
+        .then(() => {
             return hashUtils.generatePackageHashFromDirectory(currentCommand.package, path.join(currentCommand.package, ".."));
         })
         .then((hash: string) => {
