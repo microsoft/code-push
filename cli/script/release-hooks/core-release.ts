@@ -15,7 +15,7 @@ import * as yazl from "yazl";
 var progress = require("progress");
 
 import AccountManager = require("code-push");
-import {PackageInfo} from "code-push/script/types";
+import {Package, PackageInfo} from "code-push/script/types";
 import {CommonUtils} from "../common-utils";
 var log = CommonUtils.log;
 import * as cli from "../../definitions/cli";
@@ -105,7 +105,7 @@ var coreReleaseHook: cli.ReleaseHook = (currentCommand: cli.IReleaseCommand, ori
             };
 
             return sdk.isAuthenticated(true)
-                .then((isAuth: boolean): Promise<void> => {
+                .then((isAuth: boolean): Promise<Package> => {
                     return sdk.release(currentCommand.appName, currentCommand.deploymentName, packagePath, currentCommand.appStoreVersion, updateMetadata, uploadProgress);
                 })
                 .then((): void => {

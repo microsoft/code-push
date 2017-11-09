@@ -299,9 +299,9 @@ class AccountManager {
             .then((res: JsonResponse) => res.body.history);
     }
 
-    public release(appName: string, deploymentName: string, filePath: string, targetBinaryVersion: string, updateMetadata: PackageInfo, uploadProgressCallback?: (progress: number) => void): Promise<void> {
+    public release(appName: string, deploymentName: string, filePath: string, targetBinaryVersion: string, updateMetadata: PackageInfo, uploadProgressCallback?: (progress: number) => void): Promise<Package> {
 
-        return Promise<void>((resolve, reject, notify) => {
+        return Promise<Package>((resolve, reject, notify) => {
 
             updateMetadata.appVersion = targetBinaryVersion;
             var request: superagent.Request<any> = superagent.post(this._serverUrl + urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
@@ -332,7 +332,7 @@ class AccountManager {
                         }
 
                         if (res.ok) {
-                            resolve(<void>null);
+                            resolve(<Package>(JSON.parse(res.text).package));
                         } else {
                             try {
                                 var body = JSON.parse(res.text);
