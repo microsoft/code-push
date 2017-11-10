@@ -331,19 +331,17 @@ class AccountManager {
                             return;
                         }
 
-                        if (res.ok) {
-                            resolve(<Package>(JSON.parse(res.text).package));
-                        } else {
-                            try {
-                                var body = JSON.parse(res.text);
-                            } catch (err) {
-                            }
+                        try {
+                            var body = JSON.parse(res.text);
+                        } catch (err) {
+                            reject(<CodePushError>{ message: `Could not parse response: ${res.text}`, statusCode: AccountManager.ERROR_INTERNAL_SERVER });
+                            return;
+                        }
 
-                            if (body) {
-                                reject(<CodePushError>{ message: body.message, statusCode: res && res.status });
-                            } else {
-                                reject(<CodePushError>{ message: res.text, statusCode: res && res.status });
-                            }
+                        if (res.ok) {
+                            resolve(<Package>body.package);
+                        } else {
+                            reject(<CodePushError>{ message: body.message, statusCode: res && res.status });
                         }
                     });
             });
