@@ -982,7 +982,7 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
                 }
 
                 if (typeof versionName !== "string") {
-                    throw new Error(`The "android.defaultConfig.versionName" property value in "${buildGradlePath}" is not a valid string. If this is expected, consider using the --targetBinaryVersion option to specify the value manually.`);
+                    throw new Error(`The "android.defaultConfig.versionName" property value in "${buildGradlePath}" is not a valid string. If this is expected, consider using the --target-binary-version option to specify the value manually.`);
                 }
 
                 let appVersion: string = versionName.replace(/"/g, "").trim();
