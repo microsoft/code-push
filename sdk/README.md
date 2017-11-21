@@ -69,7 +69,7 @@ The `code-push` module exports a single class (typically referred to as `CodePus
 
 - __patchRelease(appName: string, deploymentName: string, label: string, updateMetadata: PackageInfo): Promise&lt;void&gt;__ - Updates the specified release's metadata with the given information.
 
-- __promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string, updateMetadata: PackageInfo): Promise&lt;void&gt;__ - Promotes the latest release from one deployment to another for the specified app and updates the release with the given metadata.
+- __promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string, updateMetadata: PackageInfo): Promise&lt;Package&gt;__ - Promotes the latest release from one deployment to another for the specified app and updates the release with the given metadata.
 
 - __release(appName: string, deploymentName: string, updateContentsPath: string, targetBinaryVersion: string, updateMetadata: PackageInfo): Promise&lt;Package&gt;__ - Releases a new update to the specified deployment with the given metadata.
 

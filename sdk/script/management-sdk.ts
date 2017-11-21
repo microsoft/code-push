@@ -355,10 +355,10 @@ class AccountManager {
             .then(() => null);
     }
 
-    public promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string,  updateMetadata: PackageInfo): Promise<void> {
+    public promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string,  updateMetadata: PackageInfo): Promise<Package> {
         var requestBody: string = JSON.stringify({ packageInfo: updateMetadata });
-        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${sourceDeploymentName}/promote/${destinationDeploymentName}`, requestBody, /*expectResponseBody=*/ false)
-            .then(() => null);
+        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${sourceDeploymentName}/promote/${destinationDeploymentName}`, requestBody, /*expectResponseBody=*/ true)
+            .then((res: JsonResponse) => res.body.package);
     }
 
     public rollback(appName: string, deploymentName: string, targetRelease?: string): Promise<void> {

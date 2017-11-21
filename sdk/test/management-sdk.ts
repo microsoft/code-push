@@ -351,7 +351,8 @@ describe("Management SDK", () => {
 
         manager.promote("appName", "deploymentName", "newDeploymentName", { description: "newDescription" })
             .done((obj: any) => {
-                assert.ok(!obj);
+                assert.ok(obj);
+                assert.equal(obj.description, "newDescription")
                 done();
             }, rejectHandler);
     });
