@@ -4,25 +4,27 @@ import * as express from "express";
 import * as querystring from "querystring";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
-import * as rest from "rest-definitions";
+import * as rest from "appcenter-rest-definitions";
 
 export var validDeploymentKey = "asdfasdfawerqw";
 export var latestPackage = <rest.UpdateCheckResponse>{
-    downloadURL: "http://www.windowsazure.com/blobs/awperoiuqpweru",
+    download_url: "http://www.windowsazure.com/blobs/awperoiuqpweru",
     description: "Angry flappy birds",
-    appVersion: "1.5.0",
+    target_binary_range: "1.5.0",
     label: "2.4.0",
-    isMandatory: false,
-    isAvailable: true,
-    updateAppVersion: false,
-    packageHash: "hash240",
-    packageSize: 1024
+    is_mandatory: false,
+    is_available: true,
+    update_app_version: false,
+    package_hash: "hash240",
+    package_size: 1024
 };
 
 export var serverUrl = "http://myurl.com";
-var reportStatusDeployUrl = serverUrl + "/reportStatus/deploy";
-var reportStatusDownloadUrl = serverUrl + "/reportStatus/download";
-var updateCheckUrl = serverUrl + "/updateCheck?";
+var codepushBasePath = "/v0.1/public/codepush";
+var serverUrlWithCodePushBasePath = serverUrl + codepushBasePath;
+var reportStatusDeployUrl = serverUrlWithCodePushBasePath + "/report_status/deploy";
+var reportStatusDownloadUrl = serverUrlWithCodePushBasePath + "/report_status/download";
+var updateCheckUrl = serverUrlWithCodePushBasePath + "/update_check?";
 
 export class HttpRequester implements acquisitionSdk.Http.Requester {
     public request(verb: acquisitionSdk.Http.Verb, url: string, requestBodyOrCallback: string | acquisitionSdk.Callback<acquisitionSdk.Http.Response>, callback?: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
@@ -77,24 +79,24 @@ class Server {
 
     public static onUpdateCheck(params: any, callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
         var updateRequest: rest.UpdateCheckRequest = {
-            deploymentKey: params.deploymentKey,
-            appVersion: params.appVersion,
-            packageHash: params.packageHash,
-            isCompanion: !!(params.isCompanion),
+            deployment_key: params.deployment_key,
+            app_version: params.app_version,
+            package_hash: params.package_hash,
+            is_companion: params.is_companion == 'true',
             label: params.label
         };
 
-        if (!updateRequest.deploymentKey || !updateRequest.appVersion) {
+        if (!updateRequest.deployment_key || !updateRequest.app_version) {
             callback(/*error=*/ null, { statusCode: 400 });
         } else {
-            var updateInfo = <rest.UpdateCheckResponse>{ isAvailable: false };
-            if (updateRequest.deploymentKey === validDeploymentKey) {
-                if (updateRequest.isCompanion || updateRequest.appVersion === latestPackage.appVersion) {
-                    if (updateRequest.packageHash !== latestPackage.packageHash) {
+            var updateInfo = <rest.UpdateCheckResponse>{ is_available: false };
+            if (updateRequest.deployment_key === validDeploymentKey) {
+                if (updateRequest.is_companion || updateRequest.app_version === latestPackage.target_binary_range) {
+                    if (updateRequest.package_hash !== latestPackage.package_hash) {
                         updateInfo = latestPackage;
                     }
-                } else if (updateRequest.appVersion < latestPackage.appVersion) {
-                    updateInfo = <rest.UpdateCheckResponse><any>{ updateAppVersion: true, appVersion: latestPackage.appVersion };
+                } else if (updateRequest.app_version < latestPackage.target_binary_range) {
+                    updateInfo = <rest.UpdateCheckResponse><any>{ update_app_version: true, target_binary_range: latestPackage.target_binary_range };
                 }
             }
 

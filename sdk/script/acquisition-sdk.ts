@@ -1,6 +1,6 @@
 /// <reference path="../definitions/harness.d.ts" />
 
-import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "rest-definitions";
+import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "appcenter-rest-definitions";
 
 export module Http {
     export const enum Verb {
@@ -86,15 +86,15 @@ export class AcquisitionManager {
         }
 
         var updateRequest: UpdateCheckRequest = {
-            deploymentKey: this._deploymentKey,
-            appVersion: currentPackage.appVersion,
-            packageHash: currentPackage.packageHash,
-            isCompanion: this._ignoreAppVersion,
+            deployment_key: this._deploymentKey,
+            app_version: currentPackage.appVersion,
+            package_hash: currentPackage.packageHash,
+            is_companion: this._ignoreAppVersion ? this._ignoreAppVersion : false,
             label: currentPackage.label,
-            clientUniqueId: this._clientUniqueId
+            client_unique_id: this._clientUniqueId
         };
 
-        var requestUrl: string = this._serverUrl + "updateCheck?" + queryStringify(updateRequest);
+        var requestUrl: string = this._serverUrl + "v0.1/public/codepush/update_check?" + queryStringify(updateRequest);
 
         this._httpRequester.request(Http.Verb.GET, requestUrl, (error: Error, response: Http.Response) => {
             if (error) {
@@ -103,7 +103,7 @@ export class AcquisitionManager {
             }
 
             if (response.statusCode !== 200) {
-                let errorMessage;
+                let errorMessage: string;
                 if (response.statusCode === 0) {
                     errorMessage = `Couldn't send request to ${requestUrl}, xhr.statusCode = 0 was returned. One of the possible reasons for that might be connection problems. Please, check your internet connection.`;
                 } else {
@@ -123,10 +123,10 @@ export class AcquisitionManager {
             if (!updateInfo) {
                 callback(error, /*remotePackage=*/ null);
                 return;
-            } else if (updateInfo.updateAppVersion) {
-                callback(/*error=*/ null, { updateAppVersion: true, appVersion: updateInfo.appVersion });
+            } else if (updateInfo.update_app_version) {
+                callback(/*error=*/ null, { updateAppVersion: true, appVersion: updateInfo.target_binary_range });
                 return;
-            } else if (!updateInfo.isAvailable) {
+            } else if (!updateInfo.is_available) {
                 callback(/*error=*/ null, /*remotePackage=*/ null);
                 return;
             }
@@ -135,11 +135,11 @@ export class AcquisitionManager {
                 deploymentKey: this._deploymentKey,
                 description: updateInfo.description,
                 label: updateInfo.label,
-                appVersion: updateInfo.appVersion,
-                isMandatory: updateInfo.isMandatory,
-                packageHash: updateInfo.packageHash,
-                packageSize: updateInfo.packageSize,
-                downloadUrl: updateInfo.downloadURL
+                appVersion: updateInfo.target_binary_range,
+                isMandatory: updateInfo.is_mandatory,
+                packageHash: updateInfo.package_hash,
+                packageSize: updateInfo.package_size,
+                downloadUrl: updateInfo.download_url
             };
 
             callback(/*error=*/ null, remotePackage);
@@ -147,19 +147,19 @@ export class AcquisitionManager {
     }
 
     public reportStatusDeploy(deployedPackage?: Package, status?: string, previousLabelOrAppVersion?: string, previousDeploymentKey?: string, callback?: Callback<void>): void {
-        var url: string = this._serverUrl + "reportStatus/deploy";
+        var url: string = this._serverUrl + "v0.1/public/codepush/report_status/deploy";
         var body: DeploymentStatusReport = {
-            appVersion: this._appVersion,
-            deploymentKey: this._deploymentKey
+            app_version: this._appVersion,
+            deployment_key: this._deploymentKey
         };
 
         if (this._clientUniqueId) {
-            body.clientUniqueId = this._clientUniqueId;
+            body.client_unique_id = this._clientUniqueId;
         }
 
         if (deployedPackage) {
             body.label = deployedPackage.label;
-            body.appVersion = deployedPackage.appVersion;
+            body.app_version = deployedPackage.appVersion;
 
             switch (status) {
                 case AcquisitionStatus.DeploymentSucceeded:
@@ -180,11 +180,11 @@ export class AcquisitionManager {
         }
 
         if (previousLabelOrAppVersion) {
-            body.previousLabelOrAppVersion = previousLabelOrAppVersion;
+            body.previous_label_or_app_version = previousLabelOrAppVersion;
         }
 
         if (previousDeploymentKey) {
-            body.previousDeploymentKey = previousDeploymentKey;
+            body.previous_deployment_key = previousDeploymentKey;
         }
 
         callback = typeof arguments[arguments.length - 1] === "function" && arguments[arguments.length - 1];
@@ -207,10 +207,10 @@ export class AcquisitionManager {
     }
 
     public reportStatusDownload(downloadedPackage: Package, callback?: Callback<void>): void {
-        var url: string = this._serverUrl + "reportStatus/download";
+        var url: string = this._serverUrl + "v0.1/public/codepush/report_status/download";
         var body: DownloadReport = {
-            clientUniqueId: this._clientUniqueId,
-            deploymentKey: this._deploymentKey,
+            client_unique_id: this._clientUniqueId,
+            deployment_key: this._deploymentKey,
             label: downloadedPackage.label
         };
 

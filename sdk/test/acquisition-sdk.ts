@@ -6,7 +6,7 @@ import * as http from "http";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
 import * as mockApi from "./acquisition-rest-mock";
-import * as rest from "rest-definitions";
+import * as rest from "appcenter-rest-definitions";
 
 var latestPackage: rest.UpdateCheckResponse = clone(mockApi.latestPackage);
 
@@ -21,7 +21,7 @@ var templateCurrentPackage: acquisitionSdk.Package = {
     deploymentKey: mockApi.validDeploymentKey,
     description: "sdfsdf",
     label: "v1",
-    appVersion: latestPackage.appVersion,
+    appVersion: latestPackage.target_binary_range,
     packageHash: "hash001",
     isMandatory: false,
     packageSize: 100
@@ -30,22 +30,22 @@ var templateCurrentPackage: acquisitionSdk.Package = {
 var scriptUpdateResult: acquisitionSdk.RemotePackage = {
     deploymentKey: mockApi.validDeploymentKey,
     description: latestPackage.description,
-    downloadUrl: latestPackage.downloadURL,
+    downloadUrl: latestPackage.download_url,
     label: latestPackage.label,
-    appVersion: latestPackage.appVersion,
-    isMandatory: latestPackage.isMandatory,
-    packageHash: latestPackage.packageHash,
-    packageSize: latestPackage.packageSize
+    appVersion: latestPackage.target_binary_range,
+    isMandatory: latestPackage.is_mandatory,
+    packageHash: latestPackage.package_hash,
+    packageSize: latestPackage.package_size
 };
 
 var nativeUpdateResult: acquisitionSdk.NativeUpdateNotification = {
     updateAppVersion: true,
-    appVersion: latestPackage.appVersion
+    appVersion: latestPackage.target_binary_range
 };
 
 describe("Acquisition SDK", () => {
     beforeEach(() => {
-        mockApi.latestPackage = clone(latestPackage);
+        mockApi.latestPackage = clone(latestPackage); 
     });
 
     it("Package with lower label and different package hash gives update", (done: MochaDone) => {
@@ -59,7 +59,7 @@ describe("Acquisition SDK", () => {
 
     it("Package with equal package hash gives no update", (done: MochaDone) => {
         var equalVersionPackage: acquisitionSdk.Package = clone(templateCurrentPackage);
-        equalVersionPackage.packageHash = latestPackage.packageHash;
+        equalVersionPackage.packageHash = latestPackage.package_hash;
 
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
         acquisition.queryUpdateWithCurrentPackage(equalVersionPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
@@ -153,7 +153,7 @@ describe("Acquisition SDK", () => {
     });
 
     it("If latest package is mandatory, returned package is mandatory", (done: MochaDone) => {
-        mockApi.latestPackage.isMandatory = true;
+        mockApi.latestPackage.is_mandatory = true;
 
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage) => {
