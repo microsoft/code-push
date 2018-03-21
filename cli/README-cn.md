@@ -337,7 +337,7 @@ code-push release <appName> <updateContents> <targetBinaryVersion>
 
 给部署提供一个可选的"更新日志"。当被检测到有更新时这个值就会完整的传到客户端，所以你的应用可以选择显示给终端用户（如：通过一个`哪些新东西？`的对话框）。这个字符串可以接受控制字符如`\n` 和 `\t`，以便你可以包含空白格式在你的描述里来提高可读性。
 
-*注意：这个参数可以用"--description" 或 "-des"来设置。*
+*注意：这个参数可以用"--description" 或 "--des"来设置。*
 
 #### Mandatory (强制性)参数
 
