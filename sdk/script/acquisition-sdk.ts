@@ -103,7 +103,7 @@ export class AcquisitionManager {
             }
 
             if (response.statusCode !== 200) {
-                let errorMessage;
+                let errorMessage: any;
                 if (response.statusCode === 0) {
                     errorMessage = `Couldn't send request to ${requestUrl}, xhr.statusCode = 0 was returned. One of the possible reasons for that might be connection problems. Please, check your internet connection.`;
                 } else {

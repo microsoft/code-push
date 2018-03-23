@@ -13,6 +13,7 @@
     "gulp-load-plugins": "^1.0.0-rc.1",
     "gulp-mocha": "^2.1.2",
     "gulp-plumber": "^1.0.1",
+    "gulp-sourcemaps": "^2.6.4",
     "gulp-tsd": "0.0.4",
     "gulp-typescript": "^2.7.8",
     "gulp-util": "^3.0.6",

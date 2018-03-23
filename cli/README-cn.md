@@ -393,10 +393,17 @@ code-push release-react <appName> <platform>
 [--development <development>]
 [--disabled <disabled>]
 [--entryFile <entryFile>]
+[--gradleFile <gradleFile>]
 [--mandatory]
+[--noDuplicateReleaseError]
+[--outputDir <outputDir>]
+[--plistFile <plistFile>]
+[--plistFilePrefix <plistFilePrefix>]
 [--sourcemapOutput <sourcemapOutput>]
 [--targetBinaryVersion <targetBinaryVersion>]
 [--rollout <rolloutPercentage>]
+[--privateKeyPath <pathToPrivateKey>]
+[--config <config>]
 ```
 `release-react`命令是React Native特有的[`发布`](#发布更新)命令，支持相同的所有参数（如：`--mandatory`,`--description`），然而通过如下额外的动作简化了发布更新过程：
 

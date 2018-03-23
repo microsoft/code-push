@@ -1456,7 +1456,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>command;
-                releaseCommand.package = path.join(os.tmpdir(), "CodePush");
+                releaseCommand.package = path.join(os.tmpdir(), "CodePush/CodePush");
                 releaseCommand.appStoreVersion = "1.2.3";
 
                 sinon.assert.calledOnce(spawn);
@@ -1465,7 +1465,7 @@ describe("CLI", () => {
                 assert.equal(spawnCommand, "node");
                 assert.equal(
                     spawnCommandArgs,
-                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush", bundleName)} --dev false --entry-file index.ios.js --platform ios`
+                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush/CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush/CodePush", bundleName)} --dev false --entry-file index.ios.js --platform ios`
                 );
                 assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
                 done();
@@ -1492,7 +1492,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>clone(command);
-                var packagePath: string = path.join(os.tmpdir(), "CodePush");
+                var packagePath: string = path.join(os.tmpdir(), "CodePush/CodePush");
                 releaseCommand.package = packagePath;
                 releaseCommand.appStoreVersion = "1.2.3";
 
@@ -1529,7 +1529,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>clone(command);
-                var packagePath: string = path.join(os.tmpdir(), "CodePush");
+                var packagePath: string = path.join(os.tmpdir(), "CodePush/CodePush");
                 releaseCommand.package = packagePath;
                 releaseCommand.appStoreVersion = "1.0.0";
 
@@ -1566,7 +1566,7 @@ describe("CLI", () => {
         cmdexec.execute(command)
             .then(() => {
                 var releaseCommand: cli.IReleaseCommand = <any>clone(command);
-                var packagePath = path.join(os.tmpdir(), "CodePush");
+                var packagePath = path.join(os.tmpdir(), "CodePush/CodePush");
                 releaseCommand.package = packagePath;
                 releaseCommand.appStoreVersion = "1.0.0";
 
@@ -1616,7 +1616,7 @@ describe("CLI", () => {
                 assert.equal(spawnCommand, "node");
                 assert.equal(
                     spawnCommandArgs,
-                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush", bundleName)} --dev true --entry-file index.android.js --platform android --sourcemap-output index.android.js.map`
+                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush/CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush/CodePush", bundleName)} --dev true --entry-file index.android.js --platform android --sourcemap-output index.android.js.map`
                 );
                 assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
                 done();
@@ -1655,7 +1655,7 @@ describe("CLI", () => {
                 assert.equal(spawnCommand, "node");
                 assert.equal(
                     spawnCommandArgs,
-                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush", bundleName)} --dev false --entry-file index.android.js --platform android --sourcemap-output index.android.js.map`
+                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush/CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush/CodePush", bundleName)} --dev false --entry-file index.android.js --platform android --sourcemap-output index.android.js.map`
                 );
                 assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
                 done();
@@ -1693,7 +1693,7 @@ describe("CLI", () => {
                 assert.equal(spawnCommand, "node");
                 assert.equal(
                     spawnCommandArgs,
-                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush", bundleName)} --dev false --entry-file index.android.js --platform android --sourcemap-output index.android.js.map`
+                    `${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush/CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush/CodePush", bundleName)} --dev false --entry-file index.android.js --platform android --sourcemap-output index.android.js.map`
                 );
                 assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
                 done();
@@ -1734,7 +1734,7 @@ describe("CLI", () => {
                 assert.equal(spawnCommand, "node");
                 assert.equal(
                     spawnCommandArgs,
-                    `--foo=bar --baz ${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush", bundleName)} --dev false --entry-file index.ios.js --platform ios`
+                    `--foo=bar --baz ${path.join("node_modules", "react-native", "local-cli", "cli.js")} bundle --assets-dest ${path.join(os.tmpdir(), "CodePush/CodePush")} --bundle-output ${path.join(os.tmpdir(), "CodePush/CodePush", bundleName)} --dev false --entry-file index.ios.js --platform ios`
                 );
                 assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
 

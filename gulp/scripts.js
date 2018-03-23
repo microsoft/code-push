@@ -4,6 +4,7 @@ var chmod = require("chmod");
 var fs = require("fs");
 var gulp = require("gulp");
 var plugins = require("gulp-load-plugins")();
+var sourcemaps = require('gulp-sourcemaps');
 var through = require("through2");
 var tsc = require("typescript");
 var tsJsxLoader = require("ts-jsx-loader");
@@ -42,6 +43,7 @@ function scriptTask(cwd, jsx) {
     var tsResult = merge([
             gulp.src("{script,test,definitions}/**/*.ts", options),
             gulp.src(generatedDefinitions)])
+        .pipe(sourcemaps.init())
         .pipe(plugins.if(jsx, through.obj(tsJsxPipe)))
         .pipe(plugins.typescript(tsProj, /* filterSettings=*/ undefined, {
             error: fullReporter.error,
@@ -56,7 +58,11 @@ function scriptTask(cwd, jsx) {
         }));
 
     return merge([
-            tsResult.js.pipe(gulp.dest("bin", options)),
+            tsResult.js
+                .pipe(sourcemaps.write("./", {
+                    sourceRoot: ".."
+                }))
+                .pipe(gulp.dest("bin", options)),
             tsResult.dts.pipe(gulp.dest("bin/definitions", options))
         ])
         .pipe(errorCatch);
