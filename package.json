@@ -19,6 +19,7 @@
     "gulp-util": "^3.0.6",
     "merge2": "^0.3.6",
     "mkdirp": "^0.5.1",
+    "moment": "^2.21.0",
     "node-libs-browser": "^0.5.2",
     "node-rsa": "^0.2.24",
     "require-all": "^1.1.0",

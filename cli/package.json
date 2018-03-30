@@ -1,6 +1,6 @@
 {
   "name": "code-push-cli",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "Management CLI for the CodePush service",
   "main": "script/cli.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "gradle-to-js": "^1.0.1",
     "jsonwebtoken": "^7.4.1",
     "mkdirp": "^0.5.1",
-    "moment": "^2.10.6",
+    "moment": "^2.21.0",
     "opener": "^1.4.1",
     "parse-duration": "0.1.1",
     "plist": "1.2.0",
