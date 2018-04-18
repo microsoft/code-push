@@ -858,7 +858,7 @@ By default, the history doesn't display the author of each release, but if you a
 
 ## Clearing Release History
 
-While you can't delete individual updates, you can clear the entire release history associated with a deployment using the following command:
+While you can't delete individual releases, you can clear the entire release history associated with a deployment using the following command:
 
 ```
 code-push deployment clear <appName> <deploymentName>
