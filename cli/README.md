@@ -804,7 +804,7 @@ code-push promote MyApp-iOS Staging Production -t "*"
 
 ## Rolling Back Updates
 
-A deployment's release history is immutable, so you cannot delete or remove individual updates once they have been released without deleting all of the deployment's history. However, if you release an update that is broken or contains unintended features, it is easy to roll it back using the `rollback` command:
+A deployment's release history is immutable, so you cannot delete or remove individual updates once they have been released without deleting all of the deployment's release history. However, if you release an update that is broken or contains unintended features, it is easy to roll it back using the `rollback` command:
 
 ```
 code-push rollback <appName> <deploymentName>
