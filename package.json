@@ -11,7 +11,7 @@
     "gulp-install": "^0.4.0",
     "gulp-istanbul": "^0.10.0",
     "gulp-load-plugins": "^1.0.0-rc.1",
-    "gulp-mocha": "^2.1.2",
+    "gulp-mocha": "^6.0.0",
     "gulp-plumber": "^1.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-tsd": "0.0.4",
@@ -30,7 +30,6 @@
     "through2": "^2.0.0",
     "ts-jsx-loader": "^0.2.1",
     "typescript": "1.5.0-alpha",
-    "webpack": "^1.10.1",
     "which": "^1.1.1",
     "yauzl": "^2.6.0"
   }

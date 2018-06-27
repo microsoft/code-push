@@ -31,7 +31,7 @@
     "code-push": "2.0.5",
     "email-validator": "^1.0.3",
     "gradle-to-js": "^1.0.1",
-    "jsonwebtoken": "^7.4.1",
+    "jsonwebtoken": "^8.3.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.21.0",
     "opener": "^1.4.1",
