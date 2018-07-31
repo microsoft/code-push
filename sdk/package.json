@@ -1,6 +1,6 @@
 {
   "name": "code-push",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Management SDK for the CodePush service",
   "main": "script/index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "recursive-fs": "0.1.4",
     "slash": "1.0.0",
     "superagent": "^3.8.0",
-    "superagent-proxy": "^1.0.0",
+    "superagent-proxy": "^1.0.3",
     "yazl": "^2.4.1"
   }
 }
