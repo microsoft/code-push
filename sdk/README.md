@@ -63,7 +63,7 @@ The `code-push` module exports a single class (typically referred to as `CodePus
 
 - __getDeploymentHistory(appName: string, deploymentName: string): Promise&lt;Package[]&gt;__ - Retrieves the list of releases that have been made to the specified app deployment.
 
-- __getDeploymentMetrics(appName: string, deploymentName:string): Promise&lt;DeploymentMetrics&gt;__ - Retrieves the installation metrics for the specified app deployment.
+- __getDeploymentMetrics(appName: string, deploymentName: string): Promise&lt;DeploymentMetrics&gt;__ - Retrieves the installation metrics for the specified app deployment.
 
 - __getDeployments(appName: string): Promose&lt;Deployment[]&gt;__ - Retrieves the list of deployments associated with the specified app.
 
