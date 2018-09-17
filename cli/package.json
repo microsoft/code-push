@@ -36,7 +36,7 @@
     "moment": "^2.21.0",
     "opener": "^1.4.1",
     "parse-duration": "0.1.1",
-    "plist": "1.2.0",
+    "plist": "^3.0.1",
     "progress": "^1.1.8",
     "prompt": "^0.2.14",
     "properties": "^1.2.1",
