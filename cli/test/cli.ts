@@ -129,7 +129,7 @@ export class SdkStub {
         if (appName === "a") {
             return Q([this.productionDeployment, this.stagingDeployment]);
         }
-    
+
         return Q.reject<codePush.Deployment[]>();
     }
 
@@ -1313,7 +1313,7 @@ describe("CLI", () => {
             });
     });
 
-    it("release-react fails if CWD does not contain package.json", (done: MochaDone): void => {
+    it("release-react fails if projectDir does not contain package.json, using CWD as default", (done: MochaDone): void => {
         var command: cli.IReleaseReactCommand = {
             type: cli.CommandType.releaseReact,
             appName: "a",
@@ -1333,9 +1333,42 @@ describe("CLI", () => {
                 done(new Error("Did not throw error."));
             })
             .catch((err) => {
-                assert.equal(err.message, "Unable to find or read \"package.json\" in the CWD. The \"release-react\" command must be executed in a React Native project folder.");
+                assert.equal(err.message, `Unable to find or read \"package.json\" in ${process.cwd()}. The \"release-react\" command must be executed in a React Native project folder or you must specify its path with the --projectDir option.`);
                 sinon.assert.notCalled(release);
                 sinon.assert.notCalled(spawn);
+                done();
+            })
+            .done();
+    });
+
+    it("release-react can be run from a projectDir", (done: MochaDone): void => {
+        var bundleName = "bundle.js";
+        var command: cli.IReleaseReactCommand = {
+            type: cli.CommandType.releaseReact,
+            appName: "a",
+            appStoreVersion: null,
+            bundleName: bundleName,
+            deploymentName: "Staging",
+            description: "Test default entry file",
+            mandatory: false,
+            rollout: null,
+            platform: "ios",
+            entryFile: __dirname + "/resources/TestApp/index.ios.js",
+            projectDir: __dirname + "/resources/TestApp",
+            plistFile: __dirname + "/resources/TestApp/iOS/TestApp/Info.plist"
+        };
+
+        var release: Sinon.SinonSpy = sandbox.stub(cmdexec, "release", () => { return Q(<void>null) });
+
+        cmdexec.execute(command)
+            .then(() => {
+                var releaseCommand: cli.IReleaseCommand = <any>command;
+                releaseCommand.package = path.join(os.tmpdir(), "CodePush/CodePush");
+                releaseCommand.appStoreVersion = "1.2.3";
+                sinon.assert.calledOnce(spawn);
+                var spawnCommand: string = spawn.args[0][0];
+                assert.equal(spawnCommand, "node");
+                assertJsonDescribesObject(JSON.stringify(release.args[0][0], /*replacer=*/ null, /*spacing=*/ 2), releaseCommand);
                 done();
             })
             .done();
