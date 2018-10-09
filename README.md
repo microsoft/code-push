@@ -10,7 +10,7 @@ This repo includes the [management CLI](https://github.com/Microsoft/code-push/t
 
 * Install [Node.js](https://nodejs.org/)
 * Install [Git](http://www.git-scm.com/)
-* Install Gulp: `npm install -g gulp`
+* Install [Gulp](https://gulpjs.com/): `npm install -g gulp`
 * Clone the Repository: `git clone https://github.com/Microsoft/code-push.git`
 
 ### Building
