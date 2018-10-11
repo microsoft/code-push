@@ -65,7 +65,7 @@ function accessKeyPatch(commandName: string, yargs: yargs.Argv): void {
 function accessKeyList(commandName: string, yargs: yargs.Argv): void {
     isValidCommand = true;
     yargs.usage(USAGE_PREFIX + " access-key " + commandName + " [options]")
-        .demand(/*count*/ 0, /*max*/ 0)  
+        .demand(/*count*/ 0, /*max*/ 0)
         .example("access-key " + commandName, "Lists your access keys in tabular format")
         .example("access-key " + commandName + " --format json", "Lists your access keys in JSON format")
         .option("format", { default: "table", demand: false, description: "Output format to display your access keys with (\"json\" or \"table\")", type: "string" });
@@ -92,7 +92,7 @@ function addCommonConfiguration(yargs: yargs.Argv): void {
 function appList(commandName: string, yargs: yargs.Argv): void {
     isValidCommand = true;
     yargs.usage(USAGE_PREFIX + " app " + commandName + " [options]")
-        .demand(/*count*/ 0, /*max*/ 0)  
+        .demand(/*count*/ 0, /*max*/ 0)
         .example("app " + commandName, "List your apps in tabular format")
         .example("app " + commandName + " --format json", "List your apps in JSON format")
         .option("format", { default: "table", demand: false, description: "Output format to display your apps with (\"json\" or \"table\")", type: "string" });
@@ -132,7 +132,7 @@ function removeCollaborator(commandName: string, yargs: yargs.Argv): void {
 function sessionList(commandName: string, yargs: yargs.Argv): void {
     isValidCommand = true;
     yargs.usage(USAGE_PREFIX + " session " + commandName + " [options]")
-        .demand(/*count*/ 0, /*max*/ 0)  
+        .demand(/*count*/ 0, /*max*/ 0)
         .example("session " + commandName, "Lists your sessions in tabular format")
         .example("session " + commandName + " --format json", "Lists your login sessions in JSON format")
         .option("format", { default: "table", demand: false, description: "Output format to display your login sessions with (\"json\" or \"table\")", type: "string" });
@@ -340,7 +340,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " logout")
-            .demand(/*count*/ 0, /*max*/ 0) 
+            .demand(/*count*/ 0, /*max*/ 0)
             .example("logout", "Logs out and ends your current session");
         addCommonConfiguration(yargs);
     })
@@ -446,7 +446,8 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
             .option("sourcemapOutput", { alias: "s", default: null, demand: false, description: "Path to where the sourcemap for the resulting bundle should be written. If omitted, a sourcemap will not be generated.", type: "string" })
             .option("targetBinaryVersion", { alias: "t", default: null, demand: false, description: "Semver expression that specifies the binary app version(s) this release is targeting (e.g. 1.1.0, ~1.2.3). If omitted, the release will target the exact version specified in the \"Info.plist\" (iOS), \"build.gradle\" (Android) or \"Package.appxmanifest\" (Windows) files.", type: "string" })
             .option("outputDir", { alias: "o", default: null, demand: false, description: "Path to where the bundle and sourcemap should be written. If omitted, a bundle and sourcemap will not be written.", type: "string" })
-            .option("config", { alias: "c", default: null, demand: false, description: "Path to the React Native CLI configuration file", type: "string" })    
+            .option("config", { alias: "c", default: null, demand: false, description: "Path to the React Native CLI configuration file", type: "string" })
+            .option("projectDir", { alias: "dir", default: null, demand: false, description: "Path to where the react-native module is installed. By default your current working dir", type: "string" })
             .check((argv: any, aliases: { [aliases: string]: string }): any => { return checkValidReleaseOptions(argv); });
 
         addCommonConfiguration(yargs);
@@ -478,7 +479,7 @@ var argv = yargs.usage(USAGE_PREFIX + " <command>")
         isValidCommandCategory = true;
         isValidCommand = true;
         yargs.usage(USAGE_PREFIX + " whoami")
-            .demand(/*count*/ 0, /*max*/ 0)  
+            .demand(/*count*/ 0, /*max*/ 0)
             .example("whoami", "Display the account info for the current login session");
         addCommonConfiguration(yargs);
     })
@@ -862,6 +863,7 @@ function createCommand(): cli.ICommand {
                     releaseReactCommand.privateKeyPath = argv["privateKeyPath"];
                     releaseReactCommand.sourcemapOutput = argv["sourcemapOutput"];
                     releaseReactCommand.outputDir = argv["outputDir"];
+                    releaseReactCommand.projectDir = argv["projectDir"];
                     releaseReactCommand.config = argv["config"];
                 }
                 break;

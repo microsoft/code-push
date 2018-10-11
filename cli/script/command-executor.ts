@@ -1218,8 +1218,8 @@ export var releaseCordova = (command: cli.IReleaseCordovaCommand): Promise<void>
             if (platform === "ios") {
                 outputFolder = path.join(platformFolder, "www");
             } else if (platform === "android") {
-                
-                // Since cordova-android 7 assets directory moved to android/app/src/main/assets instead of android/assets                
+
+                // Since cordova-android 7 assets directory moved to android/app/src/main/assets instead of android/assets
                 const outputFolderVer7 = path.join(platformFolder, "app", "src", "main", "assets", "www");
                 if (fs.existsSync(outputFolderVer7)) {
                     outputFolder = outputFolderVer7;
@@ -1293,10 +1293,11 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
     var bundleName: string = command.bundleName;
     var entryFile: string = command.entryFile;
     var outputFolder: string = command.outputDir || path.join(os.tmpdir(), "CodePush");
+    var projectDir: string = command.projectDir || process.cwd();
     var platform: string = command.platform = command.platform.toLowerCase();
     var releaseCommand: cli.IReleaseCommand = <any>command;
 
-    // we have to add "CodePush" root forlder to make update contents file structure 
+    // we have to add "CodePush" root forlder to make update contents file structure
     // to be compatible with React Native client SDK
     outputFolder = path.join(outputFolder, "CodePush");
     mkdirp.sync(outputFolder);
@@ -1323,19 +1324,19 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
             }
 
             try {
-                var projectPackageJson: any = require(path.join(process.cwd(), "package.json"));
+                var projectPackageJson: any = require(path.join(projectDir, "package.json"));
                 var projectName: string = projectPackageJson.name;
                 if (!projectName) {
-                    throw new Error("The \"package.json\" file in the CWD does not have the \"name\" field set.");
+                    throw new Error(`The \"package.json\" file in the projectDir (${projectDir}) does not have the \"name\" field set.`);
                 }
 
                 const isReactNativeProject: boolean = projectPackageJson.dependencies["react-native"] ||
                     (projectPackageJson.devDependencies && projectPackageJson.devDependencies["react-native"]);
                 if (!isReactNativeProject) {
-                    throw new Error("The project in the CWD is not a React Native project.");
+                    throw new Error(`The project in the projectDir (${projectDir}) is not a React Native project.`);
                 }
             } catch (error) {
-                throw new Error("Unable to find or read \"package.json\" in the CWD. The \"release-react\" command must be executed in a React Native project folder.");
+                throw new Error(`Unable to find or read \"package.json\" in ${projectDir}. The \"release-react\" command must be executed in a React Native project folder or you must specify its path with the --projectDir option.`);
             }
 
             if (!entryFile) {
