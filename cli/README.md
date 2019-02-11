@@ -348,14 +348,14 @@ If you ever want an update to target multiple versions of the app store binary, 
 
 The following table outlines the version value that CodePush expects your update's semver range to satisfy for each respective app type:
 
-| Platform               | Source of app store version                                                  |
+| Platform               | Source of binary version                                                  |
 |------------------------|------------------------------------------------------------------------------|
 | Cordova                | The `<widget version>` attribute in the `config.xml` file                    |
 | React Native (Android) | The `android.defaultConfig.versionName` property in your `build.gradle` file |
 | React Native (iOS)     | The `CFBundleShortVersionString` key in the `Info.plist` file                |
 | React Native (Windows) | The `<Identity Version>` key in the `Package.appxmanifest` file                                |
 
-*NOTE: If the app store version in the metadata files are missing a patch version, e.g. `2.0`, it will be treated as having a patch version of `0`, i.e. `2.0 -> 2.0.0`. The same is true for app store version equal to plain integer number, `1` will be treated as `1.0.0` in this case.*
+*NOTE: If the binary version in the metadata files are missing a patch version, e.g. `2.0`, it will be treated as having a patch version of `0`, i.e. `2.0 -> 2.0.0`. The same is true for binary version equal to plain integer number, `1` will be treated as `1.0.0` in this case.*
 
 #### Deployment name parameter
 
