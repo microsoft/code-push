@@ -332,7 +332,7 @@ If you ever want an update to target multiple versions of the app store binary, 
 
 | Range Expression | Who gets the update                                                                    |
 |------------------|----------------------------------------------------------------------------------------|
-| `1.2.3`          | Only devices running the specific binary app store version `1.2.3` of your app         |
+| `1.2.3`          | Only devices running the specific binary version `1.2.3` of your app         |
 | `*`              | Any device configured to consume updates from your CodePush app                        |
 | `1.2.x`          | Devices running major version 1, minor version 2 and any patch version of your app     |
 | `1.2.3 - 1.2.7`  | Devices running any binary version between `1.2.3` (inclusive) and `1.2.7` (inclusive) |
@@ -763,7 +763,7 @@ code-push promote <appName> <sourceDeploymentName> <destDeploymentName>
 
 The `promote` command will create a new release for the destination deployment, which includes the **exact code and metadata** (description, mandatory and target binary version) from the latest release of the source deployment. While you could use the `release` command to "manually" migrate an update from one environment to another, the `promote` command has the following benefits:
 
-1. It's quicker, since you don't need to reassemble the release assets you want to publish or remember the description/app store version that are associated with the source deployment's release.
+1. It's quicker, since you don't need to reassemble the release assets you want to publish or remember the description/binary version that are associated with the source deployment's release.
 
 2. It's less error-prone, since the promote operation ensures that the exact thing that you already tested in the source deployment (e.g. `Staging`) will become active in the destination deployment (e.g. `Production`).
 
