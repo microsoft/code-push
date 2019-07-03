@@ -865,8 +865,8 @@ function createCommand(): cli.ICommand {
                     releaseReactCommand.sourcemapOutput = argv["sourcemapOutput"];
                     releaseReactCommand.outputDir = argv["outputDir"];
                     releaseReactCommand.config = argv["config"];
-                    releaseReactCommand.config = argv["bundleCommand"];
-                    releaseReactCommand.config = argv["indexedRamBundle"];
+                    releaseReactCommand.bundleCommand = argv["bundleCommand"];
+                    releaseReactCommand.indexedRamBundle = argv["indexedRamBundle"];
                 }
                 break;
 
