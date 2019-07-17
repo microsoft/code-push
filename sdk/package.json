@@ -15,10 +15,10 @@
   "homepage": "https://microsoft.github.io/code-push",
   "dependencies": {
     "q": "^1.4.1",
-    "recursive-fs": "0.1.4",
-    "slash": "1.0.0",
-    "superagent": "^3.8.0",
-    "superagent-proxy": "^1.0.3",
+    "recursive-fs": "^1.1.2",
+    "slash": "3.0.0",
+    "superagent": "^5.1.0",
+    "superagent-proxy": "^2.0.0",
     "yazl": "^2.4.1"
   }
 }
