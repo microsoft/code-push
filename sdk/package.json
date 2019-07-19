@@ -1,6 +1,6 @@
 {
   "name": "code-push",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Management SDK for the CodePush service",
   "main": "script/index.js",
   "scripts": {
