@@ -60,19 +60,18 @@ declare module "rest-definitions" {
     }
 
     /*out*/
-    export interface UpdateCheckResponse extends PackageInfo {
-        downloadURL?: string;
-        isAvailable: boolean;
-        packageSize?: number;
-        shouldRunBinaryVersion?: boolean;
-        updateAppVersion?: boolean;
-    }
-
-    /*out*/
-    export interface UpdateCheckCacheResponse {
-        originalPackage: UpdateCheckResponse;
-        rollout?: number;
-        rolloutPackage?: UpdateCheckResponse;
+    export interface UpdateCheckResponse {
+        download_url?: string;
+        description?: string;
+        is_available: boolean;
+        is_disabled?: boolean;
+        target_binary_range: string;
+        /*generated*/ label?: string;
+        /*generated*/ package_hash?: string;
+        package_size?: number;
+        should_run_binary_version?: boolean;
+        update_app_version?: boolean;
+        is_mandatory?: boolean;
     }
 
     /*in*/

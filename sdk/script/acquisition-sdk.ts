@@ -123,10 +123,10 @@ export class AcquisitionManager {
             if (!updateInfo) {
                 callback(error, /*remotePackage=*/ null);
                 return;
-            } else if (updateInfo.updateAppVersion) {
-                callback(/*error=*/ null, { updateAppVersion: true, appVersion: updateInfo.appVersion });
+            } else if (updateInfo.update_app_version) {
+                callback(/*error=*/ null, { updateAppVersion: true, appVersion: updateInfo.target_binary_range });
                 return;
-            } else if (!updateInfo.isAvailable) {
+            } else if (!updateInfo.is_available) {
                 callback(/*error=*/ null, /*remotePackage=*/ null);
                 return;
             }
@@ -135,11 +135,11 @@ export class AcquisitionManager {
                 deploymentKey: this._deploymentKey,
                 description: updateInfo.description,
                 label: updateInfo.label,
-                appVersion: updateInfo.appVersion,
-                isMandatory: updateInfo.isMandatory,
-                packageHash: updateInfo.packageHash,
-                packageSize: updateInfo.packageSize,
-                downloadUrl: updateInfo.downloadURL
+                appVersion: updateInfo.target_binary_range,
+                isMandatory: updateInfo.is_mandatory,
+                packageHash: updateInfo.package_hash,
+                packageSize: updateInfo.package_size,
+                downloadUrl: updateInfo.download_url
             };
 
             callback(/*error=*/ null, remotePackage);

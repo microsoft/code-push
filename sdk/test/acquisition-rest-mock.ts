@@ -8,15 +8,15 @@ import * as rest from "rest-definitions";
 
 export var validDeploymentKey = "asdfasdfawerqw";
 export var latestPackage = <rest.UpdateCheckResponse>{
-    downloadURL: "http://www.windowsazure.com/blobs/awperoiuqpweru",
+    download_url: "http://www.windowsazure.com/blobs/awperoiuqpweru",
     description: "Angry flappy birds",
-    appVersion: "1.5.0",
+    target_binary_range: "1.5.0",
     label: "2.4.0",
-    isMandatory: false,
-    isAvailable: true,
-    updateAppVersion: false,
-    packageHash: "hash240",
-    packageSize: 1024
+    is_mandatory: false,
+    is_available: true,
+    update_app_version: false,
+    package_hash: "hash240",
+    package_size: 1024
 };
 
 export var serverUrl = "http://myurl.com";
@@ -87,14 +87,14 @@ class Server {
         if (!updateRequest.deployment_key || !updateRequest.app_version) {
             callback(/*error=*/ null, { statusCode: 400 });
         } else {
-            var updateInfo = <rest.UpdateCheckResponse>{ isAvailable: false };
+            var updateInfo = <rest.UpdateCheckResponse>{ is_available: false };
             if (updateRequest.deployment_key === validDeploymentKey) {
-                if (updateRequest.is_companion || updateRequest.app_version === latestPackage.appVersion) {
-                    if (updateRequest.package_hash !== latestPackage.packageHash) {
+                if (updateRequest.is_companion || updateRequest.app_version === latestPackage.target_binary_range) {
+                    if (updateRequest.package_hash !== latestPackage.package_hash) {
                         updateInfo = latestPackage;
                     }
-                } else if (updateRequest.app_version < latestPackage.appVersion) {
-                    updateInfo = <rest.UpdateCheckResponse><any>{ updateAppVersion: true, appVersion: latestPackage.appVersion };
+                } else if (updateRequest.app_version < latestPackage.target_binary_range) {
+                    updateInfo = <rest.UpdateCheckResponse><any>{ updateAppVersion: true, appVersion: latestPackage.target_binary_range };
                 }
             }
 
