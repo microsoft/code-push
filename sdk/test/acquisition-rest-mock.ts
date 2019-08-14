@@ -22,7 +22,7 @@ export var latestPackage = <rest.UpdateCheckResponse>{
 export var serverUrl = "http://myurl.com";
 var reportStatusDeployUrl = serverUrl + "/reportStatus/deploy";
 var reportStatusDownloadUrl = serverUrl + "/reportStatus/download";
-var updateCheckUrl = serverUrl + "/updateCheck?";
+var updateCheckUrl = serverUrl + "/update_check?";
 
 export class HttpRequester implements acquisitionSdk.Http.Requester {
     public request(verb: acquisitionSdk.Http.Verb, url: string, requestBodyOrCallback: string | acquisitionSdk.Callback<acquisitionSdk.Http.Response>, callback?: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
@@ -77,10 +77,10 @@ class Server {
 
     public static onUpdateCheck(params: any, callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
         var updateRequest: rest.UpdateCheckRequest = {
-            deployment_key: params.deploymentKey,
-            app_version: params.appVersion,
-            package_hash: params.packageHash,
-            is_companion: !!(params.isCompanion),
+            deployment_key: params.deployment_key,
+            app_version: params.app_version,
+            package_hash: params.package_hash,
+            is_companion: !!(params.is_companion),
             label: params.label
         };
 
@@ -94,7 +94,7 @@ class Server {
                         updateInfo = latestPackage;
                     }
                 } else if (updateRequest.app_version < latestPackage.target_binary_range) {
-                    updateInfo = <rest.UpdateCheckResponse><any>{ updateAppVersion: true, appVersion: latestPackage.target_binary_range };
+                    updateInfo = <rest.UpdateCheckResponse><any>{ update_app_version: true, target_binary_range: latestPackage.target_binary_range };
                 }
             }
 
