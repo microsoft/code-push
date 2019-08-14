@@ -147,19 +147,19 @@ export class AcquisitionManager {
     }
 
     public reportStatusDeploy(deployedPackage?: Package, status?: string, previousLabelOrAppVersion?: string, previousDeploymentKey?: string, callback?: Callback<void>): void {
-        var url: string = this._serverUrl + "reportStatus/deploy";
+        var url: string = this._serverUrl + "report_status/deploy";
         var body: DeploymentStatusReport = {
-            appVersion: this._appVersion,
-            deploymentKey: this._deploymentKey
+            app_version: this._appVersion,
+            deployment_key: this._deploymentKey
         };
 
         if (this._clientUniqueId) {
-            body.clientUniqueId = this._clientUniqueId;
+            body.client_unique_id = this._clientUniqueId;
         }
 
         if (deployedPackage) {
             body.label = deployedPackage.label;
-            body.appVersion = deployedPackage.appVersion;
+            body.app_version = deployedPackage.appVersion;
 
             switch (status) {
                 case AcquisitionStatus.DeploymentSucceeded:
@@ -180,11 +180,11 @@ export class AcquisitionManager {
         }
 
         if (previousLabelOrAppVersion) {
-            body.previousLabelOrAppVersion = previousLabelOrAppVersion;
+            body.previous_label_or_app_version = previousLabelOrAppVersion;
         }
 
         if (previousDeploymentKey) {
-            body.previousDeploymentKey = previousDeploymentKey;
+            body.previous_deployment_key = previousDeploymentKey;
         }
 
         callback = typeof arguments[arguments.length - 1] === "function" && arguments[arguments.length - 1];
