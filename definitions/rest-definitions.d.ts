@@ -32,11 +32,11 @@ declare module "rest-definitions" {
 
     /*in*/
     export interface DeploymentStatusReport {
-        appVersion: string;
-        clientUniqueId?: string;
-        deploymentKey: string;
-        previousDeploymentKey?: string;
-        previousLabelOrAppVersion?: string;
+        app_version: string;
+        client_unique_id?: string;
+        deployment_key: string;
+        previous_deployment_key?: string;
+        previous_label_or_app_version?: string;
         label?: string;
         status?: string;
     }

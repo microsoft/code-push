@@ -20,7 +20,7 @@ export var latestPackage = <rest.UpdateCheckResponse>{
 };
 
 export var serverUrl = "http://myurl.com";
-var reportStatusDeployUrl = serverUrl + "/reportStatus/deploy";
+var reportStatusDeployUrl = serverUrl + "/report_status/deploy";
 var reportStatusDownloadUrl = serverUrl + "/reportStatus/download";
 var updateCheckUrl = serverUrl + "/update_check?";
 
