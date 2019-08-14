@@ -43,8 +43,8 @@ declare module "rest-definitions" {
 
     /*in*/
     export interface DownloadReport {
-        clientUniqueId: string;
-        deploymentKey: string;
+        client_unique_id: string;
+        deployment_key: string;
         label: string;
     }
 

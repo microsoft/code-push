@@ -207,10 +207,10 @@ export class AcquisitionManager {
     }
 
     public reportStatusDownload(downloadedPackage: Package, callback?: Callback<void>): void {
-        var url: string = this._serverUrl + "reportStatus/download";
+        var url: string = this._serverUrl + "report_status/download";
         var body: DownloadReport = {
-            clientUniqueId: this._clientUniqueId,
-            deploymentKey: this._deploymentKey,
+            client_unique_id: this._clientUniqueId,
+            deployment_key: this._deploymentKey,
             label: downloadedPackage.label
         };
 
@@ -239,12 +239,12 @@ function queryStringify(object: Object): string {
     for (var property in object) {
         if (object.hasOwnProperty(property)) {
             var value: string = (<any>object)[property];
-            if (!isFirst) {
-                queryString += "&";
-            }
-
-            queryString += encodeURIComponent(property) + "=";
             if (value !== null && typeof value !== "undefined") {
+                if (!isFirst) {
+                    queryString += "&";
+                }
+
+                queryString += encodeURIComponent(property) + "=";
                 queryString += encodeURIComponent(value);
             }
 
