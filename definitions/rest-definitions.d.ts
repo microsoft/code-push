@@ -77,12 +77,12 @@ declare module "rest-definitions" {
 
     /*in*/
     export interface UpdateCheckRequest {
-        appVersion: string;
-        clientUniqueId?: string;
-        deploymentKey: string;
-        isCompanion?: boolean;
+        app_version: string;
+        client_unique_id?: string;
+        deployment_key: string;
+        is_companion?: boolean;
         label?: string;
-        packageHash?: string;
+        package_hash?: string;
     }
 
     /*out*/

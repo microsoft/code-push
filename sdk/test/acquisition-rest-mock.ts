@@ -77,23 +77,23 @@ class Server {
 
     public static onUpdateCheck(params: any, callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
         var updateRequest: rest.UpdateCheckRequest = {
-            deploymentKey: params.deploymentKey,
-            appVersion: params.appVersion,
-            packageHash: params.packageHash,
-            isCompanion: !!(params.isCompanion),
+            deployment_key: params.deploymentKey,
+            app_version: params.appVersion,
+            package_hash: params.packageHash,
+            is_companion: !!(params.isCompanion),
             label: params.label
         };
 
-        if (!updateRequest.deploymentKey || !updateRequest.appVersion) {
+        if (!updateRequest.deployment_key || !updateRequest.app_version) {
             callback(/*error=*/ null, { statusCode: 400 });
         } else {
             var updateInfo = <rest.UpdateCheckResponse>{ isAvailable: false };
-            if (updateRequest.deploymentKey === validDeploymentKey) {
-                if (updateRequest.isCompanion || updateRequest.appVersion === latestPackage.appVersion) {
-                    if (updateRequest.packageHash !== latestPackage.packageHash) {
+            if (updateRequest.deployment_key === validDeploymentKey) {
+                if (updateRequest.is_companion || updateRequest.app_version === latestPackage.appVersion) {
+                    if (updateRequest.package_hash !== latestPackage.packageHash) {
                         updateInfo = latestPackage;
                     }
-                } else if (updateRequest.appVersion < latestPackage.appVersion) {
+                } else if (updateRequest.app_version < latestPackage.appVersion) {
                     updateInfo = <rest.UpdateCheckResponse><any>{ updateAppVersion: true, appVersion: latestPackage.appVersion };
                 }
             }

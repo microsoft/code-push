@@ -86,15 +86,15 @@ export class AcquisitionManager {
         }
 
         var updateRequest: UpdateCheckRequest = {
-            deploymentKey: this._deploymentKey,
-            appVersion: currentPackage.appVersion,
-            packageHash: currentPackage.packageHash,
-            isCompanion: this._ignoreAppVersion,
+            deployment_key: this._deploymentKey,
+            app_version: currentPackage.appVersion,
+            package_hash: currentPackage.packageHash,
+            is_companion: this._ignoreAppVersion,
             label: currentPackage.label,
-            clientUniqueId: this._clientUniqueId
+            client_unique_id: this._clientUniqueId
         };
 
-        var requestUrl: string = this._serverUrl + "updateCheck?" + queryStringify(updateRequest);
+        var requestUrl: string = this._serverUrl + "update_check?" + queryStringify(updateRequest);
 
         this._httpRequester.request(Http.Verb.GET, requestUrl, (error: Error, response: Http.Response) => {
             if (error) {
