@@ -65,12 +65,12 @@ class Server {
         if (params.deploymentKey !== validDeploymentKey) {
             callback(/*error=*/ null, {
                 statusCode: 200,
-                body: JSON.stringify({ updateInfo: { isAvailable: false } })
+                body: JSON.stringify({ update_info: { isAvailable: false } })
             });
         } else {
             callback(/*error=*/ null, {
                 statusCode: 200,
-                body: JSON.stringify({ updateInfo: latestPackage })
+                body: JSON.stringify({ update_info: latestPackage })
             });
         }
     }
@@ -100,7 +100,7 @@ class Server {
 
             callback(/*error=*/ null, {
                 statusCode: 200,
-                body: JSON.stringify({ updateInfo: updateInfo })
+                body: JSON.stringify({ update_info: updateInfo })
             });
         }
     }
