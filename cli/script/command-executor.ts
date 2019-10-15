@@ -947,9 +947,26 @@ function getReactNativeProjectAppVersion(command: cli.IReleaseReactCommand, proj
         }
 
         if (parsedPlist && parsedPlist.CFBundleShortVersionString) {
-            if (isValidVersion(parsedPlist.CFBundleShortVersionString)) {
-                log(`Using the target binary version value "${parsedPlist.CFBundleShortVersionString}" from "${resolvedPlistFile}".\n`);
-                return Q(parsedPlist.CFBundleShortVersionString);
+            let targetVersion = parsedPlist.CFBundleShortVersionString;
+            if (targetVersion === '$(MARKETING_VERSION)') {
+                const iOSDirectory = "ios";
+                const projectDirectory = projectName + ".xcodeproj";
+                const fileName = "project.pbxproj";
+                const pbxProjFilePath = path.join(iOSDirectory, projectDirectory, fileName);
+                const pbxProjFileContents = fs.readFileSync(pbxProjFilePath).toString();
+
+                const versionRegex = /MARKETING_VERSION = ([\d.]+);([\S\s](?!name))*\s*name = (.*);/;
+                const configurationVersions = pbxProjFileContents
+                    .match(new RegExp(versionRegex.source, 'g'))
+                    .map((partial: string) => partial.match(versionRegex))
+                    .reduce((result: Record<string, string>, current: string[]) => ({ ...result, [current[3]]: current[1] }), {});
+
+                targetVersion = configurationVersions[command.deploymentName];
+            }
+
+            if (isValidVersion(targetVersion)) {
+                log(`Using the target binary version value "${targetVersion}" from "${resolvedPlistFile}".\n`);
+                return Q(targetVersion);
             } else {
                 throw new Error(`The "CFBundleShortVersionString" key in the "${resolvedPlistFile}" file needs to specify a valid semver string, containing both a major and minor version (e.g. 1.3.2, 1.1).`);
             }
