@@ -276,7 +276,7 @@ class AccountManager {
 
     public getDeployment(appName: string, deploymentName: string): Promise<Deployment> {
         return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
-            .then((res: JsonResponse) => res.body.deployment);
+            .then((res: JsonResponse) => res.body);
     }
 
     public renameDeployment(appName: string, oldDeploymentName: string, newDeploymentName: string): Promise<void> {
