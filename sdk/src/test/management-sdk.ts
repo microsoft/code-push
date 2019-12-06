@@ -1,5 +1,3 @@
-/// <reference path="../definitions/harness.d.ts" />
-
 import * as assert from "assert";
 import * as Q from "q";
 
@@ -16,7 +14,7 @@ describe("Management SDK", () => {
 
     after(() => {
         // Prevent an exception that occurs due to how superagent-mock overwrites methods
-        request.Request.prototype._callback = function() { };
+        request.Request.prototype._callback = function () { };
     });
 
     it("methods reject the promise with status code info when an error occurs", (done: MochaDone) => {
@@ -45,7 +43,7 @@ describe("Management SDK", () => {
         ];
 
         var result = Q<void>(null);
-        methodsWithErrorHandling.forEach(function(f) {
+        methodsWithErrorHandling.forEach(function (f) {
             result = result.then(() => {
                 return testErrors(f);
             });
@@ -164,10 +162,10 @@ describe("Management SDK", () => {
     it("transferApp handles successful response", (done: MochaDone) => {
         mockReturn("", 201);
         manager.transferApp("appName", "email1")
-            .done((obj) => {
-                assert.ok(!obj);
-                done();
-            }, rejectHandler);
+            .done(
+                () => done(),
+                rejectHandler
+            );
     });
 
     it("addDeployment handles success response", (done: MochaDone) => {
@@ -275,18 +273,19 @@ describe("Management SDK", () => {
     it("addCollaborator handles successful response", (done: MochaDone) => {
         mockReturn("", 201, { location: "/collaborators" });
         manager.addCollaborator("appName", "email1")
-            .done((obj) => {
-                assert.ok(!obj);
-                done();
-            }, rejectHandler);
+            .done(
+                () => done(),
+                rejectHandler
+            );
     });
 
     it("addCollaborator handles error response", (done: MochaDone) => {
         mockReturn("", 404, {});
         manager.addCollaborator("appName", "email1")
-            .done((obj) => {
-                throw new Error("Call should not complete successfully");
-            }, (error: Error) => done());
+            .done(
+                () => { throw new Error("Call should not complete successfully") },
+                () => done()
+            );
     });
 
     it("getCollaborators handles success response with no collaborators", (done: MochaDone) => {
@@ -395,7 +394,7 @@ function rejectHandler(val: any): void {
 function mockReturn(bodyText: string, statusCode: number, header = {}): void {
     require("superagent-mock")(request, [{
         pattern: "http://localhost/(\\w+)/?",
-        fixtures: function(match: any, params: any): any {
+        fixtures: function (match: any, params: any): any {
             var isOk = statusCode >= 200 && statusCode < 300;
             if (!isOk) {
                 var err: any = new Error(bodyText);
@@ -404,6 +403,6 @@ function mockReturn(bodyText: string, statusCode: number, header = {}): void {
             }
             return { text: bodyText, status: statusCode, ok: isOk, header: header, headers: {} };
         },
-        callback: function(match: any, data: any): any { return data; }
+        callback: function (match: any, data: any): any { return data; }
     }]);
 }

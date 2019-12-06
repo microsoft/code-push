@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "target": "ES5",
+        "rootDir": "src",
+        "outDir": "bin"
+    }
+}

@@ -1,13 +1,10 @@
-/// <reference path="../definitions/harness.d.ts" />
-
 import * as assert from "assert";
-import * as express from "express";
-import * as http from "http";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
-import * as mockApi from "./acquisition-rest-mock";
+import * as acquisitionRestMock from "./acquisition-rest-mock";
 import * as rest from "rest-definitions";
 
+const mockApi = acquisitionRestMock;
 var latestPackage: rest.UpdateCheckResponse = clone(mockApi.latestPackage);
 
 var configuration: acquisitionSdk.Configuration = {
@@ -19,7 +16,7 @@ var configuration: acquisitionSdk.Configuration = {
 
 var templateCurrentPackage: acquisitionSdk.Package = {
     deploymentKey: mockApi.validDeploymentKey,
-    description: "sdfsdf",
+    description: "Standard description",
     label: "v1",
     appVersion: latestPackage.target_binary_range,
     packageHash: "hash001",
@@ -109,12 +106,12 @@ describe("Acquisition SDK", () => {
         var lowerAppVersionPackage: acquisitionSdk.Package = clone(templateCurrentPackage);
         lowerAppVersionPackage.appVersion = "0.0.1";
 
-        var emptyReponse: acquisitionSdk.Http.Response = {
+        var emptyResponse: acquisitionSdk.Http.Response = {
             statusCode: 200,
             body: JSON.stringify({})
         };
 
-        var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(emptyReponse), configuration);
+        var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(emptyResponse), configuration);
         acquisition.queryUpdateWithCurrentPackage(lowerAppVersionPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
             assert.equal(null, error);
             done();
@@ -154,7 +151,6 @@ describe("Acquisition SDK", () => {
 
     it("If latest package is mandatory, returned package is mandatory", (done: MochaDone) => {
         mockApi.latestPackage.is_mandatory = true;
-
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage) => {
             assert.equal(null, error);
@@ -182,12 +178,12 @@ describe("Acquisition SDK", () => {
         var lowerAppVersionPackage: acquisitionSdk.Package = clone(templateCurrentPackage);
         lowerAppVersionPackage.appVersion = "0.0.1";
 
-        var invalidJsonReponse: acquisitionSdk.Http.Response = {
+        var invalidJsonResponse: acquisitionSdk.Http.Response = {
             statusCode: 200,
             body: "invalid {{ json"
         };
 
-        var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonReponse), configuration);
+        var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonResponse), configuration);
         acquisition.queryUpdateWithCurrentPackage(lowerAppVersionPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
             assert.notEqual(null, error);
             done();
@@ -195,7 +191,7 @@ describe("Acquisition SDK", () => {
     });
 
     it("If deploymentKey is not valid...", (done: MochaDone) => {
-        // TODO: behaviour is not defined
+        // TODO: behavior is not defined
         done();
     });
 

@@ -27,7 +27,7 @@ interface PackageFile {
 }
 
 // A template string tag function that URL encodes the substituted values
-function urlEncode(strings: string[], ...values: string[]): string {
+function urlEncode(strings: TemplateStringsArray, ...values: string[]): string {
     var result = "";
     for (var i = 0; i < strings.length; i++) {
         result += strings[i];
@@ -75,7 +75,7 @@ class AccountManager {
 
     public isAuthenticated(throwIfUnauthorized?: boolean): Promise<boolean> {
         return Promise<any>((resolve, reject, notify) => {
-            var request: superagent.Request<any> = superagent.get(this._serverUrl + urlEncode `/authenticated`);
+            var request: superagent.Request = superagent.get(this._serverUrl + urlEncode `/authenticated`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
 
@@ -304,7 +304,7 @@ class AccountManager {
         return Promise<Package>((resolve, reject, notify) => {
 
             updateMetadata.appVersion = targetBinaryVersion;
-            var request: superagent.Request<any> = superagent.post(this._serverUrl + urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
+            var request: superagent.Request = superagent.post(this._serverUrl + urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
 
@@ -441,7 +441,7 @@ class AccountManager {
 
     private makeApiRequest(method: string, endpoint: string, requestBody: string, expectResponseBody: boolean, contentType: string): Promise<JsonResponse> {
         return Promise<JsonResponse>((resolve, reject, notify) => {
-            var request: superagent.Request<any> = (<any>superagent)[method](this._serverUrl + endpoint);
+            var request: superagent.Request = (<any>superagent)[method](this._serverUrl + endpoint);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
 
@@ -503,7 +503,7 @@ class AccountManager {
         return response && response.text ? response.text : error.message;
     }
 
-    private attachCredentials(request: superagent.Request<any>): void {
+    private attachCredentials(request: superagent.Request): void {
         if (this._customHeaders) {
             for (var headerName in this._customHeaders) {
                 request.set(headerName, this._customHeaders[headerName]);
@@ -517,7 +517,7 @@ class AccountManager {
 
     // IIS and Azure web apps have this annoying behavior where %2F (URL encoded slashes) in the URL are URL decoded
     // BEFORE the requests reach node. That essentially means there's no good way to encode a "/" in the app name--
-    // URL encodeing will work when running locally but when running on Azure it gets decoded before express sees it,
+    // URL encoding will work when running locally but when running on Azure it gets decoded before express sees it,
     // so app names with slashes don't get routed properly. See https://github.com/tjanczuk/iisnode/issues/343 (or other sites
     // that complain about the same) for some more info. I explored some IIS config based workarounds, but the previous
     // link seems to say they won't work, so I eventually gave up on that.

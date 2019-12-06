@@ -1,12 +1,9 @@
-/// <reference path="../definitions/harness.d.ts" />
-
-import * as express from "express";
 import * as querystring from "querystring";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
 import * as rest from "rest-definitions";
 
-export var validDeploymentKey = "asdfasdfawerqw";
+export var validDeploymentKey = "Valid Deployment Key";
 export var latestPackage = <rest.UpdateCheckResponse>{
     download_url: "http://www.windowsazure.com/blobs/awperoiuqpweru",
     description: "Angry flappy birds",

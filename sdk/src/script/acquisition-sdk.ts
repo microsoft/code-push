@@ -1,5 +1,3 @@
-/// <reference path="../definitions/harness.d.ts" />
-
 import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "rest-definitions";
 
 export module Http {

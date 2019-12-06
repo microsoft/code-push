@@ -4,7 +4,11 @@
   "description": "Management SDK for the CodePush service",
   "main": "script/index.js",
   "scripts": {
-    "test": "gulp"
+    "build": "tsc && npm run content",
+    "setup": "npm install --quiet --no-progress",
+    "clean": "shx rm -rf bin",
+    "test": "npm run build && mocha --recursive bin/test",
+    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
   },
   "repository": {
     "type": "git",
@@ -16,9 +20,21 @@
   "dependencies": {
     "q": "^1.4.1",
     "recursive-fs": "^1.1.2",
-    "slash": "3.0.0",
+    "shx": "^0.3.2",
+    "slash": "^3.0.0",
+    "yazl": "^2.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.14",
+    "@types/mocha": "^5.2.7",
+    "@types/q": "^1.5.2",
+    "@types/slash": "^3.0.0",
+    "@types/superagent": "^4.1.4",
+    "@types/yazl": "^2.4.2",
+    "mocha": "^6.2.2",
+    "superagent-mock": "^3.7.0",
     "superagent": "^5.1.0",
     "superagent-proxy": "^2.0.0",
-    "yazl": "^2.4.1"
+    "typescript": "^3.7.3"
   }
 }
