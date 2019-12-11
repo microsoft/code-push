@@ -8,7 +8,7 @@
     "setup": "npm install --quiet --no-progress",
     "clean": "shx rm -rf bin",
     "test": "npm run build && mocha --recursive bin/test",
-    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
+    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore,SDK.njsproj,package-lock.json} bin"
   },
   "repository": {
     "type": "git",
