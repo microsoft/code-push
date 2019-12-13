@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
+        "target": "ES5",
         "module": "commonjs",
         "noImplicitAny": true,
+        "noEmitOnError": true,
         "moduleResolution": "node",
         "sourceMap": true,
-        "target": "ES5",
         "rootDir": "src",
         "outDir": "bin"
     }
