@@ -1,4 +1,4 @@
 .npmignore
 .gitignore
 node_modules/*
-definitions/*
+test/*
