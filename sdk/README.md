@@ -40,17 +40,17 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 # CodePush Management SDK (Node.js)
 
-A JavaScript library for programmatically managing your CodePush account (e.g. creating apps, promoting releases), which allows authoring Node.js-based build and/or deployment scripts, without needing to shell out to the CLI.
+A JavaScript library for programmatically managing your CodePush account (e.g. creating apps, promoting releases), which allows authoring Node.js-based build and/or deployment scripts, without needing to shell out to the appcenter CLI.
 
 
 ## Getting Started
 
-1. Create an access token to authenticate with the CodePush server using the following App Center CLI command:
+1. Create an access token to authenticate with the CodePush server using the following appcenter CLI command:
 
     ```shell
     appcenter tokens create -d "DESCRIPTION_OF_THE_TOKEN"
     ```
-    
+
 2. Install the management SDK by running `npm install code-push --save`
 
 3. Import it using the following statement (using ES6 syntax as applicable):
@@ -69,7 +69,7 @@ A JavaScript library for programmatically managing your CodePush account (e.g. c
 
 ## API Reference
 
-The `code-push` module exports a single class (typically referred to as `CodePush`), which represents a proxy to the CodePush account management REST API. This class has a single constructor for authenticating with the CodePush service, and a collection of instance methods that correspond to the commands in the management CLI, which allow you to programmatically control every aspect of your CodePush account.
+The `code-push` module exports a single class (typically referred to as `CodePush`), which represents a proxy to the CodePush account management REST API. This class has a single constructor for authenticating with the CodePush service, and a collection of instance methods that correspond to the commands in the appcenter CLI, which allow you to programmatically control every aspect of your CodePush account.
 
 ### Constructors
 
