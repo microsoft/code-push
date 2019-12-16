@@ -50,6 +50,7 @@ A JavaScript library for programmatically managing your CodePush account (e.g. c
     ```shell
     appcenter tokens create -d "DESCRIPTION_OF_THE_TOKEN"
     ```
+    `API Token` will be displayed only once, so remember to save it somewhere if needed!
 
 2. Install the management SDK by running `npm install code-push --save`
 
