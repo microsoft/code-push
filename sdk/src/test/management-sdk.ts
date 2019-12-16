@@ -1,5 +1,5 @@
-import * as assert from "assert";
-import * as Q from "q";
+import assert from "assert";
+import Q from "q";
 
 import AccountManager = require("../script/management-sdk");
 
