@@ -4,11 +4,7 @@
   "description": "Management SDK for the CodePush service",
   "main": "script/index.js",
   "scripts": {
-    "build": "tsc && npm run content",
-    "setup": "npm install --quiet --no-progress",
-    "clean": "shx rm -rf bin",
-    "test": "npm run build && mocha --recursive bin/test",
-    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
+    "test": "gulp"
   },
   "repository": {
     "type": "git",
@@ -20,7 +16,6 @@
   "dependencies": {
     "q": "^1.4.1",
     "recursive-fs": "^1.1.2",
-    "shx": "^0.3.2",
     "slash": "^3.0.0",
     "yazl": "^2.4.1"
   },
