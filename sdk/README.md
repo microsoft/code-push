@@ -40,17 +40,17 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 # CodePush Management SDK (Node.js)
 
-A JavaScript library for programmatically managing your CodePush account (e.g. creating apps, promoting releases), which allows authoring Node.js-based build and/or deployment scripts, without needing to shell out to the appcenter CLI.
+A JavaScript library for programmatically managing your CodePush account (e.g. creating apps, promoting releases), which allows authoring Node.js-based build and/or deployment scripts, without needing to shell out to the [App Center CLI](https://github.com/microsoft/appcenter-cli).
 
 
 ## Getting Started
 
-1. Create an access token to authenticate with the CodePush server using the following appcenter CLI command:
+1. Create an access token to authenticate with the CodePush server using the following [App Center CLI](https://github.com/microsoft/appcenter-cli) command:
 
     ```shell
     appcenter tokens create -d "DESCRIPTION_OF_THE_TOKEN"
     ```
-    `API Token` will be displayed only once, so remember to save it somewhere if needed!
+    Please copy your `API Token` and keep it secret. You won't be able to see it again.
 
 2. Install the management SDK by running `npm install code-push --save`
 
@@ -70,7 +70,7 @@ A JavaScript library for programmatically managing your CodePush account (e.g. c
 
 ## API Reference
 
-The `code-push` module exports a single class (typically referred to as `CodePush`), which represents a proxy to the CodePush account management REST API. This class has a single constructor for authenticating with the CodePush service, and a collection of instance methods that correspond to the commands in the appcenter CLI, which allow you to programmatically control every aspect of your CodePush account.
+The `code-push` module exports a single class (typically referred to as `CodePush`), which represents a proxy to the CodePush account management REST API. This class has a single constructor for authenticating with the CodePush service, and a collection of instance methods that correspond to the commands in the [App Center CLI](https://github.com/microsoft/appcenter-cli), which allow you to programmatically control every aspect of your CodePush account.
 
 ### Constructors
 
