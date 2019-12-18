@@ -3,8 +3,16 @@
   "version": "3.0.1",
   "description": "Management SDK for the CodePush service",
   "main": "script/index.js",
+  "types": "script/index.d.ts",
   "scripts": {
-    "test": "gulp"
+    "build": "tsc && npm run content",
+    "build:release": "tsc -p ./tsconfig-release.json && npm run content",
+    "prebuild": "npm run clean",
+    "prebuild:release": "npm run clean",
+    "setup": "npm install --quiet --no-progress",
+    "clean": "shx rm -rf bin",
+    "test": "npm run build && mocha --recursive bin/test",
+    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
   },
   "repository": {
     "type": "git",
@@ -26,6 +34,7 @@
     "@types/slash": "^3.0.0",
     "@types/superagent": "^4.1.4",
     "@types/yazl": "^2.4.2",
+    "shx": "^0.3.2",
     "mocha": "^6.2.2",
     "superagent-mock": "^3.7.0",
     "superagent": "^5.1.0",
