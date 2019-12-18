@@ -20,15 +20,15 @@
     "yazl": "^2.4.1"
   },
   "devDependencies": {
-    "@types/node": "^12.12.14",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.20",
     "@types/q": "^1.5.2",
     "@types/slash": "^3.0.0",
     "@types/superagent": "^4.1.4",
     "@types/yazl": "^2.4.2",
     "mocha": "^6.2.2",
+    "superagent": "^5.1.2",
     "superagent-mock": "^3.7.0",
-    "superagent": "^5.1.0",
     "superagent-proxy": "^2.0.0",
     "typescript": "^3.7.3"
   }
