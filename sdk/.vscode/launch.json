@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Tests",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "Build",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "test:debugger"
+            ],
+            "port": 9229,
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart",
+            "autoAttachChildProcesses": true,
+            "timeout": 100000
+        }
+    ]
+}

@@ -12,6 +12,7 @@
     "setup": "npm install --quiet --no-progress",
     "clean": "shx rm -rf bin",
     "test": "npm run build && mocha --recursive bin/test",
+    "test:debugger": "mocha -r ts-node/register --recursive --inspect-brk=0.0.0.0 bin/test",
     "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
   },
   "repository": {
@@ -28,17 +29,18 @@
     "yazl": "^2.4.1"
   },
   "devDependencies": {
-    "@types/node": "^12.12.14",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.14",
     "@types/q": "^1.5.2",
     "@types/slash": "^3.0.0",
     "@types/superagent": "^4.1.4",
     "@types/yazl": "^2.4.2",
-    "shx": "^0.3.2",
     "mocha": "^6.2.2",
-    "superagent-mock": "^3.7.0",
+    "shx": "^0.3.2",
     "superagent": "^5.1.0",
+    "superagent-mock": "^3.7.0",
     "superagent-proxy": "^2.0.0",
+    "ts-node": "^8.5.4",
     "typescript": "^3.7.3"
   }
 }
