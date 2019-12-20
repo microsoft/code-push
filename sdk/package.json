@@ -12,7 +12,7 @@
     "prebuild:release": "npm run clean",
     "build:release": "tsc -p ./tsconfig-release.json && npm run content",
     "test": "npm run build && mocha --recursive bin/test",
-    "test:debugger": "mocha -r ts-node/register --recursive --inspect-brk=0.0.0.0 bin/test",
+    "test:debugger": "mocha --recursive --inspect-brk=0.0.0.0 bin/test",
     "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
   },
   "repository": {
@@ -40,7 +40,6 @@
     "superagent": "^5.1.2",
     "superagent-mock": "^3.7.0",
     "superagent-proxy": "^2.0.0",
-    "ts-node": "^8.5.4",
     "typescript": "^3.7.3"
   }
 }
