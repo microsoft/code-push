@@ -5,12 +5,12 @@
   "main": "script/index.js",
   "types": "script/index.d.ts",
   "scripts": {
-    "build": "tsc && npm run content",
-    "build:release": "tsc -p ./tsconfig-release.json && npm run content",
-    "prebuild": "npm run clean",
-    "prebuild:release": "npm run clean",
-    "setup": "npm install --quiet --no-progress",
     "clean": "shx rm -rf bin",
+    "setup": "npm install --quiet --no-progress",
+    "prebuild": "npm run clean",
+    "build": "tsc && npm run content",
+    "prebuild:release": "npm run clean",
+    "build:release": "tsc -p ./tsconfig-release.json && npm run content",
     "test": "npm run build && mocha --recursive bin/test",
     "test:debugger": "mocha -r ts-node/register --recursive --inspect-brk=0.0.0.0 bin/test",
     "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
