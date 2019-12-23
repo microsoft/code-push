@@ -30,7 +30,7 @@ To get started using CodePush, refer to our [documentation](https://docs.microso
 ### Running Tests
 
 * To run tests, run `npm run test` from the root of the project.
-* You can use debug mode for tests.
+* You can use debug mode for tests with `.vscode/launch.json` file.
 
 ### Coding Conventions
 
