@@ -47,7 +47,7 @@ A JavaScript library for programmatically managing your CodePush account (e.g. c
 
 ## Getting Started
 
-1. Create an access token to authenticate with the CodePush server using the following [App Center CLI](https://github.com/microsoft/appcenter-cli) command:
+1. Create a token to authenticate with the CodePush server using the following [App Center CLI](https://github.com/microsoft/appcenter-cli) command:
 
     ```shell
     appcenter tokens create -d "DESCRIPTION_OF_THE_TOKEN"
@@ -68,10 +68,10 @@ A JavaScript library for programmatically managing your CodePush account (e.g. c
     import CodePush from "code-push";    
     ```
     
-4. Create an instance of the `CodePush` class, passing it the access token you created or retrieved in step #1:
+4. Create an instance of the `CodePush` class, passing it the `API Token` you created or retrieved in step #1:
 
     ```javascript
-    const codePush = new CodePush("YOUR_ACCESS_TOKEN");
+    const codePush = new CodePush("YOUR_API_TOKEN");
     ```
 
 5. Begin automating the management of your account! For more details on what you can do with this `codePush` object, refer to the API reference section below.
@@ -82,11 +82,11 @@ The `code-push` module exports a single class (typically referred to as `CodePus
 
 ### Constructors
 
-- __CodePush(accessKey: string)__ - Creates a new instance of the CodePush management SDK, using the specified access token to authenticated with the server.
+- __CodePush(accessKey: string)__ - Creates a new instance of the CodePush management SDK, using the specified access key to authenticated with the server.
 
 ### Methods
 
-- __addAccessKey(description: string): Promise&lt;AccessKey&gt;__ - Creates a new access token with the specified description (e.g. "VSTS CI").
+- __addAccessKey(description: string): Promise&lt;AccessKey&gt;__ - Creates a new access key with the specified description (e.g. "VSTS CI").
 
 - __addApp(name: string, os: string, platform: string, manuallyProvisionDeployments: boolean = false): Promise&lt;App&gt;__ - Creates a new CodePush app with the specified name, os, and platform. If the default deployments of "Staging" and "Production" are not desired, pass a value of true for the manuallyProvisionDeployments parameter.
 
@@ -96,9 +96,9 @@ The `code-push` module exports a single class (typically referred to as `CodePus
 
 - __clearDeploymentHistory(appName: string, deploymentName: string): Promise&lt;void&gt;__ - Clears the release history associated with the specified app deployment.
 
-- __getAccessKey(accessKey: string): Promise&lt;AccessKey&gt;__ - Retrieves the metadata about the specific access token.
+- __getAccessKey(accessKey: string): Promise&lt;AccessKey&gt;__ - Retrieves the metadata about the specific access key.
 
-- __getAccessKeys(): Promise&lt;AccessKey[]&gt;__ - Retrieves the list of access tokens associated with your CodePush account.
+- __getAccessKeys(): Promise&lt;AccessKey[]&gt;__ - Retrieves the list of access keys associated with your CodePush account.
 
 - __getApp(appName: string): Promise&lt;App&gt;__ - Retrieves the metadata about the specified app.
 
@@ -120,7 +120,7 @@ The `code-push` module exports a single class (typically referred to as `CodePus
 
 - __release(appName: string, deploymentName: string, updateContentsPath: string, targetBinaryVersion: string, updateMetadata: PackageInfo): Promise&lt;Package&gt;__ - Releases a new update to the specified deployment with the given metadata.
 
-- __removeAccessKey(accessKey: string): Promise&lt;void&gt;__ - Removes the specified access token from your CodePush account.
+- __removeAccessKey(accessKey: string): Promise&lt;void&gt;__ - Removes the specified access key from your CodePush account.
 
 - __removeApp(appName: string): Promise&lt;void&gt;__ - Deletes the specified CodePush app from your account.
 
@@ -146,4 +146,4 @@ When an error occurs in any of the methods, the promise will be rejected with a 
     - __CodePush.ERROR_INTERNAL_SERVER__: An error occurred internally on the CodePush server.
     - __CodePush.ERROR_NOT_FOUND__: The resource you are attempting to retrieve does not exist.
     - __CodePush.ERROR_CONFLICT__: The resource you are attempting to create already exists.
-    - __CodePush.ERROR_UNAUTHORIZED__: The access token you configured is invalid or expired.
+    - __CodePush.ERROR_UNAUTHORIZED__: The access key you configured is invalid or expired.
