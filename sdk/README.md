@@ -86,7 +86,7 @@ The `code-push` module exports a single class (typically referred to as `CodePus
 
 ### Methods
 
-*Note: `access key` in this context is the same item as the token. When you work with a access key, this means that you are working with an API token from appcenter.*
+*Note: `access key` here refers to an AppCenter API Token.*
 
 - __addAccessKey(description: string): Promise&lt;AccessKey&gt;__ - Creates a new access key with the specified description (e.g. "VSTS CI").
 
