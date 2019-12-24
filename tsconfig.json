@@ -1,9 +1,15 @@
 {
     "compilerOptions": {
+        "target": "ES5",
         "module": "commonjs",
         "noImplicitAny": true,
-        "noResolve": true,
+        "noEmitOnError": true,
+        "moduleResolution": "node",
         "sourceMap": true,
-        "target": "ES5"
+        "rootDir": "src",
+        "outDir": "bin",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true
     }
 }

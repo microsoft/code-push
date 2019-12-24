@@ -29,8 +29,6 @@ node_modules
 
 # Build specific exclusions
 bin/
-definitions/external/
-definitions/generated/
 
 # Environment variables
 *.env

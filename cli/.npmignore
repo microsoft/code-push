@@ -1,5 +1,0 @@
-.npmignore
-.gitignore
-node_modules/*
-definitions/*
-!cli.js
