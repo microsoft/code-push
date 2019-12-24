@@ -1,4 +1,4 @@
-UPDATE: Over the next few months, we will be working on a new version of CodePush that will address some of the most common performance issues our customers are facing. This updated version will allow a better experience, our team to better support CodePush moving forward and have a faster development cycle for new features. 
+UPDATE: Over the next few months, we will be working on a new version of CodePush that will address some of the most common performance issues our customers are facing. This updated version will allow a better experience, our team to better support CodePush moving forward and have a faster development cycle for new features.
 We are prioritizing this work because we believe this to be the most valuable thing we can do for our CodePush customers in the long run. Starting June 11th 2019, support will slow down, bug fixes will be limited to critical bugs, and new feature development will pause until we finish this core update.
 
 ---
@@ -23,7 +23,7 @@ To get started using CodePush, refer to our [documentation](https://docs.microso
 
 ### Building
 
-* Run `npm setup` to install the NPM dependencies of management SDK.
+* Run `npm run setup` to install the NPM dependencies of management SDK.
 * Run `npm run build` to build the management SDK for testing.
 * Run `npm run build:release` to build the release version of management SDK.
 
