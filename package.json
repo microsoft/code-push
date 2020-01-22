@@ -26,6 +26,8 @@
     "q": "^1.4.1",
     "recursive-fs": "^1.1.2",
     "slash": "^3.0.0",
+    "superagent": "^5.1.2",
+    "superagent-proxy": "^2.0.0",
     "yazl": "^2.4.1"
   },
   "devDependencies": {
@@ -37,9 +39,7 @@
     "@types/yazl": "^2.4.2",
     "mocha": "^6.2.2",
     "shx": "^0.3.2",
-    "superagent": "^5.1.2",
     "superagent-mock": "^3.7.0",
-    "superagent-proxy": "^2.0.0",
     "typescript": "^3.7.3"
   }
 }
