@@ -1,0 +1,24 @@
+name: Сode-push CI
+
+on: 
+   pull_request:
+    branches:
+      - master
+
+jobs:
+  Run-tests:
+    name: Test code-push-sdk
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Setup NodeJs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Setup dependencies
+        run: npm run setup
+      - name: Build
+        run: npm run build 
+      - name: Run tests 
+        run: npm run test
