@@ -1,4 +1,5 @@
 import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "rest-definitions";
+import { getCodePushHttpError, getCodePushDeployStatusError, getCodePushPackageError } from "../utils/code-push-error"
 
 export module Http {
     export const enum Verb {
@@ -81,7 +82,7 @@ export class AcquisitionManager {
 
     public queryUpdateWithCurrentPackage(currentPackage: Package, callback?: Callback<RemotePackage | NativeUpdateNotification>): void {
         if (!currentPackage || !currentPackage.appVersion) {
-            throw new Error("Calling common acquisition SDK with incorrect package");  // Unexpected; indicates error in our implementation
+            throw getCodePushPackageError("Calling common acquisition SDK with incorrect package");  // Unexpected; indicates error in our implementation
         }
 
         var updateRequest: UpdateCheckRequest = {
@@ -108,7 +109,7 @@ export class AcquisitionManager {
                 } else {
                     errorMessage = `${response.statusCode}: ${response.body}`;
                 }
-                callback(new Error(errorMessage), /*remotePackage=*/ null);
+                callback(getCodePushHttpError(errorMessage), /*remotePackage=*/ null);
                 return;
             }
             try {
@@ -169,9 +170,9 @@ export class AcquisitionManager {
                 default:
                     if (callback) {
                         if (!status) {
-                            callback(new Error("Missing status argument."), /*not used*/ null);
+                            callback(getCodePushDeployStatusError("Missing status argument."), /*not used*/ null);
                         } else {
-                            callback(new Error("Unrecognized status \"" + status + "\"."), /*not used*/ null);
+                            callback(getCodePushDeployStatusError("Unrecognized status \"" + status + "\"."), /*not used*/ null);
                         }
                     }
                     return;
@@ -196,7 +197,7 @@ export class AcquisitionManager {
                 }
 
                 if (response.statusCode !== 200) {
-                    callback(new Error(response.statusCode + ": " + response.body), /*not used*/ null);
+                    callback(getCodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
 
@@ -221,7 +222,7 @@ export class AcquisitionManager {
                 }
 
                 if (response.statusCode !== 200) {
-                    callback(new Error(response.statusCode + ": " + response.body), /*not used*/ null);
+                    callback(getCodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
 

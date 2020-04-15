@@ -6,6 +6,7 @@ import slash = require("slash");
 import superagent = require("superagent");
 import * as recursiveFs from "recursive-fs";
 import * as yazl from "yazl";
+import { getCodePushAccessKeyError } from "../utils/code-push-error"
 
 import Promise = Q.Promise;
 
@@ -61,7 +62,7 @@ class AccountManager {
     private _proxy: string;
 
     constructor(accessKey: string, customHeaders?: Headers, serverUrl?: string, proxy?: string) {
-        if (!accessKey) throw new Error("A token must be specified.");
+        if (!accessKey) throw getCodePushAccessKeyError("A token must be specified.");
 
         this._accessKey = accessKey;
         this._customHeaders = customHeaders;
@@ -75,7 +76,7 @@ class AccountManager {
 
     public isAuthenticated(throwIfUnauthorized?: boolean): Promise<boolean> {
         return Promise<any>((resolve, reject, notify) => {
-            var request: superagent.Request = superagent.get(this._serverUrl + urlEncode `/authenticated`);
+            var request: superagent.Request = superagent.get(this._serverUrl + urlEncode`/authenticated`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
 
@@ -88,7 +89,7 @@ class AccountManager {
 
                 var authenticated: boolean = status === 200;
 
-                if (!authenticated && throwIfUnauthorized){
+                if (!authenticated && throwIfUnauthorized) {
                     reject(this.getCodePushError(err, res));
                     return;
                 }
@@ -100,7 +101,7 @@ class AccountManager {
 
     public addAccessKey(friendlyName: string, ttl?: number): Promise<AccessKey> {
         if (!friendlyName) {
-            throw new Error("A name must be specified when adding an access key.");
+            throw getCodePushAccessKeyError("A name must be specified when adding an access key.");
         }
 
         var accessKeyRequest: AccessKeyRequest = {
@@ -109,7 +110,7 @@ class AccountManager {
             ttl
         };
 
-        return this.post(urlEncode `/accessKeys/`, JSON.stringify(accessKeyRequest), /*expectResponseBody=*/ true)
+        return this.post(urlEncode`/accessKeys/`, JSON.stringify(accessKeyRequest), /*expectResponseBody=*/ true)
             .then((response: JsonResponse) => {
                 return {
                     createdTime: response.body.accessKey.createdTime,
@@ -121,7 +122,7 @@ class AccountManager {
     }
 
     public getAccessKey(accessKeyName: string): Promise<AccessKey> {
-        return this.get(urlEncode `/accessKeys/${accessKeyName}`)
+        return this.get(urlEncode`/accessKeys/${accessKeyName}`)
             .then((res: JsonResponse) => {
                 return {
                     createdTime: res.body.accessKey.createdTime,
@@ -132,7 +133,7 @@ class AccountManager {
     }
 
     public getAccessKeys(): Promise<AccessKey[]> {
-        return this.get(urlEncode `/accessKeys`)
+        return this.get(urlEncode`/accessKeys`)
             .then((res: JsonResponse) => {
                 var accessKeys: AccessKey[] = [];
 
@@ -149,7 +150,7 @@ class AccountManager {
     }
 
     public getSessions(): Promise<Session[]> {
-        return this.get(urlEncode `/accessKeys`)
+        return this.get(urlEncode`/accessKeys`)
             .then((res: JsonResponse) => {
                 // A machine name might be associated with multiple session keys,
                 // but we should only return one per machine name.
@@ -178,7 +179,7 @@ class AccountManager {
             ttl
         };
 
-        return this.patch(urlEncode `/accessKeys/${oldName}`, JSON.stringify(accessKeyRequest))
+        return this.patch(urlEncode`/accessKeys/${oldName}`, JSON.stringify(accessKeyRequest))
             .then((res: JsonResponse) => {
                 return {
                     createdTime: res.body.accessKey.createdTime,
@@ -189,29 +190,29 @@ class AccountManager {
     }
 
     public removeAccessKey(name: string): Promise<void> {
-        return this.del(urlEncode `/accessKeys/${name}`)
+        return this.del(urlEncode`/accessKeys/${name}`)
             .then(() => null);
     }
 
     public removeSession(machineName: string): Promise<void> {
-        return this.del(urlEncode `/sessions/${machineName}`)
+        return this.del(urlEncode`/sessions/${machineName}`)
             .then(() => null);
     }
 
     // Account
     public getAccountInfo(): Promise<Account> {
-        return this.get(urlEncode `/account`)
+        return this.get(urlEncode`/account`)
             .then((res: JsonResponse) => res.body.account);
     }
 
     // Apps
     public getApps(): Promise<App[]> {
-        return this.get(urlEncode `/apps`)
+        return this.get(urlEncode`/apps`)
             .then((res: JsonResponse) => res.body.apps);
     }
 
     public getApp(appName: string): Promise<App> {
-        return this.get(urlEncode `/apps/${this.appNameParam(appName)}`)
+        return this.get(urlEncode`/apps/${this.appNameParam(appName)}`)
             .then((res: JsonResponse) => res.body.app);
     }
 
@@ -222,80 +223,80 @@ class AccountManager {
             platform: appPlatform,
             manuallyProvisionDeployments: manuallyProvisionDeployments
         };
-        return this.post(urlEncode `/apps/`, JSON.stringify(app), /*expectResponseBody=*/ false)
+        return this.post(urlEncode`/apps/`, JSON.stringify(app), /*expectResponseBody=*/ false)
             .then(() => app);
     }
 
     public removeApp(appName: string): Promise<void> {
-        return this.del(urlEncode `/apps/${this.appNameParam(appName)}`)
+        return this.del(urlEncode`/apps/${this.appNameParam(appName)}`)
             .then(() => null);
     }
 
     public renameApp(oldAppName: string, newAppName: string): Promise<void> {
-        return this.patch(urlEncode `/apps/${this.appNameParam(oldAppName)}`, JSON.stringify({ name: newAppName }))
+        return this.patch(urlEncode`/apps/${this.appNameParam(oldAppName)}`, JSON.stringify({ name: newAppName }))
             .then(() => null);
     }
 
     public transferApp(appName: string, email: string): Promise<void> {
-        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/transfer/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
+        return this.post(urlEncode`/apps/${this.appNameParam(appName)}/transfer/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
     // Collaborators
     public getCollaborators(appName: string): Promise<CollaboratorMap> {
-        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/collaborators`)
+        return this.get(urlEncode`/apps/${this.appNameParam(appName)}/collaborators`)
             .then((res: JsonResponse) => res.body.collaborators);
     }
 
     public addCollaborator(appName: string, email: string): Promise<void> {
-        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/collaborators/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
+        return this.post(urlEncode`/apps/${this.appNameParam(appName)}/collaborators/${email}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
     public removeCollaborator(appName: string, email: string): Promise<void> {
-        return this.del(urlEncode `/apps/${this.appNameParam(appName)}/collaborators/${email}`)
+        return this.del(urlEncode`/apps/${this.appNameParam(appName)}/collaborators/${email}`)
             .then(() => null);
     }
 
     // Deployments
     public addDeployment(appName: string, deploymentName: string): Promise<Deployment> {
         var deployment = <Deployment>{ name: deploymentName };
-        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/`, JSON.stringify(deployment), /*expectResponseBody=*/ true)
+        return this.post(urlEncode`/apps/${this.appNameParam(appName)}/deployments/`, JSON.stringify(deployment), /*expectResponseBody=*/ true)
             .then((res: JsonResponse) => res.body.deployment);
     }
 
     public clearDeploymentHistory(appName: string, deploymentName: string): Promise<void> {
-        return this.del(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/history`)
+        return this.del(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/history`)
             .then(() => null);
     }
 
     public getDeployments(appName: string): Promise<Deployment[]> {
-        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/`)
+        return this.get(urlEncode`/apps/${this.appNameParam(appName)}/deployments/`)
             .then((res: JsonResponse) => res.body.deployments);
     }
 
     public getDeployment(appName: string, deploymentName: string): Promise<Deployment> {
-        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
+        return this.get(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
             .then((res: JsonResponse) => res.body.deployment);
     }
 
     public renameDeployment(appName: string, oldDeploymentName: string, newDeploymentName: string): Promise<void> {
-        return this.patch(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${oldDeploymentName}`, JSON.stringify({ name: newDeploymentName }))
+        return this.patch(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${oldDeploymentName}`, JSON.stringify({ name: newDeploymentName }))
             .then(() => null);
     }
 
     public removeDeployment(appName: string, deploymentName: string): Promise<void> {
-        return this.del(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
+        return this.del(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}`)
             .then(() => null);
     }
 
     public getDeploymentMetrics(appName: string, deploymentName: string): Promise<DeploymentMetrics> {
-        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/metrics`)
+        return this.get(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/metrics`)
             .then((res: JsonResponse) => res.body.metrics);
     }
 
     public getDeploymentHistory(appName: string, deploymentName: string): Promise<Package[]> {
-        return this.get(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/history`)
+        return this.get(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/history`)
             .then((res: JsonResponse) => res.body.history);
     }
 
@@ -304,7 +305,7 @@ class AccountManager {
         return Promise<Package>((resolve, reject, notify) => {
 
             updateMetadata.appVersion = targetBinaryVersion;
-            var request: superagent.Request = superagent.post(this._serverUrl + urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
+            var request: superagent.Request = superagent.post(this._serverUrl + urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
 
@@ -351,18 +352,18 @@ class AccountManager {
     public patchRelease(appName: string, deploymentName: string, label: string, updateMetadata: PackageInfo): Promise<void> {
         updateMetadata.label = label;
         var requestBody: string = JSON.stringify({ packageInfo: updateMetadata });
-        return this.patch(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`, requestBody, /*expectResponseBody=*/ false)
+        return this.patch(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`, requestBody, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
-    public promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string,  updateMetadata: PackageInfo): Promise<Package> {
+    public promote(appName: string, sourceDeploymentName: string, destinationDeploymentName: string, updateMetadata: PackageInfo): Promise<Package> {
         var requestBody: string = JSON.stringify({ packageInfo: updateMetadata });
-        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${sourceDeploymentName}/promote/${destinationDeploymentName}`, requestBody, /*expectResponseBody=*/ true)
+        return this.post(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${sourceDeploymentName}/promote/${destinationDeploymentName}`, requestBody, /*expectResponseBody=*/ true)
             .then((res: JsonResponse) => res.body.package);
     }
 
     public rollback(appName: string, deploymentName: string, targetRelease?: string): Promise<void> {
-        return this.post(urlEncode `/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/rollback/${targetRelease || ``}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
+        return this.post(urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/rollback/${targetRelease || ``}`, /*requestBody=*/ null, /*expectResponseBody=*/ false)
             .then(() => null);
     }
 
