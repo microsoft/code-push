@@ -6,7 +6,7 @@ import slash = require("slash");
 import superagent = require("superagent");
 import * as recursiveFs from "recursive-fs";
 import * as yazl from "yazl";
-import { getCodePushAccessKeyError } from "../utils/code-push-error"
+import { CodePushAccessKeyError } from "../utils/code-push-error"
 
 import Promise = Q.Promise;
 
@@ -62,7 +62,7 @@ class AccountManager {
     private _proxy: string;
 
     constructor(accessKey: string, customHeaders?: Headers, serverUrl?: string, proxy?: string) {
-        if (!accessKey) throw getCodePushAccessKeyError("A token must be specified.");
+        if (!accessKey) throw new CodePushAccessKeyError("A token must be specified.");
 
         this._accessKey = accessKey;
         this._customHeaders = customHeaders;
@@ -101,7 +101,7 @@ class AccountManager {
 
     public addAccessKey(friendlyName: string, ttl?: number): Promise<AccessKey> {
         if (!friendlyName) {
-            throw getCodePushAccessKeyError("A name must be specified when adding an access key.");
+            throw new CodePushAccessKeyError("A name must be specified when adding an access key.");
         }
 
         var accessKeyRequest: AccessKeyRequest = {
