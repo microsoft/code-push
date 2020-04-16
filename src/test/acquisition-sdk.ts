@@ -3,6 +3,7 @@ import * as assert from "assert";
 import * as acquisitionSdk from "../script/acquisition-sdk";
 import * as acquisitionRestMock from "./acquisition-rest-mock";
 import * as rest from "rest-definitions";
+import { CodePushPackageError } from "../utils/code-push-error"
 
 const mockApi = acquisitionRestMock;
 var latestPackage: rest.UpdateCheckResponse = clone(mockApi.latestPackage);
@@ -162,6 +163,7 @@ describe("Acquisition SDK", () => {
     it("If invalid arguments are provided, an error is raised", (done: MochaDone) => {
         var invalidPackage: acquisitionSdk.Package = clone(templateCurrentPackage);
         invalidPackage.appVersion = null;
+        var expectedError = new CodePushPackageError("Calling common acquisition SDK with incorrect package")
 
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
         try {
@@ -170,6 +172,8 @@ describe("Acquisition SDK", () => {
                 done();
             });
         } catch (error) {
+            assert.deepEqual(error, expectedError);
+            assert.equal(error instanceof CodePushPackageError, true)
             done();
         }
     });
