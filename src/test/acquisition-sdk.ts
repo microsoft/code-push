@@ -2,11 +2,11 @@ import * as assert from "assert";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
 import * as acquisitionRestMock from "./acquisition-rest-mock";
-import * as rest from "../script/types";
+import * as types from "../script/types";
 import { CodePushPackageError } from "../utils/code-push-error"
 
 const mockApi = acquisitionRestMock;
-var latestPackage: rest.UpdateCheckResponse = clone(mockApi.latestPackage);
+var latestPackage: types.UpdateCheckResponse = clone(mockApi.latestPackage);
 
 var configuration: acquisitionSdk.Configuration = {
     appVersion: "1.5.0",

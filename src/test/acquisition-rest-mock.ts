@@ -1,10 +1,10 @@
 import * as querystring from "querystring";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
-import * as rest from "../script/types";
+import * as types from "../script/types";
 
 export var validDeploymentKey = "Valid Deployment Key";
-export var latestPackage = <rest.UpdateCheckResponse>{
+export var latestPackage = <types.UpdateCheckResponse>{
     download_url: "http://www.windowsazure.com/blobs/awperoiuqpweru",
     description: "Angry flappy birds",
     target_binary_range: "1.5.0",
@@ -74,7 +74,7 @@ class Server {
     }
 
     public static onUpdateCheck(params: any, callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
-        var updateRequest: rest.UpdateCheckRequest = {
+        var updateRequest: types.UpdateCheckRequest = {
             deployment_key: params.deployment_key,
             app_version: params.app_version,
             package_hash: params.package_hash,
@@ -85,14 +85,14 @@ class Server {
         if (!updateRequest.deployment_key || !updateRequest.app_version) {
             callback(/*error=*/ null, { statusCode: 400 });
         } else {
-            var updateInfo = <rest.UpdateCheckResponse>{ is_available: false };
+            var updateInfo = <types.UpdateCheckResponse>{ is_available: false };
             if (updateRequest.deployment_key === validDeploymentKey) {
                 if (updateRequest.is_companion || updateRequest.app_version === latestPackage.target_binary_range) {
                     if (updateRequest.package_hash !== latestPackage.package_hash) {
                         updateInfo = latestPackage;
                     }
                 } else if (updateRequest.app_version < latestPackage.target_binary_range) {
-                    updateInfo = <rest.UpdateCheckResponse><any>{ update_app_version: true, target_binary_range: latestPackage.target_binary_range };
+                    updateInfo = <types.UpdateCheckResponse><any>{ update_app_version: true, target_binary_range: latestPackage.target_binary_range };
                 }
             }
 
