@@ -1,7 +1,7 @@
 import * as querystring from "querystring";
 
 import * as acquisitionSdk from "../script/acquisition-sdk";
-import * as rest from "rest-definitions";
+import * as rest from "../script/types";
 
 export var validDeploymentKey = "Valid Deployment Key";
 export var latestPackage = <rest.UpdateCheckResponse>{

@@ -1,4 +1,4 @@
-import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "rest-definitions";
+import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "./types";
 import { CodePushHttpError, CodePushDeployStatusError, CodePushPackageError } from "../utils/code-push-error"
 
 export module Http {
