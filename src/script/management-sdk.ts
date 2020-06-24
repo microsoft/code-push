@@ -1,14 +1,11 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import Q = require("q");
 import slash = require("slash");
 import superagent = require("superagent");
 import * as recursiveFs from "recursive-fs";
 import * as yazl from "yazl";
 import { CodePushUnauthorizedError } from "../utils/code-push-error"
-
-import Promise = Q.Promise;
 
 import { AccessKey, AccessKeyRequest, Account, App, AppCreationRequest, CodePushError, CollaboratorMap, CollaboratorProperties, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ServerAccessKey, Session, UpdateMetrics } from "./types";
 
@@ -75,7 +72,7 @@ class AccountManager {
     }
 
     public isAuthenticated(throwIfUnauthorized?: boolean): Promise<boolean> {
-        return Promise<any>((resolve, reject, notify) => {
+        return new  Promise<any>((resolve, reject) => {
             var request: superagent.Request = superagent.get(this._serverUrl + urlEncode`/authenticated`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
@@ -302,7 +299,7 @@ class AccountManager {
 
     public release(appName: string, deploymentName: string, filePath: string, targetBinaryVersion: string, updateMetadata: PackageInfo, uploadProgressCallback?: (progress: number) => void): Promise<Package> {
 
-        return Promise<Package>((resolve, reject, notify) => {
+        return new Promise<Package>((resolve, reject) => {
 
             updateMetadata.appVersion = targetBinaryVersion;
             var request: superagent.Request = superagent.post(this._serverUrl + urlEncode`/apps/${this.appNameParam(appName)}/deployments/${deploymentName}/release`);
@@ -370,7 +367,7 @@ class AccountManager {
     private packageFileFromPath(filePath: string): Promise<PackageFile> {
         var getPackageFilePromise: Promise<PackageFile>;
         if (fs.lstatSync(filePath).isDirectory()) {
-            getPackageFilePromise = Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
+            getPackageFilePromise =  new Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
                 var directoryPath: string = filePath;
 
                 recursiveFs.readdirr(directoryPath, (error?: any, directories?: string[], files?: string[]): void => {
@@ -408,7 +405,9 @@ class AccountManager {
                 });
             });
         } else {
-            getPackageFilePromise = Q({ isTemporary: false, path: filePath });
+          getPackageFilePromise = new Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
+            resolve({ isTemporary: false, path: filePath });
+          });
         }
         return getPackageFilePromise;
     }
@@ -441,7 +440,7 @@ class AccountManager {
     }
 
     private makeApiRequest(method: string, endpoint: string, requestBody: string, expectResponseBody: boolean, contentType: string): Promise<JsonResponse> {
-        return Promise<JsonResponse>((resolve, reject, notify) => {
+        return new Promise<JsonResponse>((resolve, reject) => {
             var request: superagent.Request = (<any>superagent)[method](this._serverUrl + endpoint);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
