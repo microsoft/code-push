@@ -72,7 +72,7 @@ class AccountManager {
     }
 
     public isAuthenticated(throwIfUnauthorized?: boolean): Promise<boolean> {
-        return new  Promise<any>((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             var request: superagent.Request = superagent.get(this._serverUrl + urlEncode`/authenticated`);
             if (this._proxy) (<any>request).proxy(this._proxy);
             this.attachCredentials(request);
@@ -367,7 +367,7 @@ class AccountManager {
     private packageFileFromPath(filePath: string): Promise<PackageFile> {
         var getPackageFilePromise: Promise<PackageFile>;
         if (fs.lstatSync(filePath).isDirectory()) {
-            getPackageFilePromise =  new Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
+            getPackageFilePromise = new Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
                 var directoryPath: string = filePath;
 
                 recursiveFs.readdirr(directoryPath, (error?: any, directories?: string[], files?: string[]): void => {
@@ -405,9 +405,9 @@ class AccountManager {
                 });
             });
         } else {
-          getPackageFilePromise = new Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
-            resolve({ isTemporary: false, path: filePath });
-          });
+            getPackageFilePromise = new Promise<PackageFile>((resolve: (file: PackageFile) => void, reject: (reason: Error) => void): void => {
+                resolve({ isTemporary: false, path: filePath });
+            });
         }
         return getPackageFilePromise;
     }
