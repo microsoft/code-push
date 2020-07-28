@@ -42,8 +42,7 @@ class AccountManager {
         OWNER: "Owner",
         COLLABORATOR: "Collaborator"
     };
-    public static SERVER_URL = "https://codepush.appcenter.ms/v0.1/legacy";
-    public static MOBILE_CENTER_SERVER_URL = "https://mobile.azure.com";
+    public static SERVER_URL = "https://api.appcenter.ms/v0.1";
 
     private static API_VERSION: number = 2;
 
@@ -510,9 +509,7 @@ class AccountManager {
             }
         }
 
-        request.set("Accept", `application/vnd.code-push.v${AccountManager.API_VERSION}+json`);
-        request.set("Authorization", `Bearer ${this._accessKey}`);
-        request.set("X-CodePush-SDK-Version", packageJson.version);
+        request.set("x-api-token", `${this._accessKey}`);
     }
 
     // IIS and Azure web apps have this annoying behavior where %2F (URL encoded slashes) in the URL are URL decoded
