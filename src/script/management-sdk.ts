@@ -12,8 +12,6 @@ import { AccessKey, AccessKeyRequest, Account, App, AppCreationRequest, CodePush
 var superproxy = require("superagent-proxy");
 superproxy(superagent);
 
-var packageJson = require("../package.json");
-
 interface JsonResponse {
     headers: Headers;
     body?: any;
@@ -43,8 +41,6 @@ class AccountManager {
         COLLABORATOR: "Collaborator"
     };
     public static SERVER_URL = "https://api.appcenter.ms/v0.1";
-
-    private static API_VERSION: number = 2;
 
     public static ERROR_GATEWAY_TIMEOUT = 504;  // Used if there is a network error
     public static ERROR_INTERNAL_SERVER = 500;
