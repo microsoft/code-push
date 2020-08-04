@@ -26,19 +26,19 @@
     "appcenter-file-upload-client": "0.0.24",
     "recursive-fs": "^2.1.0",
     "slash": "^3.0.0",
-    "superagent": "^5.2.1",
+    "superagent": "^5.3.1",
     "superagent-proxy": "^2.0.0",
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^13.11.0",
+    "@types/mocha": "^8.0.1",
+    "@types/node": "^14.0.27",
     "@types/slash": "^3.0.0",
     "@types/superagent": "^4.1.4",
     "@types/yazl": "^2.4.2",
-    "mocha": "^7.1.1",
+    "mocha": "^8.1.0",
     "shx": "^0.3.2",
     "superagent-mock": "^3.7.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.7"
   }
 }

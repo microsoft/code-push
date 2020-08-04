@@ -52,7 +52,7 @@ describe("Management SDK", () => {
         request.Request.prototype._callback = function () { };
     });
 
-    it("methods reject the promise with status code info when an error occurs", (done: MochaDone) => {
+    it("methods reject the promise with status code info when an error occurs", (done: Mocha.Done) => {
         mockReturn("Text", 404);
 
         var methodsWithErrorHandling: any[] = [
@@ -104,7 +104,7 @@ describe("Management SDK", () => {
     });
 
     describe("isAuthenticated", () => {
-        it("isAuthenticated handles successful auth", (done: MochaDone) => {
+        it("isAuthenticated handles successful auth", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(testUser), 200);
             manager.isAuthenticated()
                 .then((authenticated: boolean) => {
@@ -113,7 +113,7 @@ describe("Management SDK", () => {
                 });
         });
 
-        it("isAuthenticated handles unsuccessful auth", (done: MochaDone) => {
+        it("isAuthenticated handles unsuccessful auth", (done: Mocha.Done) => {
             mockReturn("Unauthorized", 401);
             manager.isAuthenticated()
                 .then((authenticated: boolean) => {
@@ -122,7 +122,7 @@ describe("Management SDK", () => {
                 });
         });
 
-        it("isAuthenticated handles unsuccessful auth with promise rejection", (done: MochaDone) => {
+        it("isAuthenticated handles unsuccessful auth with promise rejection", (done: Mocha.Done) => {
             mockReturn("Unauthorized", 401);
 
             // use optional parameter to ask for rejection of the promise if not authenticated
@@ -136,7 +136,7 @@ describe("Management SDK", () => {
                 });
         });
 
-        it("isAuthenticated handles unexpected status codes", (done: MochaDone) => {
+        it("isAuthenticated handles unexpected status codes", (done: Mocha.Done) => {
             mockReturn("Not Found", 404);
             manager.isAuthenticated()
                 .then((authenticated: boolean) => {
@@ -150,7 +150,7 @@ describe("Management SDK", () => {
     });
 
     describe("addApp", () => {
-        it("addApp handles successful response", (done: MochaDone) => {
+        it("addApp handles successful response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(testApp), 201, null, { location: "/appName" });
             manager.addApp("appName", "iOS", "React-Native")
                 .then((obj) => {
@@ -159,7 +159,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("addApp handles error response", (done: MochaDone) => {
+        it("addApp handles error response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify({ success: false }), 404);
             manager.addApp("appName", "iOS", "React-Native")
                 .then((obj) => {
@@ -169,7 +169,7 @@ describe("Management SDK", () => {
     });
 
     describe("getApp", () => {
-        it("getApp handles JSON response", (done: MochaDone) => {
+        it("getApp handles JSON response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(testApp), 200);
             mockUser();
             mockReturn(JSON.stringify([testDeployment, testDeployment2]), 200, `/apps/${testUser.name}/${testApp.name}/deployments/`)
@@ -183,7 +183,7 @@ describe("Management SDK", () => {
     });
 
     describe("updateApp", () => {
-        it("updateApp handles success response", (done: MochaDone) => {
+        it("updateApp handles success response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(testApp), 200);
 
             manager.renameApp("appName", "newAppName")
@@ -195,7 +195,7 @@ describe("Management SDK", () => {
     });
 
     describe("removeApp", () => {
-        it("removeApp handles success response", (done: MochaDone) => {
+        it("removeApp handles success response", (done: Mocha.Done) => {
             mockReturn("", 200);
             mockUser();
 
@@ -208,7 +208,7 @@ describe("Management SDK", () => {
     });
 
     describe("transferApp", () => {
-        it("transferApp handles successful response", (done: MochaDone) => {
+        it("transferApp handles successful response", (done: Mocha.Done) => {
             mockReturn("", 201);
             mockUser();
             manager.transferApp("appName", "email1")
@@ -220,7 +220,7 @@ describe("Management SDK", () => {
     });
 
     describe("addDeployment", () => {
-        it("addDeployment handles success response", (done: MochaDone) => {
+        it("addDeployment handles success response", (done: Mocha.Done) => {
             const testDeploymentWithoutPackage: adapterTypes.Deployment = { ...testDeployment, latest_release: null }
 
             mockReturn(JSON.stringify(testDeploymentWithoutPackage), 201, null, { location: "/deploymentName" });
@@ -234,7 +234,7 @@ describe("Management SDK", () => {
     });
 
     describe("getDeployment", () => {
-        it("getDeployment handles JSON response", (done: MochaDone) => {
+        it("getDeployment handles JSON response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(testDeployment), 200);
             mockUser();
 
@@ -247,7 +247,7 @@ describe("Management SDK", () => {
     });
 
     describe("getDeployments", () => {
-        it("getDeployments handles JSON response", (done: MochaDone) => {
+        it("getDeployments handles JSON response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify([testDeployment, testDeployment2]), 200);
             mockUser();
 
@@ -260,7 +260,7 @@ describe("Management SDK", () => {
     });
 
     describe("renameDeployment", () => {
-        it("renameDeployment handles success response", (done: MochaDone) => {
+        it("renameDeployment handles success response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(testApp), 200);
 
             manager.renameDeployment("appName", "deploymentName", "newDeploymentName")
@@ -272,7 +272,7 @@ describe("Management SDK", () => {
     });
 
     describe("removeDeployment", () => {
-        it("removeDeployment handles success response", (done: MochaDone) => {
+        it("removeDeployment handles success response", (done: Mocha.Done) => {
             mockReturn("", 200);
             mockUser();
 
@@ -285,7 +285,7 @@ describe("Management SDK", () => {
     });
 
     describe("getDeploymentHistory", () => {
-        it("getDeploymentHistory handles success response with no packages", (done: MochaDone) => {
+        it("getDeploymentHistory handles success response with no packages", (done: Mocha.Done) => {
             mockReturn(JSON.stringify([]), 200);
             mockUser();
 
@@ -297,7 +297,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("getDeploymentHistory handles success response with two packages", (done: MochaDone) => {
+        it("getDeploymentHistory handles success response with two packages", (done: Mocha.Done) => {
             const release: adapterTypes.CodePushRelease = { ...codePushRelease, label: "v1" };
             const release2: adapterTypes.CodePushRelease = { ...codePushRelease, label: "v2" };
 
@@ -314,7 +314,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("getDeploymentHistory handles error response", (done: MochaDone) => {
+        it("getDeploymentHistory handles error response", (done: Mocha.Done) => {
             mockReturn("", 404);
 
             manager.getDeploymentHistory("appName", "deploymentName")
@@ -325,7 +325,7 @@ describe("Management SDK", () => {
     });
 
     describe("clearDeploymentHistory", () => {
-        it("clearDeploymentHistory handles success response", (done: MochaDone) => {
+        it("clearDeploymentHistory handles success response", (done: Mocha.Done) => {
             mockReturn("", 204);
             mockUser();
 
@@ -336,7 +336,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("clearDeploymentHistory handles error response", (done: MochaDone) => {
+        it("clearDeploymentHistory handles error response", (done: Mocha.Done) => {
             mockReturn("", 404);
 
             manager.clearDeploymentHistory("appName", "deploymentName")
@@ -347,7 +347,7 @@ describe("Management SDK", () => {
     });
 
     describe("addCollaborator", () => {
-        it("addCollaborator handles successful response", (done: MochaDone) => {
+        it("addCollaborator handles successful response", (done: Mocha.Done) => {
             mockReturn("", 201, null, { location: "/collaborators" });
             mockUser();
             manager.addCollaborator("appName", "email1")
@@ -357,7 +357,7 @@ describe("Management SDK", () => {
                 );
         });
 
-        it("addCollaborator handles error response", (done: MochaDone) => {
+        it("addCollaborator handles error response", (done: Mocha.Done) => {
             mockReturn("", 404);
             manager.addCollaborator("appName", "email1")
                 .then(
@@ -368,7 +368,7 @@ describe("Management SDK", () => {
     });
 
     describe("getCollaborators", () => {
-        it("getCollaborators handles success response with no collaborators", (done: MochaDone) => {
+        it("getCollaborators handles success response with no collaborators", (done: Mocha.Done) => {
             mockReturn(JSON.stringify([]), 200);
             mockUser();
 
@@ -380,7 +380,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("getCollaborators handles success response with multiple collaborators", (done: MochaDone) => {
+        it("getCollaborators handles success response with multiple collaborators", (done: Mocha.Done) => {
             const testUser2: adapterTypes.UserProfile = {
                 ...testUser,
                 email: "testEmail2",
@@ -401,7 +401,7 @@ describe("Management SDK", () => {
     });
 
     describe("removeCollaborator", () => {
-        it("removeCollaborator handles success response", (done: MochaDone) => {
+        it("removeCollaborator handles success response", (done: Mocha.Done) => {
             mockReturn("", 200);
             mockUser();
 
@@ -414,7 +414,7 @@ describe("Management SDK", () => {
     });
 
     describe("patchRelease", () => {
-        it("patchRelease handles success response", (done: MochaDone) => {
+        it("patchRelease handles success response", (done: Mocha.Done) => {
             const newReleasePackage: adapterTypes.CodePushRelease = { ...codePushRelease, description: "newDescription" };
             mockReturn(JSON.stringify(newReleasePackage), 200);
 
@@ -425,7 +425,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("patchRelease handles error response", (done: MochaDone) => {
+        it("patchRelease handles error response", (done: Mocha.Done) => {
             mockReturn("", 400);
 
             manager.patchRelease("appName", "deploymentName", "label", {})
@@ -436,7 +436,7 @@ describe("Management SDK", () => {
     });
 
     describe("promote", () => {
-        it("promote handles success response", (done: MochaDone) => {
+        it("promote handles success response", (done: Mocha.Done) => {
             const newReleasePackage: adapterTypes.CodePushRelease = { ...codePushRelease, description: "newDescription" };
 
             mockReturn(JSON.stringify(newReleasePackage), 200);
@@ -449,7 +449,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("promote handles error response", (done: MochaDone) => {
+        it("promote handles error response", (done: Mocha.Done) => {
             mockReturn("", 400);
 
             manager.promote("appName", "deploymentName", "newDeploymentName", { rollout: 123 })
@@ -460,7 +460,7 @@ describe("Management SDK", () => {
     });
 
     describe("rollback", () => {
-        it("rollback handles success response", (done: MochaDone) => {
+        it("rollback handles success response", (done: Mocha.Done) => {
             mockReturn(JSON.stringify(codePushRelease), 200);
 
             manager.rollback("appName", "deploymentName", "v1")
@@ -470,7 +470,7 @@ describe("Management SDK", () => {
                 }, rejectHandler);
         });
 
-        it("rollback handles error response", (done: MochaDone) => {
+        it("rollback handles error response", (done: Mocha.Done) => {
             mockReturn("", 400);
 
             manager.rollback("appName", "deploymentName", "v1")
