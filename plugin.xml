@@ -8,4 +8,7 @@
 	<js-module src="script/acquisition-sdk.js" name="AcquisitionManager">
 		<merges target="window" />
 	</js-module>
+	<js-module src="script/code-push-error.js" name="code-push-error">
+        <runs/>
+    </js-module>
 </plugin>

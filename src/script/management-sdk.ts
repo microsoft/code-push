@@ -5,7 +5,7 @@ import * as recursiveFs from "recursive-fs";
 import * as yazl from "yazl";
 import Adapter from "../utils/adapter/adapter"
 import RequestManager from "../utils/request-manager"
-import { CodePushUnauthorizedError } from "../utils/code-push-error"
+import { CodePushUnauthorizedError } from "./code-push-error"
 import FileUploadClient, { IProgress } from "appcenter-file-upload-client";
 
 import { AccessKey, AccessKeyRequest, Account, App, AppCreationRequest, CollaboratorMap, Deployment, DeploymentMetrics, Headers, Package, PackageInfo, ReleaseUploadAssets, UploadReleaseProperties, CodePushError } from "./types";

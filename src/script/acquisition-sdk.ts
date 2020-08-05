@@ -1,5 +1,5 @@
 import { UpdateCheckResponse, UpdateCheckRequest, DeploymentStatusReport, DownloadReport } from "./types";
-import { CodePushHttpError, CodePushDeployStatusError, CodePushPackageError } from "../utils/code-push-error"
+import { CodePushHttpError, CodePushDeployStatusError, CodePushPackageError } from "./code-push-error"
 
 export module Http {
     export const enum Verb {

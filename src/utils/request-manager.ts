@@ -1,5 +1,5 @@
 import superagent = require("superagent");
-import { CodePushUnauthorizedError } from "../utils/code-push-error"
+import { CodePushUnauthorizedError } from "../script/code-push-error"
 import { CodePushError, Headers } from "../script/types";
 
 var superproxy = require("superagent-proxy");
