@@ -17,11 +17,11 @@ These methods are not supported in the release's version **[4.0.0](https://githu
 
 * Server URL
 
-  * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above
+  * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above:
 
     `https://api.appcenter.ms/v0.1`
 
-  * versions are lower than **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)**
+  * versions are lower than **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)**:
 
     `https://codepush-management.azurewebsites.net`
 
@@ -31,11 +31,11 @@ These methods are not supported in the release's version **[4.0.0](https://githu
 
     For example the path of `getDeployments` method:
 
-  * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above
+  * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above:
 
     `https://api.appcenter.ms/v0.1/apps/{owner_name}/{app_name}/deployments/`
 
-  * versions are lower than **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)**
+  * versions are lower than **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)**:
 
     `https://codepush-management.azurewebsites.net/apps/{app_name}/deployments/`
 
@@ -43,7 +43,7 @@ These methods are not supported in the release's version **[4.0.0](https://githu
 
   We change some messages for error handling. For example the output of `getDeployments` method:
 
-  * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above
+  * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above:
 
     ```javascript
     {
@@ -52,7 +52,7 @@ These methods are not supported in the release's version **[4.0.0](https://githu
     }
     ```
 
-  * versions are lower than **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)**
+  * versions are lower than **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)**:
 
     ```javascript
     {
