@@ -39,9 +39,9 @@ These methods are not supported in versions **[4.0.0](https://github.com/microso
 
     `https://codepush-management.azurewebsites.net/apps/{app_name}/deployments/`
 
-* Error message
+* Error handling
 
-  Messages and status codes for error handling are different. For example the output of the case when you don't have the app:
+  Error messages differ. Status codes only differ when the application is not found for the owner:
 
   * versions **[4.0.0](https://github.com/microsoft/code-push/releases/tag/v4.0.0)** and above:
 
