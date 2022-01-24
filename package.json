@@ -36,7 +36,7 @@
     "@types/slash": "^3.0.0",
     "@types/superagent": "^4.1.13",
     "@types/yazl": "^2.4.2",
-    "mocha": "^9.1.1",
+    "mocha": "^9.2.0",
     "shx": "^0.3.3",
     "superagent-mock": "^4.0.0",
     "typescript": "^4.4.3"
