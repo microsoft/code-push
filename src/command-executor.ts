@@ -552,8 +552,8 @@ export function execute(command: cli.ICommand): Promise<void> {
                 break;
 
             // Must be logged in
-            default:
-                if (!!sdk) break; // Used by unit tests to skip authentication
+            default: // Used by unit tests to skip authentication
+                if (!!sdk) break;
 
                 if (!connectionInfo) {
                     throw new Error(
@@ -1395,6 +1395,7 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
                     platform,
                     command.sourcemapOutput,
                     command.config,
+                    command.extraBundlerOptions,
                 ),
             )
             .then(() => {
@@ -1405,7 +1406,7 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
                                 bundleName,
                                 outputFolder,
                                 command.sourcemapOutput,
-                                [], // TODO: extra flags
+                                command.extraHermesFlags,
                             );
                         }
                     });
@@ -1416,7 +1417,7 @@ export var releaseReact = (command: cli.IReleaseReactCommand): Promise<void> => 
                                 bundleName,
                                 outputFolder,
                                 command.sourcemapOutput,
-                                [], // TODO: extra flags
+                                command.extraHermesFlags,
                             );
                         }
                     });

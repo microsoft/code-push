@@ -283,6 +283,22 @@ function deploymentHistory(commandName: string, yargs: yargs.Argv): void {
     addCommonConfiguration(yargs);
 }
 
+const supportedArrayBooleanOptions = (arg: string | string[]) => {
+    if (!Array.isArray(arg)) {
+        const arr = [];
+        for (const [key, value] of Object.entries(arg)) {
+            arr[key] = value;
+        }
+        return arr;
+    }
+    return arg.map((v) => {
+        if (/^false|true$/.test(v)) {
+            return v === 'true';
+        }
+        return v;
+    });
+};
+
 var argv = yargs
     .usage(USAGE_PREFIX + ' <command>')
     .demand(/*count*/ 1, /*max*/ 1) // Require exactly one non-option argument.
@@ -1077,6 +1093,22 @@ var argv = yargs
                     description: 'Path to the React Native CLI configuration file',
                     type: 'string',
                 })
+                .option('extraBundlerOptions', {
+                    default: [],
+                    demand: false,
+                    description:
+                        'Option that gets passed to react-native bundler. Can be specified multiple times',
+                    type: 'array',
+                    coerce: supportedArrayBooleanOptions,
+                })
+                .option('extraHermesFlags', {
+                    default: [],
+                    demand: false,
+                    description:
+                        'Flag that gets passed to Hermes, JavaScript to bytecode compiler. Can be specified multiple times',
+                    type: 'array',
+                    coerce: supportedArrayBooleanOptions,
+                })
                 .check((argv: any, aliases: { [aliases: string]: string }): any => {
                     return checkValidReleaseOptions(argv);
                 });
@@ -1540,6 +1572,10 @@ function createCommand(): cli.ICommand {
                     releaseReactCommand.sourcemapOutputDir = argv['sourcemapOutputDir'] as string;
                     releaseReactCommand.outputDir = argv['outputDir'] as string;
                     releaseReactCommand.config = argv['config'] as string;
+                    releaseReactCommand.extraBundlerOptions = argv[
+                        'extraBundlerOptions'
+                    ] as string[];
+                    releaseReactCommand.extraHermesFlags = argv['extraHermesFlags'] as string[];
                 }
                 break;
 

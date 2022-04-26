@@ -270,6 +270,7 @@ export function runReactNativeBundleCommand(
     platform: string,
     sourcemapOutput: string,
     config: string,
+    extraBundlerOptions?: string[],
 ): Promise<void> {
     let reactNativeBundleArgs: string[] = [];
     let envNodeArgs: string = process.env.CODE_PUSH_NODE_ARGS;
@@ -291,6 +292,7 @@ export function runReactNativeBundleCommand(
         entryFile,
         '--platform',
         platform,
+        ...extraBundlerOptions,
     ]);
 
     if (sourcemapOutput) {

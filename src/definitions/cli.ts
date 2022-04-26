@@ -206,6 +206,8 @@ export interface IReleaseReactCommand extends IReleaseBaseCommand {
     sourcemapOutputDir?: string;
     outputDir?: string;
     config?: string;
+    extraBundlerOptions?: string[];
+    extraHermesFlags?: string[];
 }
 
 export interface IRollbackCommand extends ICommand {
