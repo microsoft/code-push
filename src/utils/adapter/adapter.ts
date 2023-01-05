@@ -277,7 +277,7 @@ class Adapter {
 
         if (legacyCodePushReleaseInfo.isDisabled) releaseModification.is_disabled = legacyCodePushReleaseInfo.isDisabled;
 
-        if (legacyCodePushReleaseInfo.isMandatory) releaseModification.is_mandatory = legacyCodePushReleaseInfo.isMandatory;
+        if (legacyCodePushReleaseInfo.isMandatory !== undefined) releaseModification.is_mandatory = legacyCodePushReleaseInfo.isMandatory === true;
 
         if (legacyCodePushReleaseInfo.description) releaseModification.description = legacyCodePushReleaseInfo.description;
 
