@@ -26,7 +26,7 @@
     "appcenter-file-upload-client": "0.0.24",
     "recursive-fs": "^2.1.0",
     "slash": "^3.0.0",
-    "superagent": "^6.1.0",
+    "superagent": "^8.0.0",
     "superagent-proxy": "^3.0.0",
     "yazl": "^2.5.1"
   },
