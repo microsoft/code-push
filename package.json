@@ -23,7 +23,7 @@
   "license": "MIT",
   "homepage": "https://microsoft.github.io/code-push",
   "dependencies": {
-    "appcenter-file-upload-client": "0.0.24",
+    "appcenter-file-upload-client": "0.1.0",
     "recursive-fs": "^2.1.0",
     "slash": "^3.0.0",
     "superagent": "^8.0.0",
