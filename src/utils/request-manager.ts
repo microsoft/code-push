@@ -2,8 +2,8 @@ import superagent = require("superagent");
 import { CodePushUnauthorizedError } from "../script/code-push-error"
 import { CodePushError, Headers } from "../script/types";
 
-var superproxy = require("superagent-proxy");
-superproxy(superagent);
+import superagent_setup from "./superagent-proxy.js";
+superagent_setup(superagent);
 
 interface JsonResponse {
     headers: Headers;

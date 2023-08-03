@@ -13,7 +13,7 @@
     "build:release": "tsc -p ./tsconfig-release.json && npm run content",
     "test": "npm run build && mocha --recursive bin/test",
     "test:debugger": "mocha --recursive --inspect-brk=0.0.0.0 bin/test",
-    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin"
+    "content": "shx cp {plugin.xml,README.md,package.json,.npmignore} bin && cp src/utils/*.js bin/utils/"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "recursive-fs": "^2.1.0",
     "slash": "^3.0.0",
     "superagent": "^8.0.0",
-    "superagent-proxy": "^3.0.0",
+    "proxy-agent": "^6.3.0",
     "yazl": "^2.5.1"
   },
   "devDependencies": {
