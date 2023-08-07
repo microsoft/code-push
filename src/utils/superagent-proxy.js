@@ -5,7 +5,7 @@
  * Module dependencies.
  */
 
-var proxyAgent = require('proxy-agent');
+const { ProxyAgent } = require('proxy-agent');
 // var debug = require('debug')('superagent-proxy');
 
 /**
@@ -70,7 +70,7 @@ function proxy (uri) {
   setupUrl(this);
 
   // attempt to get a proxying `http.Agent` instance
-  var agent = proxyAgent(uri);
+  var agent = new ProxyAgent({ getProxyForUrl: () => uri });
 
   // if we have an `http.Agent` instance then call the .agent() function
   if (agent) this.agent(agent);
