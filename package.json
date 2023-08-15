@@ -24,10 +24,10 @@
   "homepage": "https://microsoft.github.io/code-push",
   "dependencies": {
     "appcenter-file-upload-client": "0.1.0",
+    "proxy-agent": "^6.3.0",
     "recursive-fs": "^2.1.0",
     "slash": "^3.0.0",
     "superagent": "^8.0.0",
-    "proxy-agent": "^6.3.0",
     "yazl": "^2.5.1"
   },
   "devDependencies": {
@@ -39,6 +39,6 @@
     "mocha": "^9.2.0",
     "shx": "^0.3.4",
     "superagent-mock": "^4.0.0",
-    "typescript": "^4.4.3"
+    "typescript": "^5.1.6"
   }
 }
