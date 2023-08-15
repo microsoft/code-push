@@ -1,9 +1,7 @@
 import superagent = require("superagent");
+import { ProxyAgent } from "proxy-agent";
 import { CodePushUnauthorizedError } from "../script/code-push-error"
 import { CodePushError, Headers } from "../script/types";
-
-import superagent_setup from "./superagent-proxy.js";
-superagent_setup(superagent);
 
 interface JsonResponse {
     headers: Headers;
@@ -52,7 +50,11 @@ class RequestManager {
     private makeApiRequest(method: string, endpoint: string, requestBody: string, expectResponseBody: boolean, contentType: string): Promise<JsonResponse> {
         return new Promise<any>((resolve, reject) => {
             var request: superagent.Request = (<any>superagent)[method](this._serverUrl + endpoint);
-            if (this._proxy) (<any>request).proxy(this._proxy);
+
+            if (this._proxy) {
+                (<superagent.SuperAgentRequest>request).agent(new ProxyAgent({ getProxyForUrl: () => this._proxy }))
+            }
+
             this.attachCredentials(request);
 
             if (requestBody) {
