@@ -69,10 +69,6 @@ These methods are not supported in versions **[4.0.0](https://github.com/microso
 
 The CodePush CLI **[3.0.0](https://www.npmjs.com/package/code-push-cli/v/3.0.0)** is the latest and last version for this CLI. We no longer update the CodePush CLI and recommend migrating to the App Center CLI (<https://github.com/microsoft/appcenter-cli>).
 
-## Cordova-plugin-code-push
-
-Cordova-plugin-code-push versions lower than **[1.12.0](https://github.com/microsoft/cordova-plugin-code-push/releases/tag/v1.12.0)** will stop working in the near future.
-
 ## React-native-code-push
 
 React-native-code-push versions lower than **[5.7.0](https://github.com/microsoft/react-native-code-push/releases/tag/v5.7.0)** will stop working in the near future.

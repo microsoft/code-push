@@ -4,7 +4,7 @@
 
 # CodePush
 
-[CodePush](https://microsoft.github.io/code-push) is a cloud service that enables Cordova and React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using provided client SDK for [Cordova](https://github.com/Microsoft/cordova-plugin-code-push) and [React Native](https://github.com/Microsoft/react-native-code-push)). This allows you to have a more deterministic and direct engagement model with your userbase, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
+[CodePush](https://microsoft.github.io/code-push) is a cloud service that enables React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using provided client SDK for [React Native](https://github.com/Microsoft/react-native-code-push)). This allows you to have a more deterministic and direct engagement model with your userbase, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
 
 To get started using CodePush, refer to our [documentation](https://docs.microsoft.com/en-us/appcenter/distribution/codepush/), otherwise, read the following steps if you'd like to build/contribute to the project from source.
 

@@ -56,7 +56,7 @@ describe("Management SDK", () => {
         mockReturn("Text", 404);
 
         var methodsWithErrorHandling: any[] = [
-            manager.addApp.bind(manager, "appName", "iOS", "Cordova"),
+            manager.addApp.bind(manager, "appName", "iOS", "React-Native"),
             manager.getApp.bind(manager, "appName"),
             manager.renameApp.bind(manager, "appName", {}),
             manager.removeApp.bind(manager, "appName"),
