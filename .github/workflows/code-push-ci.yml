@@ -1,7 +1,7 @@
 name: Сode-push CI
 
-on: 
-   pull_request:
+on:
+  pull_request:
     branches:
       - master
 
@@ -15,10 +15,32 @@ jobs:
       - name: Setup NodeJs
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: "12.x"
       - name: Setup dependencies
         run: npm run setup
       - name: Build
-        run: npm run build 
-      - name: Run tests 
+        run: npm run build
+      - name: Run tests
         run: npm run test
+
+  build-check:
+    name: Should have declarartion files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup NodeJs
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      - name: Setup dependencies
+        run: npm run setup
+
+      - name: Generate Release
+        run: npm run build:release
+
+      - name: Check For Declaration
+        run: |
+          npm run check:release
