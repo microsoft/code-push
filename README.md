@@ -2,13 +2,11 @@
 
 #### [Sign up With App Center](https://appcenter.ms/signup?utm_source=CodePush&utm_medium=Azure) to use CodePush
 
-# CodePush
+# CodePush SDK
 
-[CodePush](https://microsoft.github.io/code-push) is a cloud service that enables React Native developers to deploy mobile app updates directly to their users' devices. It works by acting as a central repository that developers can publish updates to (JS, HTML, CSS and images), and that apps can query for updates from (using provided client SDK for [React Native](https://github.com/Microsoft/react-native-code-push)). This allows you to have a more deterministic and direct engagement model with your userbase, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.
+CodePush SDK enables seamless in-app updates and serves as a core component of the [CodePush React Native SDK](https://github.com/Microsoft/react-native-code-push).
 
-To get started using CodePush, refer to our [documentation](https://docs.microsoft.com/en-us/appcenter/distribution/codepush/), otherwise, read the following steps if you'd like to build/contribute to the project from source.
-
-*NOTE: If you need information about [code-push management CLI](https://github.com/microsoft/code-push/tree/v3.0.1/cli), you can find it in v3.0.1.*
+To start integrating CodePush into your project, visit our [documentation](https://docs.microsoft.com/en-us/appcenter/distribution/codepush/). If you're interested in contributing or building the SDK from source, follow the steps below.
 
 ## Dev Setup
 
