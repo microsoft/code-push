@@ -8,6 +8,10 @@ CodePush SDK enables seamless in-app updates and serves as a core component of t
 
 To start integrating CodePush into your project, visit our [documentation](https://docs.microsoft.com/en-us/appcenter/distribution/codepush/). If you're interested in contributing or building the SDK from source, follow the steps below.
 
+## Self-Hosted CodePush Server
+
+For teams or organizations looking to self-host CodePush, we now offer the [CodePush Server](https://github.com/microsoft/code-push-server). This server allows you to set up and manage CodePush as a self-hosted service, giving you more control over your infrastructure and data. Visit the repository for installation instructions, usage guides, and more.
+
 ## Dev Setup
 
 * Install [Node.js](https://nodejs.org/)
