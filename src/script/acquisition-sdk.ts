@@ -66,7 +66,7 @@ export class AcquisitionManager {
     private _ignoreAppVersion: boolean;
     private _serverUrl: string;
     private _publicPrefixUrl: string = "v0.1/public/codepush/";
-    private static _apiCallsDisabled: Boolean = false;
+     private static _apiCallsDisabled: boolean = false;
     constructor(httpRequester: Http.Requester, configuration: Configuration) {
         this._httpRequester = httpRequester;
 
@@ -81,6 +81,9 @@ export class AcquisitionManager {
         this._ignoreAppVersion = configuration.ignoreAppVersion;
     }
 
+    public static get apiCallsDisabled(): boolean {
+        return this._apiCallsDisabled;
+    }
     private disableApiCalls(statusCode: number) {
         if (this._serverUrl.includes(this.BASER_URL) && !(statusCode >= 500 || statusCode == 408 || statusCode == 429)) {
             AcquisitionManager._apiCallsDisabled = true

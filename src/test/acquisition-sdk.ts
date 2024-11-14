@@ -226,7 +226,22 @@ describe("Acquisition SDK", () => {
             done();
         }));
     });
+
+    it("disables api calls on unsuccessful response", (done: Mocha.Done): void => {
+        var invalidJsonResponse: acquisitionSdk.Http.Response = {
+            statusCode: 404,
+            body: "Not found"
+        };
+        configuration={...configuration, serverUrl:"https://codepush.appcenter.ms"}
+        var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonResponse), configuration);
+        acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
+            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
+            done();
+        });
+    })
 });
+
+
 
 function clone<T>(initialObject: T): T {
     return JSON.parse(JSON.stringify(initialObject));
