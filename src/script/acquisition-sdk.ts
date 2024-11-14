@@ -58,7 +58,7 @@ export class AcquisitionStatus {
 }
 
 export class AcquisitionManager {
-    readonly BASER_URL = "https://codepush.appcenter.ms"
+    private readonly BASER_URL = "https://codepush.appcenter.ms"
     private _appVersion: string;
     private _clientUniqueId: string;
     private _deploymentKey: string;
