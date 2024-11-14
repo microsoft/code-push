@@ -232,7 +232,7 @@ describe("Acquisition SDK", () => {
             statusCode: 404,
             body: "Not found"
         };
-        configuration={...configuration, serverUrl:"https://codepush.appcenter.ms"}
+        configuration = { ...configuration, serverUrl: "https://codepush.appcenter.ms" }
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonResponse), configuration);
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
             assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
