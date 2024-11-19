@@ -94,6 +94,7 @@ export class AcquisitionManager {
     public queryUpdateWithCurrentPackage(currentPackage: Package, callback?: Callback<RemotePackage | NativeUpdateNotification>): void {
         if (AcquisitionManager._apiCallsDisabled) {
             console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            callback(/*error=*/ null, /*remotePackage=*/ null);
             return;
         }
 
@@ -165,7 +166,7 @@ export class AcquisitionManager {
 
     public reportStatusDeploy(deployedPackage?: Package, status?: string, previousLabelOrAppVersion?: string, previousDeploymentKey?: string, callback?: Callback<void>): void {
         if (AcquisitionManager._apiCallsDisabled) {
-            console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            console.log(`[CodePush] Api calls are disabled, skipping reportStatusDeploy`);
             return;
         }
 
@@ -231,7 +232,7 @@ export class AcquisitionManager {
 
     public reportStatusDownload(downloadedPackage: Package, callback?: Callback<void>): void {
         if (AcquisitionManager._apiCallsDisabled) {
-            console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            console.log(`[CodePush] Api calls are disabled, skipping reportStatusDownload`);
             return;
         }
 
