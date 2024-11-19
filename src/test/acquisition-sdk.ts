@@ -234,14 +234,31 @@ describe("Acquisition SDK", () => {
         };
         configuration = { ...configuration, serverUrl: "https://codepush.appcenter.ms" }
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonResponse), configuration);
+
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
             assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
             done();
         });
+
+        acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
+            assert.strictEqual(returnPackage, undefined);
+            done();
+        })
+    })
+
+    it("doesn't disable api calls on successful response", (done: Mocha.Done): void => {
+        var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
+
+        acquisition.reportStatusDeploy(templateCurrentPackage, acquisitionSdk.AcquisitionStatus.DeploymentSucceeded, "1.5.0", mockApi.validDeploymentKey, ((error: Error, parameter: void): void => {
+            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
+        }))
+
+        acquisition.reportStatusDownload(templateCurrentPackage, ((error: Error, parameter: void): void => {
+            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
+            done();
+        }));
     })
 });
-
-
 
 function clone<T>(initialObject: T): T {
     return JSON.parse(JSON.stringify(initialObject));

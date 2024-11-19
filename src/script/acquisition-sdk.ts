@@ -58,7 +58,7 @@ export class AcquisitionStatus {
 }
 
 export class AcquisitionManager {
-    private readonly BASER_URL = "https://codepush.appcenter.ms"
+    private readonly BASER_URL_PART = "appcenter.ms"
     private _appVersion: string;
     private _clientUniqueId: string;
     private _deploymentKey: string;
@@ -66,7 +66,7 @@ export class AcquisitionManager {
     private _ignoreAppVersion: boolean;
     private _serverUrl: string;
     private _publicPrefixUrl: string = "v0.1/public/codepush/";
-     private static _apiCallsDisabled: boolean = false;
+    private static _apiCallsDisabled: boolean = false;
     constructor(httpRequester: Http.Requester, configuration: Configuration) {
         this._httpRequester = httpRequester;
 
@@ -80,18 +80,23 @@ export class AcquisitionManager {
         this._deploymentKey = configuration.deploymentKey;
         this._ignoreAppVersion = configuration.ignoreAppVersion;
     }
-
+    // Used for Tests
     public static get apiCallsDisabled(): boolean {
         return this._apiCallsDisabled;
     }
-    private disableApiCalls(statusCode: number) {
-        if (this._serverUrl.includes(this.BASER_URL) && !(statusCode >= 500 || statusCode == 408 || statusCode == 429)) {
-            AcquisitionManager._apiCallsDisabled = true
+
+    private handleRequestFailure(statusCode: number) {
+        if (this._serverUrl.includes(this.BASER_URL_PART) && !(statusCode >= 500 || statusCode == 408 || statusCode == 429)) {
+            AcquisitionManager._apiCallsDisabled = true;
         }
     }
 
     public queryUpdateWithCurrentPackage(currentPackage: Package, callback?: Callback<RemotePackage | NativeUpdateNotification>): void {
-        if (AcquisitionManager._apiCallsDisabled) return
+        if (AcquisitionManager._apiCallsDisabled) {
+            console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            return;
+        }
+
         if (!currentPackage || !currentPackage.appVersion) {
             throw new CodePushPackageError("Calling common acquisition SDK with incorrect package");  // Unexpected; indicates error in our implementation
         }
@@ -115,7 +120,7 @@ export class AcquisitionManager {
 
             if (response.statusCode !== 200) {
                 let errorMessage: any;
-                this.disableApiCalls(response.statusCode)
+                this.handleRequestFailure(response.statusCode)
                 if (response.statusCode === 0) {
                     errorMessage = `Couldn't send request to ${requestUrl}, xhr.statusCode = 0 was returned. One of the possible reasons for that might be connection problems. Please, check your internet connection.`;
                 } else {
@@ -159,7 +164,11 @@ export class AcquisitionManager {
     }
 
     public reportStatusDeploy(deployedPackage?: Package, status?: string, previousLabelOrAppVersion?: string, previousDeploymentKey?: string, callback?: Callback<void>): void {
-        if (AcquisitionManager._apiCallsDisabled) return
+        if (AcquisitionManager._apiCallsDisabled) {
+            console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            return;
+        }
+
         var url: string = this._serverUrl + this._publicPrefixUrl + "report_status/deploy";
         var body: DeploymentStatusReport = {
             app_version: this._appVersion,
@@ -210,7 +219,7 @@ export class AcquisitionManager {
                 }
 
                 if (response.statusCode !== 200) {
-                    this.disableApiCalls(response.statusCode)
+                    this.handleRequestFailure(response.statusCode)
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
@@ -221,7 +230,11 @@ export class AcquisitionManager {
     }
 
     public reportStatusDownload(downloadedPackage: Package, callback?: Callback<void>): void {
-        if (AcquisitionManager._apiCallsDisabled) return
+        if (AcquisitionManager._apiCallsDisabled) {
+            console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            return;
+        }
+
         var url: string = this._serverUrl + this._publicPrefixUrl + "report_status/download";
         var body: DownloadReport = {
             client_unique_id: this._clientUniqueId,
@@ -237,11 +250,10 @@ export class AcquisitionManager {
                 }
 
                 if (response.statusCode !== 200) {
-                    this.disableApiCalls(response.statusCode)
+                    this.handleRequestFailure(response.statusCode)
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
-                
                 callback(/*error*/ null, /*not used*/ null);
             }
         });
