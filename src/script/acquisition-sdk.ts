@@ -58,7 +58,7 @@ export class AcquisitionStatus {
 }
 
 export class AcquisitionManager {
-    private readonly BASER_URL_PART = "appcenter.ms"
+    private readonly BASER_URL_PART = "appcenter.ms";
     private _appVersion: string;
     private _clientUniqueId: string;
     private _deploymentKey: string;
@@ -66,6 +66,7 @@ export class AcquisitionManager {
     private _ignoreAppVersion: boolean;
     private _serverUrl: string;
     private _publicPrefixUrl: string = "v0.1/public/codepush/";
+
     private static _apiCallsDisabled: boolean = false;
     constructor(httpRequester: Http.Requester, configuration: Configuration) {
         this._httpRequester = httpRequester;
@@ -80,6 +81,7 @@ export class AcquisitionManager {
         this._deploymentKey = configuration.deploymentKey;
         this._ignoreAppVersion = configuration.ignoreAppVersion;
     }
+
     // Used for Tests
     public static get apiCallsDisabled(): boolean {
         return this._apiCallsDisabled;
@@ -93,7 +95,7 @@ export class AcquisitionManager {
 
     public queryUpdateWithCurrentPackage(currentPackage: Package, callback?: Callback<RemotePackage | NativeUpdateNotification>): void {
         if (AcquisitionManager._apiCallsDisabled) {
-            console.log(`[CodePush] Api calls are disabled, skipping queryUpdateWithCurrentPackage`);
+            console.log(`[CodePush] Api calls are disabled, skipping API call`);
             callback(/*error=*/ null, /*remotePackage=*/ null);
             return;
         }
@@ -166,7 +168,8 @@ export class AcquisitionManager {
 
     public reportStatusDeploy(deployedPackage?: Package, status?: string, previousLabelOrAppVersion?: string, previousDeploymentKey?: string, callback?: Callback<void>): void {
         if (AcquisitionManager._apiCallsDisabled) {
-            console.log(`[CodePush] Api calls are disabled, skipping reportStatusDeploy`);
+            console.log(`[CodePush] Api calls are disabled, skipping API call`);
+            callback(null, null)
             return;
         }
 
@@ -232,7 +235,8 @@ export class AcquisitionManager {
 
     public reportStatusDownload(downloadedPackage: Package, callback?: Callback<void>): void {
         if (AcquisitionManager._apiCallsDisabled) {
-            console.log(`[CodePush] Api calls are disabled, skipping reportStatusDownload`);
+            console.log(`[CodePush] Api calls are disabled, skipping API call`);
+            callback(null, null)
             return;
         }
 
@@ -255,6 +259,7 @@ export class AcquisitionManager {
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
+
                 callback(/*error*/ null, /*not used*/ null);
             }
         });

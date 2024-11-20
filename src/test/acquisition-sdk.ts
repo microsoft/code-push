@@ -229,7 +229,15 @@ describe("Acquisition SDK", () => {
 
     it("doesnt disable api calls on successful response", (done: Mocha.Done): void => {
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
-        
+
+        acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
+            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
+        });
+
+        acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
+            assert.notStrictEqual(returnPackage, null)
+        });
+
         acquisition.reportStatusDeploy(templateCurrentPackage, acquisitionSdk.AcquisitionStatus.DeploymentSucceeded, "1.5.0", mockApi.validDeploymentKey, ((error: Error, parameter: void): void => {
             assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
         }))
@@ -251,6 +259,13 @@ describe("Acquisition SDK", () => {
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
             assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
         });
+
+        acquisition.reportStatusDeploy(templateCurrentPackage, acquisitionSdk.AcquisitionStatus.DeploymentSucceeded, "1.5.0", mockApi.validDeploymentKey, ((error: Error, parameter: void): void => {
+            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
+        }))
+        acquisition.reportStatusDownload(templateCurrentPackage, ((error: Error, parameter: void): void => {
+            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
+        }));
 
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
             assert.strictEqual(returnPackage, null);
