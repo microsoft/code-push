@@ -22,7 +22,19 @@ var reportStatusDeployUrl = serverUrl + publicPrefixUrl + "/report_status/deploy
 var reportStatusDownloadUrl = serverUrl + publicPrefixUrl + "/report_status/download";
 var updateCheckUrl = serverUrl + publicPrefixUrl + "/update_check?";
 
+export function updateMockUrl() {
+    reportStatusDeployUrl = serverUrl + publicPrefixUrl + "/report_status/deploy";
+    reportStatusDownloadUrl = serverUrl + publicPrefixUrl + "/report_status/download";
+    updateCheckUrl = serverUrl + publicPrefixUrl + "/update_check?";
+}
+
+
 export class HttpRequester implements acquisitionSdk.Http.Requester {
+    private expectedStatusCode: number;
+
+    constructor(expectedStatusCode?: number) {
+        this.expectedStatusCode = expectedStatusCode;
+    }
     public request(verb: acquisitionSdk.Http.Verb, url: string, requestBodyOrCallback: string | acquisitionSdk.Callback<acquisitionSdk.Http.Response>, callback?: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
         if (!callback && typeof requestBodyOrCallback === "function") {
             callback = <acquisitionSdk.Callback<acquisitionSdk.Http.Response>>requestBodyOrCallback;
@@ -30,11 +42,11 @@ export class HttpRequester implements acquisitionSdk.Http.Requester {
 
         if (verb === acquisitionSdk.Http.Verb.GET && url.indexOf(updateCheckUrl) === 0) {
             var params = querystring.parse(url.substring(updateCheckUrl.length));
-            Server.onUpdateCheck(params, callback);
+            Server.onUpdateCheck(params, callback,this.expectedStatusCode);
         } else if (verb === acquisitionSdk.Http.Verb.POST && url === reportStatusDeployUrl) {
-            Server.onReportStatus(callback);
+            Server.onReportStatus(callback,this.expectedStatusCode);
         } else if (verb === acquisitionSdk.Http.Verb.POST && url === reportStatusDownloadUrl) {
-            Server.onReportStatus(callback);
+            Server.onReportStatus(callback,this.expectedStatusCode);
         } else {
             throw new Error("Unexpected call");
         }
@@ -73,7 +85,7 @@ class Server {
         }
     }
 
-    public static onUpdateCheck(params: any, callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
+    public static onUpdateCheck(params: any, callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>, expectedStatusCode?: number): void {
         var updateRequest: types.UpdateCheckRequest = {
             deployment_key: params.deployment_key,
             app_version: params.app_version,
@@ -97,13 +109,13 @@ class Server {
             }
 
             callback(/*error=*/ null, {
-                statusCode: 200,
+                statusCode: expectedStatusCode ? expectedStatusCode : 200,
                 body: JSON.stringify({ update_info: updateInfo })
             });
         }
     }
 
-    public static onReportStatus(callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
-        callback(/*error*/ null, /*response*/ { statusCode: 200 });
+    public static onReportStatus(callback: acquisitionSdk.Callback<acquisitionSdk.Http.Response>, expectedStatusCode: number): void {
+        callback(/*error*/ null, /*response*/ { statusCode: expectedStatusCode ? expectedStatusCode : 200 });
     }
 }

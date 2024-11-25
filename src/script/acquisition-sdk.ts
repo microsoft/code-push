@@ -84,7 +84,7 @@ export class AcquisitionManager {
 
     // Used for Tests
     public static get apiCallsDisabled(): boolean {
-        return this._apiCallsDisabled;
+        return AcquisitionManager._apiCallsDisabled;
     }
 
     private handleRequestFailure(statusCode: number) {
@@ -169,7 +169,7 @@ export class AcquisitionManager {
     public reportStatusDeploy(deployedPackage?: Package, status?: string, previousLabelOrAppVersion?: string, previousDeploymentKey?: string, callback?: Callback<void>): void {
         if (AcquisitionManager._apiCallsDisabled) {
             console.log(`[CodePush] Api calls are disabled, skipping API call`);
-            callback(null, null)
+            callback(/*error*/ null, /*not used*/ null);
             return;
         }
 
@@ -236,7 +236,7 @@ export class AcquisitionManager {
     public reportStatusDownload(downloadedPackage: Package, callback?: Callback<void>): void {
         if (AcquisitionManager._apiCallsDisabled) {
             console.log(`[CodePush] Api calls are disabled, skipping API call`);
-            callback(null, null)
+            callback(/*error*/ null, /*not used*/ null);
             return;
         }
 
