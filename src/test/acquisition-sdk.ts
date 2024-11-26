@@ -241,7 +241,7 @@ describe("Acquisition SDK", () => {
 
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonResponse), configuration);
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
-            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
+            assert.strictEqual((acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled, true);
             (acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled = false;
         });
 
@@ -253,13 +253,13 @@ describe("Acquisition SDK", () => {
         });
 
         acquisition.reportStatusDeploy(templateCurrentPackage, acquisitionSdk.AcquisitionStatus.DeploymentSucceeded, "1.5.0", mockApi.validDeploymentKey, ((error: Error, parameter: void): void => {
-            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
+            assert.strictEqual((acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled, true);
             acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(404), configuration);
             (acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled = false;
         }));
 
         acquisition.reportStatusDownload(templateCurrentPackage, ((error: Error, parameter: void): void => {
-            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, true);
+            assert.strictEqual((acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled, true);
             acquisition = acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.CustomResponseHttpRequester(invalidJsonResponse), configuration);
             (acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled = false;
         }));
@@ -272,7 +272,7 @@ describe("Acquisition SDK", () => {
         updateMockUrl();
 
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
-            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
+            assert.strictEqual((acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled, false);
         });
 
         acquisition.queryUpdateWithCurrentPackage(templateCurrentPackage, (error: Error, returnPackage: acquisitionSdk.RemotePackage | acquisitionSdk.NativeUpdateNotification) => {
@@ -280,11 +280,11 @@ describe("Acquisition SDK", () => {
         });
 
         acquisition.reportStatusDeploy(templateCurrentPackage, acquisitionSdk.AcquisitionStatus.DeploymentSucceeded, "1.5.0", mockApi.validDeploymentKey, ((error: Error, parameter: void): void => {
-            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
+            assert.strictEqual((acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled, false);
         }));
 
         acquisition.reportStatusDownload(templateCurrentPackage, ((error: Error, parameter: void): void => {
-            assert.strictEqual(acquisitionSdk.AcquisitionManager.apiCallsDisabled, false);
+            assert.strictEqual((acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled, false);
         }));
 
         done();

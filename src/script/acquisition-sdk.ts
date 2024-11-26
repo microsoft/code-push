@@ -82,10 +82,6 @@ export class AcquisitionManager {
         this._ignoreAppVersion = configuration.ignoreAppVersion;
     }
 
-    // Used for Tests
-    public static get apiCallsDisabled(): boolean {
-        return AcquisitionManager._apiCallsDisabled;
-    }
 
     private handleRequestFailure(statusCode: number) {
         if (this._serverUrl.includes(this.BASER_URL_PART) && !(statusCode >= 500 || statusCode == 408 || statusCode == 429)) {
