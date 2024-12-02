@@ -229,6 +229,7 @@ describe("Acquisition SDK", () => {
             done();
         }));
     });
+
     it("disables api calls on unsuccessful response", (done: Mocha.Done): void => {
         var invalidJsonResponse: acquisitionSdk.Http.Response = {
             statusCode: 404,
@@ -249,7 +250,6 @@ describe("Acquisition SDK", () => {
             assert.strictEqual(returnPackage, null);
             acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(404), configuration);
             (acquisitionSdk.AcquisitionManager as any)._apiCallsDisabled = false;
-
         });
 
         acquisition.reportStatusDeploy(templateCurrentPackage, acquisitionSdk.AcquisitionStatus.DeploymentSucceeded, "1.5.0", mockApi.validDeploymentKey, ((error: Error, parameter: void): void => {
@@ -266,6 +266,7 @@ describe("Acquisition SDK", () => {
 
         done();
     })
+
     it("doesn't disable api calls on successful response", (done: Mocha.Done): void => {
         var acquisition = new acquisitionSdk.AcquisitionManager(new mockApi.HttpRequester(), configuration);
         mockApi.serverUrl = "https://codepush.appcenter.ms";

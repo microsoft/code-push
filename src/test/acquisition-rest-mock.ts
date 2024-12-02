@@ -28,13 +28,13 @@ export function updateMockUrl() {
     updateCheckUrl = serverUrl + publicPrefixUrl + "/update_check?";
 }
 
-
 export class HttpRequester implements acquisitionSdk.Http.Requester {
     private expectedStatusCode: number;
 
     constructor(expectedStatusCode?: number) {
         this.expectedStatusCode = expectedStatusCode;
     }
+
     public request(verb: acquisitionSdk.Http.Verb, url: string, requestBodyOrCallback: string | acquisitionSdk.Callback<acquisitionSdk.Http.Response>, callback?: acquisitionSdk.Callback<acquisitionSdk.Http.Response>): void {
         if (!callback && typeof requestBodyOrCallback === "function") {
             callback = <acquisitionSdk.Callback<acquisitionSdk.Http.Response>>requestBodyOrCallback;
@@ -42,11 +42,11 @@ export class HttpRequester implements acquisitionSdk.Http.Requester {
 
         if (verb === acquisitionSdk.Http.Verb.GET && url.indexOf(updateCheckUrl) === 0) {
             var params = querystring.parse(url.substring(updateCheckUrl.length));
-            Server.onUpdateCheck(params, callback,this.expectedStatusCode);
+            Server.onUpdateCheck(params, callback, this.expectedStatusCode);
         } else if (verb === acquisitionSdk.Http.Verb.POST && url === reportStatusDeployUrl) {
-            Server.onReportStatus(callback,this.expectedStatusCode);
+            Server.onReportStatus(callback, this.expectedStatusCode);
         } else if (verb === acquisitionSdk.Http.Verb.POST && url === reportStatusDownloadUrl) {
-            Server.onReportStatus(callback,this.expectedStatusCode);
+            Server.onReportStatus(callback, this.expectedStatusCode);
         } else {
             throw new Error("Unexpected call");
         }
