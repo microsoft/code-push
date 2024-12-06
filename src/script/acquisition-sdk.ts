@@ -58,7 +58,7 @@ export class AcquisitionStatus {
 }
 
 export class AcquisitionManager {
-    private readonly BASER_URL_PART = "appcenter.ms";
+    private readonly BASE_URL_PART = "appcenter.ms";
     private _appVersion: string;
     private _clientUniqueId: string;
     private _deploymentKey: string;
@@ -66,7 +66,7 @@ export class AcquisitionManager {
     private _ignoreAppVersion: boolean;
     private _serverUrl: string;
     private _publicPrefixUrl: string = "v0.1/public/codepush/";
-
+    private _statusCode: number;
     private static _apiCallsDisabled: boolean = false;
     constructor(httpRequester: Http.Requester, configuration: Configuration) {
         this._httpRequester = httpRequester;
@@ -82,9 +82,10 @@ export class AcquisitionManager {
         this._ignoreAppVersion = configuration.ignoreAppVersion;
     }
 
+    private isRecoverable = (statusCode: number): boolean => statusCode >= 500 || statusCode === 408 || statusCode === 429;
 
-    private handleRequestFailure(statusCode: number) {
-        if (this._serverUrl.includes(this.BASER_URL_PART) && !(statusCode >= 500 || statusCode == 408 || statusCode == 429)) {
+    private handleRequestFailure() {
+        if (this._serverUrl.includes(this.BASE_URL_PART) && !this.isRecoverable(this._statusCode)) {
             AcquisitionManager._apiCallsDisabled = true;
         }
     }
@@ -119,7 +120,8 @@ export class AcquisitionManager {
 
             if (response.statusCode !== 200) {
                 let errorMessage: any;
-                this.handleRequestFailure(response.statusCode)
+                this._statusCode = response.statusCode;
+                this.handleRequestFailure();
                 if (response.statusCode === 0) {
                     errorMessage = `Couldn't send request to ${requestUrl}, xhr.statusCode = 0 was returned. One of the possible reasons for that might be connection problems. Please, check your internet connection.`;
                 } else {
@@ -219,7 +221,8 @@ export class AcquisitionManager {
                 }
 
                 if (response.statusCode !== 200) {
-                    this.handleRequestFailure(response.statusCode)
+                    this._statusCode = response.statusCode;
+                    this.handleRequestFailure();
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
@@ -251,7 +254,8 @@ export class AcquisitionManager {
                 }
 
                 if (response.statusCode !== 200) {
-                    this.handleRequestFailure(response.statusCode)
+                    this._statusCode = response.statusCode;
+                    this.handleRequestFailure();
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
                     return;
                 }
