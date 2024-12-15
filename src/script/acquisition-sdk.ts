@@ -118,7 +118,7 @@ export class AcquisitionManager {
                 return;
             }
 
-            if (response.statusCode !== 200) {
+            if (response.statusCode < 200 || response.statusCode >= 300) {
                 let errorMessage: any;
                 this._statusCode = response.statusCode;
                 this.handleRequestFailure();
@@ -220,7 +220,7 @@ export class AcquisitionManager {
                     return;
                 }
 
-                if (response.statusCode !== 200) {
+                if (response.statusCode < 200 || response.statusCode >= 300) {
                     this._statusCode = response.statusCode;
                     this.handleRequestFailure();
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
@@ -253,7 +253,7 @@ export class AcquisitionManager {
                     return;
                 }
 
-                if (response.statusCode !== 200) {
+                if (response.statusCode < 200 || response.statusCode >= 300) {
                     this._statusCode = response.statusCode;
                     this.handleRequestFailure();
                     callback(new CodePushHttpError(response.statusCode + ": " + response.body), /*not used*/ null);
