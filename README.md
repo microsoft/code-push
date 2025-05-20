@@ -1,8 +1,14 @@
+# Archiving this repository
+
+Visual Studio App Center was retired on March 31, 2025, except for its Analytics and Diagnostics features. You can learn more about the retirement and the Analytics and Diagnostics extension [here](https://aka.ms/appcenter/retire). CodePush, along with other App Center features, was also retired on March 31, 2025. Consequently, we are archiving this repository.
+
+---
+
 [![appcenterbanner](https://user-images.githubusercontent.com/31293287/32969262-3cc5d48a-cb99-11e7-91bf-fa57c67a371c.png)](http://microsoft.github.io/code-push/)
 
 #### [Sign up With App Center](https://appcenter.ms/signup?utm_source=CodePush&utm_medium=Azure) to use CodePush
 
-# CodePush SDK
+## CodePush SDK
 
 CodePush SDK enables seamless in-app updates and serves as a core component of the [CodePush React Native SDK](https://github.com/Microsoft/react-native-code-push).
 
